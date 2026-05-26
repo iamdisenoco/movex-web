@@ -2,10 +2,9 @@
 /* Body: Hanken Grotesk Variable — geometric grotesk with neutral, slightly rectangular
    letterforms. Closest free match to Viamaster's Deuterium Variable (Adobe Fonts paid). */
 @import "@fontsource-variable/hanken-grotesk";
-/* Display: Saira Variable — geometric/rectangular sans, closest free match to
-   Viamaster's Archivo Expanded PRO. Both wght and wdth axes. */
-@import "@fontsource-variable/saira/wght.css";
-@import "@fontsource-variable/saira/wdth.css";
+/* Display: Inter Variable — modern neo-grotesque sans-serif, ancho normal (no expandido).
+   Reemplaza Saira Expanded por look más editorial/Söhne-like. */
+@import "@fontsource-variable/inter";
 
 @theme {
   /* Movex brand palette */
@@ -20,33 +19,33 @@
   --color-gray-100: #eef0f3;
   --color-gray-500: #6b7280;
 
-  /* Typography — Viamaster-inspired */
-  --font-display: "Saira Variable", "Archivo Variable", system-ui, sans-serif;
+  /* Typography — Inter (modern neo-grotesque, ancho normal) */
+  --font-display: "Inter Variable", system-ui, sans-serif;
   --font-body: "Hanken Grotesk Variable", "Inter Variable", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
-/* Viamaster-matched display: wide + slim (wdth 125 + wght 400) */
+/* Display: Inter Variable, peso medio, sin expansión de ancho */
 @layer base {
   .font-display {
     font-family: var(--font-display);
-    font-variation-settings: "wght" 400, "wdth" 125;
-    letter-spacing: 0;
+    font-variation-settings: "wght" 500;
+    letter-spacing: -0.01em;
     line-height: 1.05;
   }
 
   .font-display-xl {
     font-family: var(--font-display);
-    font-variation-settings: "wght" 400, "wdth" 125;
-    letter-spacing: 0;
+    font-variation-settings: "wght" 500;
+    letter-spacing: -0.02em;
     line-height: 1.0;
   }
 
   .font-display-italic {
     font-family: var(--font-display);
-    font-variation-settings: "wght" 400, "wdth" 125;
+    font-variation-settings: "wght" 500;
     font-style: italic;
-    letter-spacing: 0;
+    letter-spacing: -0.01em;
   }
 }
 
