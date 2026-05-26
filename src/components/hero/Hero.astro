@@ -1,26 +1,29 @@
 ---
-import { brand } from "../../data/site";
+import { brand, services } from "../../data/site";
 ---
 
 <!--
-  Técnica scroll-stacking (estilo MVP):
-  - Hero envuelto en un "pin space" que ocupa 100vh.
-  - El hero mismo es position:sticky top:0 h:100vh → se queda PEGADO al top
-    del viewport mientras scrolleas, hasta que el pin space termina.
-  - La siguiente sección (Empresa) tiene z-index mayor → sube TAPANDO al hero
-    mientras éste sigue sticky.
-  Resultado: video + título se quedan fijos, card de Empresa sube cubriéndolos.
+  HERO refactor (post-feedback Jon — "que el barco se vea grande como el ref"):
+  - Overlay sutil (no oculta el video). Antes era 85% opacity → ahora 35%.
+  - Título GRANDE estilo MVP (clamp 3-7rem, 3 líneas).
+  - Card BLANCA "Servicios" overlapping a la derecha (igual MVP "OUR SERVICES").
+  - Animación de entrada al cargar (post-intro): fade-in stagger + slide-up
+    de cada bloque con cubic-bezier soft.
+  - Parallax sutil del video al primer scroll (data-parallax="0.15") — el
+    video se queda atrás levemente mientras Empresa sube.
+  - Hero pinned con position:sticky para scroll-stacking.
 -->
 <div class="relative" style="height: 100vh">
 <section id="hero" class="sticky top-0 left-0 right-0 isolate h-[100vh] flex flex-col overflow-hidden z-0 bg-navy-900">
-  <!-- Background fallback: gradient navy + bokeh teal mientras el video carga -->
+  <!-- Background fallback (mientras carga el video) -->
   <div
-    class="absolute inset-0 -z-20 bg-gradient-to-br from-navy-900 via-navy-700 to-navy-900"
+    class="absolute inset-0 -z-30 bg-gradient-to-br from-navy-900 via-navy-700 to-navy-900"
     aria-hidden="true"
   >
     <div class="absolute inset-0 [background:radial-gradient(ellipse_at_55%_50%,rgba(45,138,138,0.35)_0%,transparent_55%)]"></div>
   </div>
-  <!-- Background video — aerial cargo ship. id="hero-video" para forzar play() vía JS -->
+
+  <!-- Background video — protagonista, parallax sutil al scrollear -->
   <video
     id="hero-video"
     class="absolute inset-0 size-full object-cover -z-20 opacity-0 transition-opacity duration-700 ease-out"
@@ -31,119 +34,228 @@ import { brand } from "../../data/site";
     playsinline
     preload="auto"
     aria-hidden="true"
+    data-parallax="0.15"
+    data-parallax-from="page"
   ></video>
 
-  <!-- Layered overlays: gradient + bokeh + subtle vignette -->
-  <div class="absolute inset-0 -z-10 bg-gradient-to-br from-navy-900/85 via-navy-900/55 to-navy-900/85"></div>
-  <div class="absolute inset-0 -z-10 [background:radial-gradient(ellipse_at_75%_45%,rgba(45,138,138,0.18)_0%,transparent_55%)]"></div>
+  <!-- Overlay SUTIL (no oculta el video como antes). Solo un degradado del
+       lado izquierdo para que el texto sea legible. -->
+  <div
+    class="absolute inset-0 -z-10 [background:linear-gradient(95deg,rgba(26,41,64,0.78)_0%,rgba(26,41,64,0.55)_35%,rgba(26,41,64,0.15)_70%,rgba(26,41,64,0.35)_100%)]"
+    aria-hidden="true"
+  ></div>
+  <!-- Vignette inferior sutil para que los CTAs/scroll hint se lean -->
+  <div
+    class="absolute inset-x-0 bottom-0 h-48 -z-10 [background:linear-gradient(to_top,rgba(26,41,64,0.7)_0%,transparent_100%)]"
+    aria-hidden="true"
+  ></div>
 
-  <!--
-    LAYOUT REORGANIZADO según feedback de Jon (zonas amarillas):
-    - Título "Avance. Movilidad global." en TOP-LEFT (zona amarilla 1)
-    - Párrafos + CTAs en BOTTOM-RIGHT (zona amarilla 2 diagonal)
-    - Centro libre para que el barco se vea protagonista
-  -->
-  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10 h-full grid grid-rows-[auto_1fr_auto] pt-28 pb-12">
-    <!-- ZONA TOP-LEFT: brand label + headline compacto -->
-    <div class="max-w-2xl">
-      <div class="flex items-center gap-3 mb-6">
+  <!-- Content grid: izquierda (título + body) / derecha (card servicios) -->
+  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10 h-full grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-10 lg:gap-16 items-center pt-24 pb-28">
+    <!-- COLUMNA IZQUIERDA: brand label + título gigante + body -->
+    <div>
+      <div
+        data-hero-entry="0"
+        class="flex items-center gap-3 mb-8 opacity-0"
+      >
         <span class="size-2 rounded-full bg-teal-500"></span>
-        <span class="text-sm tracking-[0.02em] text-white/90">Movex International</span>
+        <span class="text-sm tracking-[0.05em] uppercase text-white font-mono">Movex International</span>
       </div>
-      <h1 class="font-display-xl text-[clamp(2.5rem,6.5vw,5.5rem)] leading-[0.95]">
-        <span data-split class="block text-teal-300">Avance.</span>
-        <span data-split="slow" class="block text-white">Movilidad global.</span>
+
+      <h1
+        data-hero-entry="1"
+        class="font-display-xl text-[clamp(3rem,8vw,7rem)] leading-[0.92] mb-10 opacity-0"
+      >
+        <span data-split class="block text-white">Avance.</span>
+        <span data-split="slow" class="block text-teal-300 italic">Movilidad</span>
+        <span data-split class="block text-white">global.</span>
       </h1>
+
+      <p
+        data-hero-entry="2"
+        class="text-base sm:text-lg lg:text-xl leading-relaxed text-white/90 max-w-xl mb-10 opacity-0"
+      >
+        Operador logístico portuario premium — desde Apartadó y Santa Marta
+        hacia el mundo. Servicio integral, seguro y sin fricción.
+      </p>
+
+      <div data-hero-entry="3" class="flex flex-wrap gap-4 opacity-0">
+        <a
+          href="#empresa"
+          class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-teal-500 hover:bg-teal-300 text-navy-900 font-semibold px-7 py-4 text-base transition-all hover:scale-[1.03]"
+        >
+          Sobre Movex
+        </a>
+        <a
+          href="#contacto"
+          class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-semibold px-7 py-4 text-base transition-all border border-white/25"
+        >
+          Contáctanos
+        </a>
+      </div>
     </div>
 
-    <!-- ZONA CENTRO: libre para que el barco se vea -->
-    <div></div>
-
-    <!-- ZONA BOTTOM-RIGHT: párrafos resumidos + CTAs alineados a la derecha -->
-    <div class="flex justify-end">
-      <div class="max-w-xl text-right">
-        <p class="text-base sm:text-lg leading-relaxed text-white/90 mb-8">
-          Operador logístico portuario premium — desde Apartadó y Santa Marta hacia el mundo.
-          Servicio integral, seguro y sin fricción.
-        </p>
-        <div class="flex flex-wrap gap-4 justify-end">
-          <a
-            href="#empresa"
-            class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-teal-500 hover:bg-teal-300 text-navy-900 font-semibold px-7 py-4 text-base transition-colors"
+    <!-- COLUMNA DERECHA: card BLANCA "Nuestros Servicios" rotando (estilo MVP) -->
+    <div
+      data-hero-entry="4"
+      class="hidden lg:flex justify-end items-center opacity-0"
+    >
+      <div class="w-full max-w-md rounded-3xl bg-white text-navy-900 p-7 shadow-[0_20px_60px_rgba(0,0,0,0.3)]">
+        <div class="flex justify-between items-center mb-6">
+          <span
+            id="hero-svc-counter"
+            class="text-xs font-mono tracking-[0.25em] uppercase text-navy-500 tabular-nums"
           >
-            Sobre Movex
-          </a>
-          <a
-            href="#contacto"
-            class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-white/15 hover:bg-white/25 backdrop-blur text-white font-semibold px-7 py-4 text-base transition-colors border border-white/20"
-          >
-            Contáctanos
-          </a>
+            01/0{services.length}
+          </span>
+          <span class="text-xs font-mono tracking-[0.25em] uppercase text-teal-500">
+            ● Nuestros Servicios
+          </span>
         </div>
+
+        <!-- Track de progreso del rotator -->
+        <div class="relative h-px bg-navy-900/10 mb-6 overflow-hidden">
+          <div
+            id="hero-svc-progress"
+            class="absolute inset-y-0 left-0 w-0 bg-teal-500"
+            style="transition: width 4500ms linear"
+          ></div>
+        </div>
+
+        <!-- Servicio activo (cross-fade entre títulos) -->
+        <div class="relative h-32">
+          {services.map((s, i) => (
+            <div
+              data-hero-svc={i}
+              class={`absolute inset-0 transition-opacity duration-500 ${i === 0 ? "opacity-100" : "opacity-0"}`}
+            >
+              <h3 class="font-display text-2xl sm:text-3xl text-navy-900 mb-3 leading-tight">
+                {s.title}
+              </h3>
+              <p class="text-sm text-navy-700 leading-relaxed line-clamp-3">
+                {s.items.slice(0, 3).join(" · ")}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <a
+          href="#servicios"
+          class="mt-6 inline-flex items-center gap-2 text-xs font-mono tracking-[0.25em] uppercase text-teal-500 hover:text-teal-700 transition-colors"
+        >
+          Ver todos
+          <span class="size-7 rounded-full bg-teal-500 hover:bg-teal-700 text-white flex items-center justify-center transition-colors text-base">→</span>
+        </a>
       </div>
     </div>
   </div>
 
-  <!-- Scroll hint bottom-left (movido para no chocar con los CTAs del bottom-right) -->
-  <span class="absolute bottom-6 left-8 text-[10px] font-mono uppercase tracking-[0.3em] text-white/45">
+  <!-- Scroll hint bottom-left -->
+  <span class="absolute bottom-8 left-8 text-[10px] font-mono uppercase tracking-[0.3em] text-white/55 animate-pulse">
     Scroll ↓
   </span>
-
-  <!-- Decorative corner cut, Viamaster aesthetic touch -->
-  <div class="absolute bottom-0 right-0 w-32 h-32 -z-10 [clip-path:polygon(100%_0,100%_100%,0_100%)] bg-navy-900/60"></div>
 </section>
 </div><!-- /hero pin space -->
 
 <script>
-  // El video del hero a veces no autoplaya por la política de Chrome
-  // (autoplay con sonido requiere user gesture; muted=true debería bastar
-  // pero en producción + sticky el browser puede ignorarlo).
-  // Estrategia:
-  //   1. Marcar `muted=true` explícitamente vía JS (override cualquier cosa).
-  //   2. Llamar play() en cuanto el componente monta.
-  //   3. Hacer fade-in al primer frame cargado (canplay event).
-  //   4. Si play() rechaza, reintentar en el primer interacción del usuario.
   (() => {
+    // ─────────────────────────────────────────────────────────────
+    // 1) VIDEO autoplay robusto + loop seamless
+    // ─────────────────────────────────────────────────────────────
     const v = document.getElementById("hero-video") as HTMLVideoElement | null;
-    if (!v) return;
-    v.muted = true;
-    v.playsInline = true;
-
-    const fadeIn = () => v.classList.remove("opacity-0");
-    v.addEventListener("canplay", fadeIn, { once: true });
-    // Si ya está cargado antes de que enganchemos el listener
-    if (v.readyState >= 3) fadeIn();
-
-    const tryPlay = () => v.play().catch(() => {
-      // Browser bloqueó el autoplay — esperar primer gesture del user
-      const onGesture = () => { v.play().catch(()=>{}); cleanup(); };
-      const cleanup = () => {
+    if (v) {
+      v.muted = true;
+      v.playsInline = true;
+      const fadeIn = () => v.classList.remove("opacity-0");
+      v.addEventListener("canplay", fadeIn, { once: true });
+      if (v.readyState >= 3) fadeIn();
+      const tryPlay = () => v.play().catch(() => {
+        const onGesture = () => { v.play().catch(()=>{}); cleanup(); };
+        const cleanup = () => {
+          ["click","touchstart","keydown","wheel"].forEach(ev =>
+            window.removeEventListener(ev, onGesture)
+          );
+        };
         ["click","touchstart","keydown","wheel"].forEach(ev =>
-          window.removeEventListener(ev, onGesture)
+          window.addEventListener(ev, onGesture, { once: true, passive: true })
         );
-      };
-      ["click","touchstart","keydown","wheel"].forEach(ev =>
-        window.addEventListener(ev, onGesture, { once: true, passive: true })
-      );
-    });
-    tryPlay();
-    // Re-intentar si el usuario vuelve a la pestaña (browser a veces pausa)
-    document.addEventListener("visibilitychange", () => {
-      if (!document.hidden && v.paused) tryPlay();
-    });
+      });
+      tryPlay();
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && v.paused) tryPlay();
+      });
+      // Loop seamless — reset 0.15s antes del final
+      v.removeAttribute("loop");
+      v.addEventListener("timeupdate", () => {
+        if (!v.duration || isNaN(v.duration)) return;
+        if (v.currentTime >= v.duration - 0.15) {
+          v.currentTime = 0;
+          v.play().catch(() => {});
+        }
+      });
+    }
 
-    // LOOP SEAMLESS: el atributo `loop` nativo del browser produce un salto
-    // visible al final del video porque hace `currentTime=0` exactamente
-    // en el último frame (cuando ya se ve el "end"). Truco: hacer el reset
-    // 0.15s ANTES del final, así el cambio queda enmascarado dentro del
-    // playback fluido — el cerebro no percibe el corte.
-    v.removeAttribute("loop");
-    v.addEventListener("timeupdate", () => {
-      if (!v.duration || isNaN(v.duration)) return;
-      if (v.currentTime >= v.duration - 0.15) {
-        v.currentTime = 0;
-        v.play().catch(() => {});
+    // ─────────────────────────────────────────────────────────────
+    // 2) ENTRY ANIMATION post-intro:
+    //    Cuando termina el intro (evento mvx:intro-done), los
+    //    elementos del hero hacen fade-in + slide-up con stagger.
+    //    Si ya pasó la intro (sessionStorage), animar inmediato.
+    // ─────────────────────────────────────────────────────────────
+    const entryEls = document.querySelectorAll<HTMLElement>("[data-hero-entry]");
+    const playEntry = () => {
+      entryEls.forEach((el) => {
+        const i = parseInt(el.dataset.heroEntry || "0", 10);
+        const delay = 200 + i * 140;
+        el.style.transition = "opacity 900ms cubic-bezier(0.16,1,0.3,1), transform 900ms cubic-bezier(0.16,1,0.3,1)";
+        el.style.transitionDelay = delay + "ms";
+        el.style.transform = "translateY(40px)";
+        // Force reflow para que el initial state se aplique antes
+        void el.offsetWidth;
+        requestAnimationFrame(() => {
+          el.style.opacity = "1";
+          el.style.transform = "translateY(0)";
+        });
+      });
+    };
+    if (sessionStorage.getItem("mvx_intro_v6")) {
+      playEntry();
+    } else {
+      window.addEventListener("mvx:intro-done", playEntry, { once: true });
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 3) CARD ROTATOR (Servicios, estilo MVP "OUR SERVICES")
+    //    Rota entre los 5 servicios cada 4.5s con cross-fade.
+    //    Barra de progreso visible se llena en cada ciclo.
+    // ─────────────────────────────────────────────────────────────
+    const svcCards = document.querySelectorAll<HTMLElement>("[data-hero-svc]");
+    const counter = document.getElementById("hero-svc-counter");
+    const progress = document.getElementById("hero-svc-progress");
+    if (svcCards.length > 1) {
+      const total = svcCards.length;
+      const pad = (n: number) => String(n).padStart(2, "0");
+      let idx = 0;
+      const tick = () => {
+        idx = (idx + 1) % total;
+        svcCards.forEach((c, i) => {
+          c.classList.toggle("opacity-100", i === idx);
+          c.classList.toggle("opacity-0", i !== idx);
+        });
+        if (counter) counter.textContent = `${pad(idx + 1)}/${pad(total)}`;
+        // Reset progress
+        if (progress) {
+          progress.style.transition = "none";
+          progress.style.width = "0%";
+          void progress.offsetWidth;
+          progress.style.transition = "width 4500ms linear";
+          progress.style.width = "100%";
+        }
+      };
+      // Inicia el progreso del primer servicio
+      if (progress) {
+        requestAnimationFrame(() => { progress.style.width = "100%"; });
       }
-    });
+      setInterval(tick, 4500);
+    }
   })();
 </script>
