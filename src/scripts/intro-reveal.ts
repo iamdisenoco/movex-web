@@ -76,41 +76,23 @@ export function playPostIntroReveal() {
   }
 
   // ─── 3) SPLIT TEXT del hero ───
-  // El SplitText custom del proyecto ya dividió el título en chars.
-  // GSAP anima cada .char con stagger 0.025 → reveal letra por letra muy smooth.
-  const heroChars = document.querySelectorAll<HTMLElement>(
-    "#hero [data-split] .char",
+  // NO tocar los chars con GSAP — el sistema CSS+IntersectionObserver del
+  // proyecto ya los maneja correctamente (transition por char con stagger 28ms).
+  // Si GSAP se mete acá, hay race condition con SplitText que corre paralelo,
+  // los chars pueden quedar invisibles (vimos ese bug).
+  //
+  // Solo le damos un "empujón": marcar [data-split] como data-revealed="true"
+  // un poco después del nav reveal, así los chars caen en su animación CSS
+  // natural sin tener que esperar al IntersectionObserver.
+  tl.call(
+    () => {
+      document
+        .querySelectorAll("#hero [data-split]")
+        .forEach((el) => el.setAttribute("data-revealed", "true"));
+    },
+    [],
+    0.35,
   );
-  if (heroChars.length) {
-    // Quitar las transitions CSS del proyecto para que GSAP tenga control total.
-    heroChars.forEach((c) => {
-      c.style.transition = "none";
-      c.style.transform = "translateY(100%)";
-      c.style.opacity = "0";
-    });
-    tl.to(
-      heroChars,
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1.2,
-        stagger: 0.025,
-        ease: "expo.out",
-      },
-      0.45,
-    );
-    // Marcar como revealed para que el IntersectionObserver del proyecto
-    // no intente animarlos de nuevo después.
-    tl.call(
-      () => {
-        document
-          .querySelectorAll("#hero [data-split]")
-          .forEach((el) => el.setAttribute("data-revealed", "true"));
-      },
-      [],
-      0.45,
-    );
-  }
 }
 
 // Auto-trigger: si sessionStorage tiene mvx_intro_v6 (intro ya vista), correr
