@@ -19,11 +19,16 @@ const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let lenis: Lenis | null = null;
 if (!reduce) {
   lenis = new Lenis({
-    duration: 1.05,
+    // Lerp más SLOW (0.07 vs 0.1 antes) — el scroll se siente premium,
+    // las cosas se "asientan" en su sitio en vez de cortar bruscamente.
+    // wheelMultiplier 0.85 → el wheel envía menos delta por click → más
+    // control fino del usuario al scrollear, sensación menos abrupta.
+    duration: 1.4,
     easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smoothWheel: true,
-    wheelMultiplier: 1,
-    lerp: 0.1,
+    wheelMultiplier: 0.85,
+    touchMultiplier: 1.5,
+    lerp: 0.07,
   });
 
   const root = document.documentElement;
