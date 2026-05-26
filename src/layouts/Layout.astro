@@ -35,19 +35,19 @@ const {
       }
     </script>
     <style is:inline>
-      /* FOUC guard: mientras intro está locked, escondemos el body original
-         PERO dejamos visibles el cover Y el astro-island del Intro3D
-         (donde React monta la animación). Sin :not(astro-island) la
-         animación entera quedaba invisible. */
+      /* FOUC guard: mientras intro-locked, esconde body excepto cover + astro-island */
       html.intro-locked body > *:not(#intro-cover):not(astro-island) { visibility: hidden; }
       #intro-cover {
         position: fixed; inset: 0; z-index: 45; background: #1a2940;
-        pointer-events: none; transition: opacity 400ms ease-out;
+        pointer-events: none;
+        opacity: 1; visibility: visible;
+        transition: opacity 500ms ease-out, visibility 0s linear 500ms;
       }
-      html:not(.intro-locked) #intro-cover { opacity: 0; pointer-events: none; }
-      /* Tras 800ms sin intro-locked, removemos el cover del flow */
-      html:not(.intro-locked) #intro-cover { animation: introCoverHide 0s linear 800ms forwards; }
-      @keyframes introCoverHide { to { display: none; } }
+      /* Cuando intro-locked se quita: fade-out opacity + visibility hidden tras 500ms */
+      html:not(.intro-locked) #intro-cover {
+        opacity: 0;
+        visibility: hidden;
+      }
     </style>
   </head>
   <body class="bg-navy-900 text-white antialiased">

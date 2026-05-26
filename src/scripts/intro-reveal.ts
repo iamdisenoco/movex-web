@@ -1,118 +1,106 @@
 /**
- * Reveal post-intro — orquesta la entrada de TODOS los elementos visibles
- * después de que la intro animation termina (evento `mvx:intro-done`).
+ * Reveal post-intro — CSS transitions + JS stagger.
  *
- * Usa GSAP timeline en lugar de CSS transitions + setTimeout porque GSAP:
- *   1. Permite stagger preciso entre elementos
- *   2. Tiene easings premium (power3.out, expo.out, back.out)
- *   3. Coordina múltiples animaciones en un solo timeline (todas
- *      sincronizadas, sin race conditions de setTimeout)
- *   4. Aplica styles inline tal como hace MVP (translate:none scale:none
- *      transform:translate(...))
+ * SIN GSAP. La versión anterior usaba gsap.from() pero en producción
+ * el bundle de Vercel no exponía gsap correctamente → las animaciones
+ * nunca corrían y todo quedaba con opacity-0 invisible.
  *
- * Patrón identificado en mvplogistics.eu: `gsap.from(...)` aplica un estado
- * INICIAL (offscreen / opacity 0) y anima hacia el estado natural del DOM.
- * Easing dominante: `power3.out` (cubic-bezier soft).
+ * Ahora: usa CSS transitions nativas + JS solo para:
+ *   1. Remover la clase opacity-0 con stagger
+ *   2. Aplicar inline transform: translateY(0) tras el delay
+ *   3. Marcar [data-split] como data-revealed=true para los chars del título
  */
-import { gsap } from "gsap";
 
-// Easing default para todo el sitio — power3.out es el más común en MVP
-// (decelera rápido al final, sensación premium).
-const DEFAULT_EASE = "power3.out";
+const EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
+const REDUCE = typeof window !== "undefined" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 export function playPostIntroReveal() {
   if (typeof window === "undefined") return;
-  // Respeta prefers-reduced-motion: mostrar todo inmediato, sin animación.
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+
+  // En reduced-motion: mostrar todo inmediato sin animación.
+  if (REDUCE) {
+    document.querySelectorAll<HTMLElement>("[data-hero-entry]").forEach((el) => {
+      el.classList.remove("opacity-0");
+      el.style.opacity = "1";
+      el.style.transform = "none";
+    });
     document
-      .querySelectorAll<HTMLElement>("[data-hero-entry], [data-nav-entry]")
-      .forEach((el) => (el.style.opacity = "1"));
+      .querySelectorAll<HTMLElement>("#hero [data-split]")
+      .forEach((el) => el.setAttribute("data-revealed", "true"));
     return;
   }
 
-  const tl = gsap.timeline({ defaults: { ease: DEFAULT_EASE } });
+  // ─── HERO entries: brand label / título / body / CTAs con stagger ───
+  const heroEntries = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-hero-entry]"),
+  );
 
-  // ─── 1) NAV: logo desde arriba + menu items con stagger desde arriba ───
-  const navLogo = document.querySelector("#site-nav a[aria-label='Movex inicio']");
-  const navLinks = document.querySelectorAll("#site-nav .nav-link");
-  const navCTA = document.querySelector("#site-nav a[href='#contacto']");
-
-  if (navLogo) {
-    tl.from(
-      navLogo,
-      { y: -30, opacity: 0, duration: 0.9 },
-      0,
-    );
-  }
-  if (navLinks.length) {
-    tl.from(
-      navLinks,
-      { y: -20, opacity: 0, duration: 0.7, stagger: 0.07 },
-      0.15,
-    );
-  }
-  if (navCTA) {
-    tl.from(navCTA, { y: -20, opacity: 0, duration: 0.7 }, 0.55);
-  }
-
-  // ─── 2) HERO: brand label + título + body + CTAs en cascada ───
-  // CRITICAL: los elementos tienen la clase Tailwind `opacity-0` que mantiene
-  // su computed opacity en 0. Si dejamos esa clase y hacemos gsap.from(),
-  // GSAP anima desde opacity:0 hacia el "estado final del DOM" → que sigue
-  // siendo opacity:0 (la clase no se quitó). Resultado: invisible para siempre.
-  // Fix: remover `opacity-0` ANTES del .from() así el estado final es opacity:1.
-  const heroEntries = document.querySelectorAll<HTMLElement>("[data-hero-entry]");
+  // Set initial state: opacity 0 + translateY 40px (manual override del CSS class)
   heroEntries.forEach((el) => {
-    el.classList.remove("opacity-0"); // ← key del fix
-    el.style.opacity = ""; // por si quedó inline también
+    el.classList.remove("opacity-0"); // ← key: quitar la clase Tailwind opacity-0
+    el.style.opacity = "0";
+    el.style.transform = "translateY(40px)";
+    el.style.transition = `opacity 900ms ${EASE}, transform 900ms ${EASE}`;
   });
 
-  if (heroEntries.length) {
-    tl.from(
-      heroEntries,
-      {
-        y: 60,
-        opacity: 0,
-        duration: 1.1,
-        stagger: 0.13,
-        ease: "expo.out",
-      },
-      0.3, // empieza 300ms después del nav
-    );
-  }
+  // Force reflow para que el initial state se aplique antes de la transición
+  void document.body.offsetHeight;
 
-  // ─── 3) SPLIT TEXT del hero ───
-  // NO tocar los chars con GSAP — el sistema CSS+IntersectionObserver del
-  // proyecto ya los maneja correctamente (transition por char con stagger 28ms).
-  // Si GSAP se mete acá, hay race condition con SplitText que corre paralelo,
-  // los chars pueden quedar invisibles (vimos ese bug).
-  //
-  // Solo le damos un "empujón": marcar [data-split] como data-revealed="true"
-  // un poco después del nav reveal, así los chars caen en su animación CSS
-  // natural sin tener que esperar al IntersectionObserver.
-  tl.call(
-    () => {
-      document
-        .querySelectorAll("#hero [data-split]")
-        .forEach((el) => el.setAttribute("data-revealed", "true"));
-    },
-    [],
-    0.35,
-  );
+  // Reveal con stagger 140ms
+  heroEntries.forEach((el, idx) => {
+    const i = parseInt(el.dataset.heroEntry || String(idx), 10);
+    const delay = 200 + i * 140;
+    setTimeout(() => {
+      el.style.opacity = "1";
+      el.style.transform = "translateY(0)";
+    }, delay);
+  });
+
+  // ─── HERO chars del título: marcar data-revealed para que el CSS del proyecto
+  //     dispare la animación stagger por char (28ms cada uno, ya está en global.css)
+  setTimeout(() => {
+    document
+      .querySelectorAll("#hero [data-split]")
+      .forEach((el) => el.setAttribute("data-revealed", "true"));
+  }, 350);
 }
 
-// Auto-trigger: si sessionStorage tiene mvx_intro_v6 (intro ya vista), correr
-// inmediato. Si no, esperar al evento mvx:intro-done de Intro3D.
+// ─── Auto-trigger ───────────────────────────────────────────────
 if (typeof window !== "undefined") {
   const start = () => {
-    // Pequeño delay para que el DOM esté completamente listo y el match-move
-    // de la intro haya terminado.
     requestAnimationFrame(() => playPostIntroReveal());
   };
-  if (sessionStorage.getItem("mvx_intro_v6")) {
-    if (document.readyState === "complete") start();
-    else window.addEventListener("load", start, { once: true });
+
+  const tryStart = () => {
+    if (sessionStorage.getItem("mvx_intro_v6")) {
+      // Intro ya vista: correr inmediato
+      if (document.readyState === "complete" || document.readyState === "interactive") {
+        start();
+      } else {
+        window.addEventListener("DOMContentLoaded", start, { once: true });
+      }
+    } else {
+      // Esperar al evento de intro completada
+      window.addEventListener("mvx:intro-done", start, { once: true });
+
+      // Safety net: si en 10s no se disparó (intro buggea o no monta),
+      // forzar el reveal igual.
+      setTimeout(() => {
+        const heroEntry = document.querySelector<HTMLElement>(
+          '[data-hero-entry="0"]',
+        );
+        if (heroEntry && heroEntry.classList.contains("opacity-0")) {
+          console.warn("[mvx] Reveal safety net: forcing play (intro-done never fired)");
+          start();
+        }
+      }, 10000);
+    }
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", tryStart, { once: true });
   } else {
-    window.addEventListener("mvx:intro-done", start, { once: true });
+    tryStart();
   }
 }
