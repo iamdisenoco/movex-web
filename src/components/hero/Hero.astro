@@ -37,55 +37,55 @@ import { brand } from "../../data/site";
   <div class="absolute inset-0 -z-10 bg-gradient-to-br from-navy-900/85 via-navy-900/55 to-navy-900/85"></div>
   <div class="absolute inset-0 -z-10 [background:radial-gradient(ellipse_at_75%_45%,rgba(45,138,138,0.18)_0%,transparent_55%)]"></div>
 
-  <!-- Content container — Viamaster-style left-aligned with generous breathing -->
-  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10 pt-28 pb-16 flex-1 flex flex-col justify-center">
-    <!-- Brand mark label with dot, Viamaster pattern -->
-    <div class="flex items-center gap-3 mb-8">
-      <span class="size-2 rounded-full bg-teal-500"></span>
-      <span class="text-sm tracking-[0.02em] text-white/90">Movex International</span>
+  <!--
+    LAYOUT REORGANIZADO según feedback de Jon (zonas amarillas):
+    - Título "Avance. Movilidad global." en TOP-LEFT (zona amarilla 1)
+    - Párrafos + CTAs en BOTTOM-RIGHT (zona amarilla 2 diagonal)
+    - Centro libre para que el barco se vea protagonista
+  -->
+  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10 h-full grid grid-rows-[auto_1fr_auto] pt-28 pb-12">
+    <!-- ZONA TOP-LEFT: brand label + headline compacto -->
+    <div class="max-w-2xl">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="size-2 rounded-full bg-teal-500"></span>
+        <span class="text-sm tracking-[0.02em] text-white/90">Movex International</span>
+      </div>
+      <h1 class="font-display-xl text-[clamp(2.5rem,6.5vw,5.5rem)] leading-[0.95]">
+        <span data-split class="block text-teal-300">Avance.</span>
+        <span data-split="slow" class="block text-white">Movilidad global.</span>
+      </h1>
     </div>
 
-    <!-- Headline: split por chars con stagger (estilo MVP animated-text) -->
-    <h1 class="font-display-xl text-[clamp(3.2rem,9vw,8rem)] mb-12 max-w-5xl">
-      <span data-split class="block text-teal-300">Avance.</span>
-      <span data-split="slow" class="block text-white">Movilidad global.</span>
-    </h1>
+    <!-- ZONA CENTRO: libre para que el barco se vea -->
+    <div></div>
 
-    <!-- Body copy: 3 paragraph blocks, generous line-height (~1.6), max-w narrow -->
-    <div class="max-w-2xl space-y-6 text-base sm:text-lg leading-relaxed text-white/85 mb-12">
-      <p>
-        Nuestro equipo de operaciones está listo para gestionar tu carga — desde Apartadó al Caribe,
-        de Sudamérica al mundo — con un servicio integral, seguro y sin fricción.
-      </p>
-      <p>
-        Acompañamos cada etapa de transporte y asumimos responsabilidad operativa sobre todo el
-        proceso. Estiba, consolidación, trazabilidad digital, agenciamiento aduanero.
-      </p>
-      <p>
-        Somos un equipo de origen colombiano con cultura de trabajo cercano: directos, exigentes,
-        confiables — valores que definen cómo operamos y por qué nuestros clientes nos eligen.
-      </p>
-    </div>
-
-    <!-- CTAs as pills, Viamaster style -->
-    <div class="flex flex-wrap gap-4">
-      <a
-        href="#empresa"
-        class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-teal-500 hover:bg-teal-300 text-navy-900 font-semibold px-7 py-4 text-base transition-colors"
-      >
-        Sobre Movex
-      </a>
-      <a
-        href="#contacto"
-        class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-white/15 hover:bg-white/25 backdrop-blur text-white font-semibold px-7 py-4 text-base transition-colors border border-white/20"
-      >
-        Contáctanos
-      </a>
+    <!-- ZONA BOTTOM-RIGHT: párrafos resumidos + CTAs alineados a la derecha -->
+    <div class="flex justify-end">
+      <div class="max-w-xl text-right">
+        <p class="text-base sm:text-lg leading-relaxed text-white/90 mb-8">
+          Operador logístico portuario premium — desde Apartadó y Santa Marta hacia el mundo.
+          Servicio integral, seguro y sin fricción.
+        </p>
+        <div class="flex flex-wrap gap-4 justify-end">
+          <a
+            href="#empresa"
+            class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-teal-500 hover:bg-teal-300 text-navy-900 font-semibold px-7 py-4 text-base transition-colors"
+          >
+            Sobre Movex
+          </a>
+          <a
+            href="#contacto"
+            class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-white/15 hover:bg-white/25 backdrop-blur text-white font-semibold px-7 py-4 text-base transition-colors border border-white/20"
+          >
+            Contáctanos
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Scroll hint bottom-right -->
-  <span class="absolute bottom-6 right-8 text-[10px] font-mono uppercase tracking-[0.3em] text-white/45">
+  <!-- Scroll hint bottom-left (movido para no chocar con los CTAs del bottom-right) -->
+  <span class="absolute bottom-6 left-8 text-[10px] font-mono uppercase tracking-[0.3em] text-white/45">
     Scroll ↓
   </span>
 
@@ -130,6 +130,20 @@ import { brand } from "../../data/site";
     // Re-intentar si el usuario vuelve a la pestaña (browser a veces pausa)
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden && v.paused) tryPlay();
+    });
+
+    // LOOP SEAMLESS: el atributo `loop` nativo del browser produce un salto
+    // visible al final del video porque hace `currentTime=0` exactamente
+    // en el último frame (cuando ya se ve el "end"). Truco: hacer el reset
+    // 0.15s ANTES del final, así el cambio queda enmascarado dentro del
+    // playback fluido — el cerebro no percibe el corte.
+    v.removeAttribute("loop");
+    v.addEventListener("timeupdate", () => {
+      if (!v.duration || isNaN(v.duration)) return;
+      if (v.currentTime >= v.duration - 0.15) {
+        v.currentTime = 0;
+        v.play().catch(() => {});
+      }
     });
   })();
 </script>

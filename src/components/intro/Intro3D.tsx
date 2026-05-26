@@ -223,17 +223,16 @@ export default function Intro3D() {
         setPhase("globe");
 
         // ─────────────────────────────────────────────────────────────────
-        // Timeline ESCALONADO (con respiración entre fases):
+        // Timeline OPTIMIZADO (M aparece RÁPIDO tras las arcs):
         //   0.00s  globe aparece (mundo neutral, sin destacar Colombia)
-        //   0.90s  ↑ se ve el planeta entero un momento
         //   0.90s  highlight: Colombia se ilumina (cap teal + stroke + altitud)
-        //   1.80s  ↑ se ve Colombia destacada un momento
-        //   1.80s  routes: empiezan a salir las líneas
-        //   3.80s  ↑ arcs ya terminaron de salir (último 450+27*40=1530ms)
-        //   3.80s  lockup-big: M gigante aparece (globe se difumina)
-        //   4.90s  lockup-pair: M se reduce + wordmark entra
-        //   6.00s  matchmove: el lockup vuela a la esquina del nav
-        //   7.00s  finish: removemos la intro y desbloqueamos scroll
+        //   1.80s  routes: empiezan a salir las líneas neon
+        //   3.30s  arcs done (último 450+27*40=1530ms, ~80% completas)
+        //   3.30s  lockup-big: M gigante aparece JUSTO cuando las arcs terminan
+        //                     (era 3.80s — quitado el gap muerto de 500ms)
+        //   4.40s  lockup-pair: M se reduce + wordmark entra
+        //   5.50s  matchmove: el lockup vuela a la esquina del nav
+        //   6.50s  finish: removemos la intro y desbloqueamos scroll
         // ─────────────────────────────────────────────────────────────────
 
         // Función que aplica el "highlight" a Colombia — cambio visible que
@@ -260,10 +259,10 @@ export default function Intro3D() {
           setPhase("routes");
           startArcAccumulation();
         }, 1800);
-        setTimeout(() => setPhase("lockup-big"), 3800);
-        setTimeout(() => setPhase("lockup-pair"), 4900);
-        setTimeout(() => setPhase("matchmove"), 6000);
-        setTimeout(finish, 7000);
+        setTimeout(() => setPhase("lockup-big"), 3300);  // M aparece RÁPIDO tras arcs
+        setTimeout(() => setPhase("lockup-pair"), 4400);
+        setTimeout(() => setPhase("matchmove"), 5500);
+        setTimeout(finish, 6500);
       } catch (err) {
         console.warn("[intro] countries failed, falling back", err);
         // Fallback: skip straight to lockup sin status text
@@ -402,16 +401,16 @@ export default function Intro3D() {
 
   if (!enabled || phase === "done") return null;
 
-  // Progress 0→1 basado en la phase actual (7s total).
-  // Distribución reflejando los tiempos del timeline (0.9 / 1.8 / 3.8 / 4.9 / 6.0 / 7.0):
+  // Progress 0→1 basado en la phase actual (6.5s total).
+  // Tiempos: 0.9 / 1.8 / 3.3 / 4.4 / 5.5 / 6.5
   const progressByPhase: Record<Phase, number> = {
     boot: 0,
-    globe: 0.12,        // 0.9s   — mundo aparece
-    highlight: 0.25,    // 1.8s   — Colombia se destaca
-    routes: 0.55,       // 3.8s   — líneas terminaron de salir
-    "lockup-big": 0.72, // 4.9s   — M grande
-    "lockup-pair": 0.88,// 6.0s   — M + wordmark
-    matchmove: 0.98,    // 7.0s   — match-move al nav
+    globe: 0.14,        // 0.9s   — mundo aparece
+    highlight: 0.28,    // 1.8s   — Colombia se destaca
+    routes: 0.51,       // 3.3s   — arcs terminaron
+    "lockup-big": 0.68, // 4.4s   — M grande
+    "lockup-pair": 0.85,// 5.5s   — M + wordmark
+    matchmove: 0.98,    // 6.5s   — match-move al nav
     done: 1,
   };
   const pct = Math.round(progressByPhase[phase] * 100);
