@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import ThreeGlobe from "three-globe";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { introDestinations, brand } from "../../data/site";
 
 type Phase =
@@ -140,6 +143,23 @@ export default function Intro3D() {
     camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 1000);
     camera.position.z = 260;
 
+    // ─────────────────────────────────────────────────────────────
+    // POST-PROCESSING: UnrealBloomPass para que las arcs brillen REAL.
+    // Sin esto, "ancho" no es "luminoso". Bloom hace glow real en
+    // píxeles brillantes (las arcs color teal-300 > threshold).
+    // ─────────────────────────────────────────────────────────────
+    const composer = new EffectComposer(renderer);
+    composer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    composer.setSize(w, h);
+    composer.addPass(new RenderPass(scene, camera));
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(w, h),
+      0.85, // strength — intensidad del glow
+      0.55, // radius — qué tan lejos se difumina
+      0.18, // threshold — qué tan brillante debe ser un píxel para "glowear"
+    );
+    composer.addPass(bloomPass);
+
     // Lighting
     const ambient = new THREE.AmbientLight(0xffffff, 0.55);
     scene.add(ambient);
@@ -261,14 +281,13 @@ export default function Intro3D() {
 
     const startArcAccumulation = () => {
       if (disposed) return;
-      // Líneas LUMINOSAS — stroke más gordo + emissive a través de pulsing dash.
-      // ThreeGlobe no expone shaderMaterial directo en arcs, así que usamos:
-      //   - arcStroke 1.6 (vs 0.5) → líneas notoriamente más visibles
-      //   - color teal-300 brillante
-      //   - atmosphere intensificada para que el reflejo parezca glow
+      // Líneas LUMINOSAS reales — stroke DELGADO (0.55) pero con
+      // UnrealBloomPass aplicado en post-processing. El bloom hace que
+      // el color teal-300 (#5fb3b3) emita luz visible alrededor del trazo.
+      // NO subir el stroke — el glow viene del bloom, no del grosor.
       globe
         .arcColor("color")
-        .arcStroke(1.6)
+        .arcStroke(0.55)
         .arcAltitude("altitude")
         .arcDashLength(1)
         .arcDashGap(0)
@@ -315,7 +334,8 @@ export default function Intro3D() {
       // Subtle breathing tilt
       const breath = Math.sin(elapsed * 0.0005) * 0.012;
       globe.rotation.x = THREE.MathUtils.degToRad(-8) + breath;
-      renderer.render(scene, camera);
+      // Usar composer en vez de renderer directo → aplica el UnrealBloomPass.
+      composer.render();
       raf = requestAnimationFrame(animate);
     };
     raf = requestAnimationFrame(animate);
@@ -326,6 +346,8 @@ export default function Intro3D() {
       const w = container.clientWidth;
       const h = container.clientHeight;
       renderer.setSize(w, h);
+      composer.setSize(w, h);
+      bloomPass.setSize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
     };

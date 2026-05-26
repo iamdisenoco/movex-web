@@ -6,6 +6,58 @@
 
 ---
 
+## 2026-05-26 — Hero video robusto (autoplay policy fix)
+
+**Problema**: User reportó "ya no está el video en el hero" en producción.
+
+**Causa**: el archivo se servía OK (HTTP 200, Content-Length: 17.9MB) pero Chrome rechazaba el autoplay silenciosamente. El video tag `autoplay muted playsinline` debería funcionar pero en algunos escenarios (sticky parent + heavy page + bandwidth) el browser ignora autoplay.
+
+**Solución** en `src/components/hero/Hero.astro`:
+1. Agregado **fallback visual** detrás del video — gradient navy + radial bokeh teal, así el hero NUNCA se ve vacío aunque el video tarde.
+2. Video inicia con `opacity-0` y hace fade-in al evento `canplay` (cuando el primer frame está listo).
+3. Script JS:
+   - Setea `muted=true` y `playsInline=true` explícitamente (override por si HTML attrs se perdieron).
+   - Llama `play()` en mount.
+   - Si `play()` rechaza → escucha el primer `click`/`touchstart`/`keydown`/`wheel` y reintenta.
+   - `visibilitychange` listener: si el usuario vuelve a la pestaña y el video está paused, reintenta.
+
+**Lección**: nunca confiar solo en `autoplay` HTML attribute. Para videos críticos del hero: fallback visual + script de retry son obligatorios.
+
+---
+
+## 2026-05-26 — Intro arcs luminosas con UnrealBloomPass
+
+**Problema**: User pidió "que las líneas sean luminosas que alumbren un poco". Primer intento fue subir `arcStroke` de 0.5 a 1.6 → "no las pusiste luminosas solo las engrosaste".
+
+**Causa**: confundí ancho con brillo. "Luminoso" = glow real (emisión de luz alrededor), no = grosor.
+
+**Solución** en `src/components/intro/Intro3D.tsx`:
+1. Stroke de vuelta a **0.55** (delgadas como antes).
+2. Agregado **UnrealBloomPass** de three.js post-processing:
+   ```ts
+   import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+   import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+   import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+
+   const composer = new EffectComposer(renderer);
+   composer.addPass(new RenderPass(scene, camera));
+   const bloomPass = new UnrealBloomPass(
+     new THREE.Vector2(w, h),
+     0.85,   // strength
+     0.55,   // radius
+     0.18,   // threshold (bajo → arcs teal-300 entran al bloom)
+   );
+   composer.addPass(bloomPass);
+   ```
+3. Render loop: cambiar `renderer.render(scene, camera)` → `composer.render()`.
+4. Resize handler: también `composer.setSize()` y `bloomPass.setSize()`.
+
+**Resultado**: arcs delgadas pero con halo de luz teal alrededor de cada trazo. Visualmente "luminosas".
+
+**Lección**: en three.js, glow real requiere post-processing (bloom). El emissive material solo emite en su propio fragmento, no irradia.
+
+---
+
 ## 2026-05-26 — Sistema de vault compartido en el repo
 
 **Contexto**: Jon trabaja desde su PC con vault Obsidian local. Otro colaborador va a editar desde otro PC sin acceso al Google Drive de Jon.

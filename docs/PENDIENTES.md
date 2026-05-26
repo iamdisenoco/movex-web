@@ -18,11 +18,7 @@
 > Jon mandó imágenes que no llegaron al chat. **Punto 1 y 2 quedaron sin hacer** porque dependen de ver las imágenes. Punto 3 y 4 sí pueden hacerse:
 
 ### Punto 3 — Líneas luminosas en el intro
-- [ ] En `src/components/intro/Intro3D.tsx`, los arcos del globo deben verse **luminosos** (que alumbren un poco). Aplicar emissive/glow.
-- Buscar la config de `.arcsData()` y agregar:
-  - `.arcStroke(0.6)` o subir grosor
-  - `.arcColor(...)` con gradient teal-bright
-  - Considerar agregar un `THREE.AdditiveBlending` material o un post-processing `UnrealBloomPass` para el glow real
+- [x] **HECHO** (2026-05-26): primer intento engrosó las arcs (stroke 1.6) sin glow real. User dijo "no las pusiste luminosas solo las engrosaste". Fix correcto: bajado stroke a 0.55 + agregado **UnrealBloomPass** (post-processing) con strength 0.85, radius 0.55, threshold 0.18. Ver `docs/DECISIONES.md` para detalle.
 
 ### Punto 4 — Tiempos muertos + cleanup visual del intro
 - [ ] Eliminar tiempo muerto **entre fase globe y fase routes** (las líneas tardan en empezar)

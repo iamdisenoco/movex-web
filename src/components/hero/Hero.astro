@@ -12,10 +12,18 @@ import { brand } from "../../data/site";
   Resultado: video + título se quedan fijos, card de Empresa sube cubriéndolos.
 -->
 <div class="relative" style="height: 100vh">
-<section id="hero" class="sticky top-0 left-0 right-0 isolate h-[100vh] flex flex-col overflow-hidden z-0">
-  <!-- Background video — aerial cargo ship -->
+<section id="hero" class="sticky top-0 left-0 right-0 isolate h-[100vh] flex flex-col overflow-hidden z-0 bg-navy-900">
+  <!-- Background fallback: gradient navy + bokeh teal mientras el video carga -->
+  <div
+    class="absolute inset-0 -z-20 bg-gradient-to-br from-navy-900 via-navy-700 to-navy-900"
+    aria-hidden="true"
+  >
+    <div class="absolute inset-0 [background:radial-gradient(ellipse_at_55%_50%,rgba(45,138,138,0.35)_0%,transparent_55%)]"></div>
+  </div>
+  <!-- Background video — aerial cargo ship. id="hero-video" para forzar play() vía JS -->
   <video
-    class="absolute inset-0 size-full object-cover -z-20"
+    id="hero-video"
+    class="absolute inset-0 size-full object-cover -z-20 opacity-0 transition-opacity duration-700 ease-out"
     src="/assets/videos/cargo-ship-aerial.mp4"
     autoplay
     muted
@@ -85,3 +93,43 @@ import { brand } from "../../data/site";
   <div class="absolute bottom-0 right-0 w-32 h-32 -z-10 [clip-path:polygon(100%_0,100%_100%,0_100%)] bg-navy-900/60"></div>
 </section>
 </div><!-- /hero pin space -->
+
+<script>
+  // El video del hero a veces no autoplaya por la política de Chrome
+  // (autoplay con sonido requiere user gesture; muted=true debería bastar
+  // pero en producción + sticky el browser puede ignorarlo).
+  // Estrategia:
+  //   1. Marcar `muted=true` explícitamente vía JS (override cualquier cosa).
+  //   2. Llamar play() en cuanto el componente monta.
+  //   3. Hacer fade-in al primer frame cargado (canplay event).
+  //   4. Si play() rechaza, reintentar en el primer interacción del usuario.
+  (() => {
+    const v = document.getElementById("hero-video") as HTMLVideoElement | null;
+    if (!v) return;
+    v.muted = true;
+    v.playsInline = true;
+
+    const fadeIn = () => v.classList.remove("opacity-0");
+    v.addEventListener("canplay", fadeIn, { once: true });
+    // Si ya está cargado antes de que enganchemos el listener
+    if (v.readyState >= 3) fadeIn();
+
+    const tryPlay = () => v.play().catch(() => {
+      // Browser bloqueó el autoplay — esperar primer gesture del user
+      const onGesture = () => { v.play().catch(()=>{}); cleanup(); };
+      const cleanup = () => {
+        ["click","touchstart","keydown","wheel"].forEach(ev =>
+          window.removeEventListener(ev, onGesture)
+        );
+      };
+      ["click","touchstart","keydown","wheel"].forEach(ev =>
+        window.addEventListener(ev, onGesture, { once: true, passive: true })
+      );
+    });
+    tryPlay();
+    // Re-intentar si el usuario vuelve a la pestaña (browser a veces pausa)
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden && v.paused) tryPlay();
+    });
+  })();
+</script>
