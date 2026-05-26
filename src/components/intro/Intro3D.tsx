@@ -425,24 +425,31 @@ export default function Intro3D() {
         pointerEvents: phase === "matchmove" ? "none" : "auto",
       }}
     >
-      {/* Globe canvas container — encoge + desvanece para dar paso a la M.
-          NO usamos filter:blur porque revela el rectángulo del canvas al
-          difuminar sus bordes (el user lo notó: "encerraste en un cuadro el
-          mundo cuando aparece la M"). Solo opacity + transform — el canvas
-          tiene clearColor transparente, así que al encoger no deja borde. */}
+      {/* Globe canvas container — el canvas WebGL es rectangular y al hacer
+          scale-down se ve EL RECTÁNGULO como un cuadro distinto del bg navy.
+          Fix: aplicar mask-image radial → el canvas SIEMPRE se ve circular,
+          sus bordes rectangulares quedan enmascarados (invisibles).
+          Estado base: mask muy amplio (90%→100%) → solo enmascara las esquinas
+          del rectángulo, no afecta visualmente al globo + atmosfera.
+          Estado lockup: mask se contrae (40%→70%) acompañando el scale-down,
+          el globo encoge dentro de un círculo que también encoge.
+          Sin transform scale: el scale lo hace el propio mask radial. */}
       <div
         ref={containerRef}
-        className="absolute inset-0 transition-[opacity,transform] duration-[1400ms] ease-[cubic-bezier(0.32,0.72,0,1)]"
+        className="absolute inset-0 transition-[opacity,mask-image,-webkit-mask-image] duration-[1400ms] ease-[cubic-bezier(0.32,0.72,0,1)]"
         style={{
           opacity:
             phase === "lockup-big" || phase === "lockup-pair" || phase === "matchmove"
               ? 0
               : 1,
-          transform:
+          maskImage:
             phase === "lockup-big" || phase === "lockup-pair" || phase === "matchmove"
-              ? "scale(0.6)"
-              : "scale(1)",
-          transformOrigin: "center center",
+              ? "radial-gradient(circle at center, black 25%, transparent 55%)"
+              : "radial-gradient(circle at center, black 80%, transparent 100%)",
+          WebkitMaskImage:
+            phase === "lockup-big" || phase === "lockup-pair" || phase === "matchmove"
+              ? "radial-gradient(circle at center, black 25%, transparent 55%)"
+              : "radial-gradient(circle at center, black 80%, transparent 100%)",
         }}
       />
 

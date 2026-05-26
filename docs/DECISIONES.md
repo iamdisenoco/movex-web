@@ -6,6 +6,32 @@
 
 ---
 
+## 2026-05-26 — Fix definitivo del "cuadro": mask-image radial
+
+**Problema persistía**: Tras quitar el `filter: blur`, el user mandó screenshot mostrando que **el cuadro alrededor del globo sigue visible** en la transición a la M.
+
+**Causa real (más profunda que blur)**: El canvas WebGL de three.js es un **rectángulo** que ocupa toda la pantalla. La **atmosfera teal** del globe se renderiza más allá de la esfera, hasta cubrir más área del rectángulo. Cuando se aplica `transform: scale(0.6)`, el rectángulo entero (con su atmosfera teal que llega a los bordes) encoge y queda visible como una "isla rectangular brillante" sobre el `bg-navy-900` puro del wrapper.
+
+No es el blur ni el scale per se — es que un canvas es siempre **rectangular**, y al encogerlo se ve.
+
+**Fix**: aplicar `mask-image: radial-gradient(...)` al container del canvas → enmascara los bordes rectangulares, el canvas se ve **siempre circular**.
+
+```ts
+// Estado base (globe/highlight/routes): mask amplio, casi no afecta visualmente
+maskImage: "radial-gradient(circle at center, black 80%, transparent 100%)"
+
+// Estado lockup-big/pair/matchmove: mask contraído, el círculo se cierra
+maskImage: "radial-gradient(circle at center, black 25%, transparent 55%)"
+```
+
+Quitado el `transform: scale` — el "encoger hacia el centro" ahora lo hace el propio mask contrayéndose con transición CSS. Resultado:
+1. Estado base: globo + atmosfera ocupan ~80% del canvas, los bordes 20% no se notan (mask los oculta sutilmente).
+2. Transición: el mask se contrae a 25%→55% mientras `opacity → 0`. El globo "implosiona" hacia un punto central que se desvanece — sin rectángulo visible.
+
+**Lección clave**: cualquier canvas WebGL que se vaya a animar (scale, fade) **necesita mask-image radial** si el contenido visual es circular y el fondo es de color sólido distinto al clearColor. Sin mask, los bordes del rectángulo del canvas siempre serán visibles.
+
+---
+
 ## 2026-05-26 — Quitado blur del fade-out del globe (revelaba cuadro)
 
 **Problema**: User dijo "no me gustó que encerraste en un cuadro el mundo cuando se va y aparece la M, de resto está perfecto".
