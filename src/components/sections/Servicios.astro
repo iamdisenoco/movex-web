@@ -23,14 +23,24 @@ const total = services.length;
   - Resultado: card 0 visible, scrolleas un viewport, card 0 sube y card 1
     aparece desde abajo. Cada card "deal" toma 1 viewport de scroll.
 -->
+<!--
+  NUEVO LAYOUT estilo MVP cuadro azul:
+  - El <section> es TRANSPARENTE y sin border-radius — solo provee el pin space.
+  - DENTRO del sticky, un <div> max-w-6xl mx-auto que SÍ tiene bg navy +
+    rounded-t + shadow. Ese es el "cuadro azul".
+  - Los lados (fuera del max-w-6xl) quedan transparentes → se ve el hero
+    sticky detrás (los primeros 100vh) o el navy del body (después).
+  - Width 832/1121 = 74% como MVP. Replicado con max-w-6xl ≈ 72rem ≈ 1152px,
+    con padding px-6 lg:px-10 visualmente similar.
+-->
 <section
   id="servicios"
   data-card-stack
   data-card-stack-count={total}
-  class="relative z-20 bg-navy-900 text-white rounded-t-[24px] sm:rounded-t-[28px] shadow-[0_-20px_60px_rgba(0,0,0,0.4)] overflow-hidden"
+  class="relative z-20 text-white"
   style={`height: ${(total + 1) * 100}vh`}
 >
-  <!-- Decorative giant bg headline -->
+  <!-- Decorative giant bg headline (FUERA del cuadro azul, en los lados) -->
   <div
     aria-hidden="true"
     class="pointer-events-none select-none absolute top-12 left-0 right-0 z-0 overflow-hidden"
@@ -41,8 +51,9 @@ const total = services.length;
   </div>
 
   <!-- Sticky stage: queda fijo durante todo el pin space -->
-  <div class="sticky top-0 h-screen overflow-hidden flex items-center">
-    <div class="mx-auto w-full max-w-7xl px-6 lg:px-10">
+  <div class="sticky top-0 h-screen overflow-hidden flex items-center justify-center px-4 sm:px-8 lg:px-12">
+    <!-- CUADRO AZUL: container narrow centered con bg navy + radius -->
+    <div class="relative w-full max-w-6xl bg-navy-900 rounded-[24px] sm:rounded-[28px] shadow-[0_-20px_60px_rgba(0,0,0,0.4),0_30px_80px_rgba(0,0,0,0.3)] px-6 sm:px-10 lg:px-14 py-10 sm:py-14 lg:py-16 h-[clamp(600px,82vh,820px)] overflow-hidden flex flex-col justify-center">
       <!-- Header strip -->
       <div class="flex justify-between items-center mb-6 text-[11px] font-mono uppercase tracking-[0.25em] text-white/55">
         <span>● Servicios</span>
@@ -121,6 +132,6 @@ const total = services.length;
           ></span>
         ))}
       </div>
-    </div>
-  </div>
+    </div><!-- /cuadro azul -->
+  </div><!-- /sticky stage -->
 </section>
