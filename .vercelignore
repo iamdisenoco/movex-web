@@ -1,0 +1,13 @@
+node_modules
+.git
+.astro
+dist
+# Raw client material (videos/images sin optimizar — solo locales)
+material
+.env
+.env.local
+.env.production
+.DS_Store
+.idea
+.vscode
+*.log
