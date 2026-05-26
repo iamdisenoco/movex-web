@@ -296,21 +296,45 @@ Co-Authored-By: claude-flow <ruv@ruv.net>
 
 ---
 
-## 11. Vault de Jon (Google Drive) — contexto histórico opcional
+## 11. Sistema de docs compartido (`docs/`) — léelo SIEMPRE
 
-Si tienes acceso al Google Drive de Jon (iam.diseno.co@gmail.com), el vault Obsidian con todo el contexto del proyecto vive en:
-```
-G:\Mi unidad\GRUPO I A M\PROYECTOS\CLAUDE\80 - Proyectos\Sitio Web Movex\
-```
-Contiene:
-- `contexto.md` — brief del cliente
-- `plan-frame.md` — metodología FRAME usada
-- `output-fase-f.md` — outputs de fase de research
-- `skill-frame-movex.md` — skill custom usada
-- `ref/` — referencias (viamaster-intl.com, mvplogistics.eu)
-- `asset-manifest.md` — qué assets se generaron con IA
+**El vault del proyecto ahora vive EN EL REPO**, no en Google Drive. Cualquier cosa que necesites saber del proyecto está en `docs/`:
 
-**No es bloqueador** para empezar a editar. Todo lo crítico está en `CLAUDE.md` del repo + en este `ONBOARDING.md`.
+```
+docs/
+├── README.md          ← cómo funciona este sistema
+├── PENDIENTES.md      ← QUÉ FALTA HACER. Léelo al inicio de cada sesión.
+├── DECISIONES.md      ← Por qué tomamos cada decisión técnica
+└── vault/             ← Contexto histórico (briefs, plan, refs)
+    ├── contexto.md
+    ├── plan-frame.md
+    ├── output-fase-f.md
+    ├── skill-frame-movex.md
+    └── asset-manifest.md
+```
+
+### ⚠️ Reglas (no las rompas, son sagradas):
+
+**Al arrancar sesión**:
+1. `git pull` (trae los pendientes/decisiones que actualizó el otro)
+2. Leer `docs/PENDIENTES.md` y ver qué hay
+3. Si una tarea es ambigua: leer `docs/vault/contexto.md` para entender el proyecto
+
+**Al tomar una tarea**:
+- En `docs/PENDIENTES.md`, cambiar `[ ]` por `[in progress] — <tu nombre>` y push INMEDIATO. Esto evita que el otro tome la misma tarea.
+
+**Al terminar una tarea**:
+- Mover el item a "✅ Hecho" en `docs/PENDIENTES.md`
+- Si fue decisión técnica importante: agregar entrada en `docs/DECISIONES.md` con fecha y razonamiento
+- Commit + push
+
+**Si encuentras un bug o feature nuevo**:
+- Agregar entrada en `docs/PENDIENTES.md` en la sección apropiada (Crítico, Animación, Features)
+- Commit + push
+
+### Vault Obsidian local de Jon (solo fallback)
+
+`G:\Mi unidad\GRUPO I A M\PROYECTOS\CLAUDE\80 - Proyectos\Sitio Web Movex\` solo está en el PC de Jon — contiene archivos pesados (PDFs del brand book, HTMLs v1-v6 de Claude Design, MP4s sin compresión). NO van al repo por tamaño. Si necesitas algo específico de ahí, pídeselo a Jon. **No es necesario** para editar el sitio.
 
 ---
 

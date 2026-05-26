@@ -78,11 +78,49 @@ Combinamos dos referencias:
 - **Sede:** Apartadó (Urabá, Colombia) y Santa Marta
 - **Posicionamiento:** operador logístico portuario premium internacional, subsidiaria del grupo Cargoban
 
-## Vault del proyecto (fuera del repo)
+## Vault del proyecto (AHORA EN EL REPO)
 
-`G:\Mi unidad\GRUPO I A M\PROYECTOS\CLAUDE\80 - Proyectos\Sitio Web Movex\`
+**📁 `docs/` en el repo es la única fuente de verdad. Esto reemplaza al vault Obsidian de Jon en Google Drive (que ahora es solo backup local).**
 
-Contiene archivos originales del cliente, contexto.md, plan-frame.md, output-fase-f.md, skill-frame-movex.md. NO se sincroniza con git (Google Drive). Para referencia histórica.
+Estructura:
+```
+docs/
+├── README.md          ← cómo funciona el sistema de docs compartido
+├── PENDIENTES.md      ← SINGLE SOURCE OF TRUTH de qué falta hacer. LEER AL INICIO DE CADA SESIÓN.
+├── DECISIONES.md      ← changelog de decisiones técnicas (append-only)
+└── vault/             ← contexto histórico (briefs, plan FRAME, refs)
+    ├── contexto.md
+    ├── plan-frame.md
+    ├── output-fase-f.md
+    ├── skill-frame-movex.md
+    └── asset-manifest.md
+```
+
+### 🤖 Flujo OBLIGATORIO al editar este proyecto
+
+**AL ARRANCAR SESIÓN**:
+1. `git pull` (trae cambios del otro colaborador)
+2. Leer `docs/PENDIENTES.md` → entender qué hay para hoy
+3. Si dudas de contexto, revisar `docs/vault/contexto.md`
+
+**AL TOMAR UNA TAREA**:
+1. En `docs/PENDIENTES.md` cambiar `[ ]` por `[in progress] — <claude o nombre>`
+2. Commit + push INMEDIATO (`chore(pendientes): tomo X`) para que el otro vea
+
+**AL TERMINAR UNA TAREA**:
+1. Mover el item a "✅ Hecho" en `docs/PENDIENTES.md`
+2. Si fue decisión técnica significativa: agregar entrada en `docs/DECISIONES.md`
+3. Commit + push
+
+**SI ENCUENTRAS BUG O NUEVA FEATURE A HACER**:
+1. Agregar entrada en `docs/PENDIENTES.md` en sección correspondiente
+2. Commit + push
+
+### Vault Obsidian local de Jon (opcional, fallback)
+
+`G:\Mi unidad\GRUPO I A M\PROYECTOS\CLAUDE\80 - Proyectos\Sitio Web Movex\` — contiene archivos pesados (PDFs, HTMLs v1-v6 de Claude Design, MP4s) que NO van al repo por tamaño. Solo en el PC de Jon. Si necesitas algo de ahí, pídeselo.
+
+**Cualquier `.md` nuevo del proyecto debe vivir en `docs/vault/` del repo, no en Obsidian.**
 
 ## Dev workflow
 

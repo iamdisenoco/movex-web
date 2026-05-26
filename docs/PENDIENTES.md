@@ -1,0 +1,83 @@
+# Pendientes — Movex Web
+
+> **Cómo se usa este archivo**: cualquiera (Jon, colaborador, Claude) actualiza esto cuando agrega/cambia/completa una tarea. Es la **única fuente de verdad** sobre qué falta. Antes de tomar una tarea, marca `[in progress] — <tu nombre>` para que el otro no la duplique.
+
+**Última actualización**: 2026-05-26 — por Claude (sesión iamdisenoco)
+
+---
+
+## 🔥 Crítico (próxima sesión)
+
+- [ ] **(usuario)** Revisar visualmente https://movex-web.vercel.app después del deploy y confirmar que todo funciona en browser real (no solo en MCP que tiene throttling)
+- [ ] **(usuario)** Cambiar repo a **privado** si se quiere ocultar el código fuente (Settings → Danger Zone → Change visibility). Vercel + colaboración siguen funcionando igual.
+
+---
+
+## 🎨 Animación intro (puntos 3 y 4 del último brief de Jon, pendientes de implementar)
+
+> Jon mandó imágenes que no llegaron al chat. **Punto 1 y 2 quedaron sin hacer** porque dependen de ver las imágenes. Punto 3 y 4 sí pueden hacerse:
+
+### Punto 3 — Líneas luminosas en el intro
+- [ ] En `src/components/intro/Intro3D.tsx`, los arcos del globo deben verse **luminosos** (que alumbren un poco). Aplicar emissive/glow.
+- Buscar la config de `.arcsData()` y agregar:
+  - `.arcStroke(0.6)` o subir grosor
+  - `.arcColor(...)` con gradient teal-bright
+  - Considerar agregar un `THREE.AdditiveBlending` material o un post-processing `UnrealBloomPass` para el glow real
+
+### Punto 4 — Tiempos muertos + cleanup visual del intro
+- [ ] Eliminar tiempo muerto **entre fase globe y fase routes** (las líneas tardan en empezar)
+- [ ] Eliminar tiempo muerto **entre routes completas y aparición de la M** (la M tarda en salir)
+- [ ] **Quitar TODOS los textos de los lados del intro**:
+  - `MVX // 04°53'N · 75°50'W` (esquina sup izq)
+  - `LOADED 177 COUNTRIES · COLOMBIA ✓` (esquina sup der)
+  - `PRESS ESC OR CLICK TO SKIP` (esquina inf izq)
+  - `SKIP →` (esquina inf der) — mantener funcionalidad de click anywhere para skip
+- [ ] **Dejar SOLO** abajo una **barra de progreso** que simule loading. Debe llegar a 100% cuando la animación termine.
+  - Barra horizontal full-width, posición inferior
+  - Color: teal-500 sobre fondo navy-700/30
+  - Progreso vinculado al `phase` actual: 0% al inicio, 25% en globe, 50% en routes, 75% en lockup-big, 100% en matchmove
+
+## ⏳ Esperando imágenes de Jon (puntos 1 y 2)
+
+- [ ] **Punto 1**: Jon dijo "después de esta sección debe seguir es lo de mis servicios". **Necesita imagen** para saber a qué sección se refiere. Hipótesis: probablemente el orden Hero → Empresa → Servicios necesita ajuste, o quiere agregar otra sección antes de Servicios. **PREGUNTAR cuando arranque la sesión**: "¿cuál sección debe quedar antes de Servicios y dónde va lo que sacamos?"
+- [ ] **Punto 2**: Sobre la animación de los números (counters de Empresa). Jon dijo "mira cómo están los números, recuerda no quitar la animación". **Necesita imagen** para ver el problema visual. Verificar que la `data-countup` sigue funcionando en `Empresa.astro` con `parseInt(c.value)`.
+
+---
+
+## 🎬 Features pendientes del proyecto
+
+- [ ] **Regenerar videos en Higgsfield HD** (los actuales son los compressed a 17MB; se quieren versiones 4K originales para refactor en H.265 con mejor calidad)
+- [ ] **Conectar dominio movex.com.co** (Vercel → Domains → Add). Necesita acceso al panel DNS del cliente.
+- [ ] **Implementar form de contacto real** en `src/components/sections/Contacto.astro` (actualmente es `<form>` sin action). Opciones: Formspree, Resend, o endpoint Vercel Function.
+- [ ] **Sección "Quiénes Somos" / timeline**: revisar contenido y verificar que tiene la historia real de Cargoban (no placeholder).
+- [ ] **Tema mobile responsive**: probar en 375px, 768px. La sección Servicios card-stack en mobile probablemente requiere otro pattern (las cards se ven muy chicas).
+- [ ] **SEO**: agregar `<meta>` específicos por sección, sitemap.xml, robots.txt
+- [ ] **Performance**: lazy-load del componente Intro3D (only on first load), code-split del three.js bundle (~700KB)
+
+---
+
+## ✅ Hecho (changelog rápido)
+
+Ver `docs/DECISIONES.md` para el detalle completo. Resumen:
+
+- [x] Stack Astro 6 + React 19 + Tailwind 4 + three.js
+- [x] Intro 3D con globo + arcos + match-move a nav
+- [x] Hero sticky + scroll-stacking (Empresa sube tapando hero)
+- [x] Servicios card-stack scroll-driven (5 cards pinned)
+- [x] SplitText reveal por chars con stagger
+- [x] Lenis smooth scroll + parallax tied
+- [x] Nav glass-pill estilo muffment (solo menú central)
+- [x] Bug fix: scroll bloqueado tras intro (faltaba dispatch `mvx:intro-done`)
+- [x] Deploy Vercel + GitHub auto-deploy
+- [x] ONBOARDING.md + README.md para que otro colaborador arranque
+- [x] Vault con contexto del proyecto copiado a `docs/vault/`
+
+---
+
+## 📋 Reglas para mantener este archivo limpio
+
+1. **Antes de tomar una tarea**: cámbiala a `[in progress] — <nombre>` y haz push (avisa al otro).
+2. **Al completarla**: muévela a la sección "✅ Hecho" con la fecha, y agrega entrada en `docs/DECISIONES.md` si fue una decisión técnica.
+3. **Si encuentras un bug nuevo**: agrégalo en "🔥 Crítico" o "🎬 Features pendientes" según urgencia.
+4. **No borres tareas viejas** — pásalas a "✅ Hecho" para tener histórico.
+5. **Si dudas si algo es prioritario**, preguntale a Jon antes de hacer.

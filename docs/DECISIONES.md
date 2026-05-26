@@ -1,0 +1,129 @@
+# Decisiones técnicas — Movex Web
+
+> **Cómo se usa**: cada vez que tomes una decisión que afecte la arquitectura, el stack, una convención, o resuelvas un bug raro, agrega aquí. Esto evita que el próximo Claude (o el otro humano) reabra discusiones cerradas o caiga en bugs ya resueltos.
+
+**Formato**: nuevas decisiones al inicio. Fecha en formato YYYY-MM-DD.
+
+---
+
+## 2026-05-26 — Sistema de vault compartido en el repo
+
+**Contexto**: Jon trabaja desde su PC con vault Obsidian local. Otro colaborador va a editar desde otro PC sin acceso al Google Drive de Jon.
+
+**Decisión**: Copiar los `.md` críticos del vault Movex (`G:\...\80 - Proyectos\Sitio Web Movex\`) a `docs/vault/` en el repo. NO copiar PDFs/HTMLs/MP4s pesados (van por separado si se necesitan).
+
+**Sistema de pendientes**: `docs/PENDIENTES.md` es la **única fuente de verdad** sobre qué falta. Se versiona en git, ambos pueden editar.
+
+**Sistema de decisiones**: este archivo. Append-only, fecha al inicio de cada entrada.
+
+---
+
+## 2026-05-26 — Bug fix: scroll bloqueado tras intro
+
+**Problema**: Tras cargar el sitio, la intro animation (globo 3D) terminaba pero el scroll quedaba bloqueado. `html.lenis-stopped` persistía.
+
+**Causa**: `finish()` en `Intro3D.tsx` removía `intro-locked` del html pero NO disparaba `window.dispatchEvent(new Event("mvx:intro-done"))`. Lenis nunca se reanudaba.
+
+**Solución** (commit `f96275c`):
+1. `finish()` ahora dispatcha el evento global
+2. `animation.ts` agregó 2 safety nets:
+   - Timeout 12s → auto-unlock si la intro no termina
+   - Wheel/touchstart → si user intenta scrollear, asumir skip y unlock
+
+**Lección**: cuando un componente "controla" el scroll vía algo (Lenis stop), el cleanup DEBE notificar al sistema con un evento. Mejor un evento global que un callback prop, así desacoplas componentes.
+
+---
+
+## 2026-05-26 — Card-stack scroll-driven en Servicios
+
+**Contexto**: Jon pidió replicar exacto el efecto de Services en mvplogistics.eu.
+
+**Cómo lo identifiqué**: JS inspection en vivo de mvplogistics.eu durante scroll real. Encontré que los 6 services-item están todos `position: absolute` en el mismo punto, con transforms coordinados:
+```
+.services__item-1: matrix(1, 0, 0, 1, -298.9, -300.5)   ← ya salió
+.services__item-2..6: matrix(1, 0, 0, 1, -298.9, +736)  ← apilados abajo
+```
+Más 4 `.pin-spacer` confirmando GSAP ScrollTrigger pin.
+
+**Implementación equivalente (vanilla, sin GSAP)** en `Servicios.astro` + `src/scripts/animation.ts`:
+- Section con `height: (N+1) × 100vh` = pin-space natural CSS
+- Inner `sticky top:0 h:100vh`
+- 5 cards apiladas con `position: absolute inset-0`
+- JS calcula `stage = progress × N - i` por card:
+  - `stage < -1` → translateY(100%) abajo, no entró
+  - `stage ∈ [-1, 1]` → translateY(-stage × 100%) transición
+  - `stage > 1` → translateY(-100%) ya salió
+
+**Beneficio vs GSAP**: 0 dependencias extra, control fino, fácil de modificar.
+
+---
+
+## 2026-05-26 — Scroll-stacking hero + Empresa
+
+**Contexto**: Jon quería que el card de Empresa "subiera tapando" al hero conforme scrolleas (como MVP).
+
+**Cómo lo identifiqué**: en mvplogistics, a scrollY=650, `hero rectTop=-324` y `.hero__video-wrapper transform: translate3d(0, 324, 0)`. Es decir, el video wrapper se traslada DOWN con `scrollY × 0.5`.
+
+**Implementación más limpia que MVP** (commit `5af1f09`):
+- Hero envuelto en pin space (`height: 100vh`)
+- Hero mismo es `position: sticky top:0 h:100vh z:0` → queda pegado
+- Empresa section ahora ES el card: `bg-navy-900 + rounded-t-[40px/56px] + z-20 + shadow`
+
+**Por qué sticky vs transform**: más simple, sin JS, comportamiento nativo CSS, mejor performance en mobile.
+
+---
+
+## 2026-05-26 — Nav glass-pill estilo muffment
+
+**Contexto**: Jon dijo "si aparece la franja cuando scrolleas que sea con efecto crystal como el de muffment y no una franja completa si no solo para el menú".
+
+**Implementación** (`src/components/nav/Nav.astro`):
+- 3 elementos horizontales independientes: logo / pill central glass / CTA
+- Solo el `<nav id="nav-pill">` tiene `data-[active=true]:backdrop-blur-md data-[active=true]:bg-white/10`
+- Activación vía IntersectionObserver con sentinel (NO `window.scroll` listener, porque Lenis intercepta wheel y `window.scrollY` no actualiza igual)
+
+**Por qué IntersectionObserver vs scroll listener**: Lenis maneja el smooth scroll, así que el scroll nativo no siempre dispara como esperas. IntersectionObserver es agnóstico de la lib de scroll.
+
+---
+
+## 2026-05-26 — Lenis + SplitText reveal
+
+**Contexto**: Jon quería el "feel smooth" de MVP. Inspeccioné MVP y descubrí que NO usa Lenis ni GSAP — usa **SplitText pattern** (chars wrapped en spans con stagger) + IntersectionObserver reveals.
+
+**Implementación Movex**:
+- Lenis 1.1 para smooth scroll (lerp 0.1) — pero esto es Movex-only, MVP no lo usa
+- SplitText custom en `src/scripts/animation.ts`: divide `[data-split]` en `.word > .char` con CSS variable `--ci` para stagger
+- Variantes: default 22ms, `data-split="fast"` 12ms, `data-split="slow"` 35ms
+
+**Por qué SplitText custom vs librería**: 100 líneas de código vs 5KB+ de Splitting.js o similar. Y con `[data-split]` data-attribute, declarative y limpio.
+
+---
+
+## 2026-05-26 — Brand: Saira Variable + Hanken Grotesk
+
+**Contexto**: Replicar typography de viamaster-intl.com (Archivo Expanded + Deuterium). Ambas son fuentes Adobe paid.
+
+**Solución**: closest free matches en variable fonts:
+- Display: **Saira Variable** (wght 400, wdth 125) — wide + slim igual que Archivo Expanded
+- Body: **Hanken Grotesk Variable** (wght 300) — geometric grotesk light igual que Deuterium light
+
+**Servidas via `@fontsource-variable/saira/{wght,wdth}.css`** + `@fontsource-variable/hanken-grotesk`.
+
+**Aplicación**: utility classes `font-display` y `font-display-xl` en `src/styles/global.css` `@layer base`.
+
+---
+
+## 2026-05-26 — Stack inicial
+
+**Stack elegido**:
+- Astro 6 (static SSG) + React 19 islands → buen balance perf/DX
+- Tailwind 4 via `@tailwindcss/vite`
+- three.js + three-globe + react-three-fiber para intro 3D
+- Vercel deploy auto desde GitHub main
+
+**Por qué Astro vs Next**:
+- Sitio mayormente estático → no necesitamos SSR
+- Islands architecture → solo Intro3D es React, el resto es Astro plain (más rápido)
+- Static export → Vercel free tier sin problema, edge caching máximo
+
+**Convención branches**: `main` (default GitHub now), feature branches solo para experimentos grandes que tarden días.
