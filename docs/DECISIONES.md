@@ -6,6 +6,40 @@
 
 ---
 
+## 2026-05-26 — GSAP para reveal post-intro (MVP usa GSAP bundleado)
+
+**Problema**: User dijo "no has podido copiar bien la animación de cómo salen los textos/botones/menús después de que la página carga". Mi implementación previa usaba CSS `transition` + setTimeout con stagger manual — se sentía rígida vs MVP.
+
+**Inspección clave** en mvplogistics.eu con `getAnimations()` y inspect de inline styles:
+- `getAnimations()` retornó solo 1 animation (la del MCP cursor) → MVP NO usa @keyframes
+- Inline styles de elementos como `.hero__btn`, `.header`, `.hero .char` tenían:
+  ```
+  translate: none; rotate: none; scale: none;
+  transform: translate(0px, 0%);
+  transform-origin: 50% 0%;
+  will-change: transform;
+  ```
+- **Ese es el patrón firma de GSAP** — usa `translate/rotate/scale` como properties individuales + siempre resetea con `none`.
+- Antes mi check `window.gsap` daba false porque MVP tiene GSAP bundleado en su `main.js` privado (483KB minified) sin exponer al global window.
+
+**Confirmado: MVP usa GSAP**, no CSS puro. Por eso CSS transitions + setTimeout nunca se sentirían igual — GSAP tiene easings (`power3.out`, `expo.out`) y timeline orchestration que CSS no logra.
+
+**Implementación en Movex**:
+1. `npm install gsap@3.13.0` (~ 50KB minified, sin plugins premium)
+2. Nuevo archivo `src/scripts/intro-reveal.ts` con timeline orquestado:
+   - Nav logo: `from({ y: -30, opacity: 0, duration: 0.9 })` en t=0
+   - Nav links: `from({ y: -20, opacity: 0, stagger: 0.07 })` en t=0.15
+   - Nav CTA: `from({ y: -20, opacity: 0 })` en t=0.55
+   - Hero entries: `from({ y: 60, opacity: 0, stagger: 0.13, ease: "expo.out" })` en t=0.3
+   - Hero chars (SplitText): `to({ y: 0, opacity: 1, stagger: 0.025, ease: "expo.out" })` en t=0.45
+3. Easing dominante: `power3.out` (similar a cubic-bezier(0.16,1,0.3,1) pero con curva nativa GSAP).
+4. Hook al evento `mvx:intro-done` (o auto-trigger si sessionStorage ya tiene la flag).
+5. Removido el código viejo de entry-animation en Hero.astro (CSS transitions + setTimeout) — GSAP toma control total.
+
+**Lección**: cuando un sitio premium se siente "diferente", probablemente usa GSAP aunque no esté en window. Inspeccionar **inline styles** (`translate: none; rotate: none; scale: none`) es la firma para confirmar GSAP.
+
+---
+
 ## 2026-05-26 — Logo nuevo (3 rayas) — reemplaza la M antigua
 
 **Contexto**: Jon entregó logo oficial nuevo (movex-09.svg y movex-10.svg, 24MB cada uno con imagen raster embebida). El isotipo ya NO es una M — son **3 rayas paralelas inclinadas** que forman una figura tipo "deslizando hacia adelante".

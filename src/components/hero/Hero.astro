@@ -137,33 +137,10 @@ import { brand } from "../../data/site";
       });
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // 2) ENTRY ANIMATION post-intro:
-    //    Cuando termina el intro (evento mvx:intro-done), los
-    //    elementos del hero hacen fade-in + slide-up con stagger.
-    //    Si ya pasó la intro (sessionStorage), animar inmediato.
-    // ─────────────────────────────────────────────────────────────
-    const entryEls = document.querySelectorAll<HTMLElement>("[data-hero-entry]");
-    const playEntry = () => {
-      entryEls.forEach((el) => {
-        const i = parseInt(el.dataset.heroEntry || "0", 10);
-        const delay = 200 + i * 140;
-        el.style.transition = "opacity 900ms cubic-bezier(0.16,1,0.3,1), transform 900ms cubic-bezier(0.16,1,0.3,1)";
-        el.style.transitionDelay = delay + "ms";
-        el.style.transform = "translateY(40px)";
-        // Force reflow para que el initial state se aplique antes
-        void el.offsetWidth;
-        requestAnimationFrame(() => {
-          el.style.opacity = "1";
-          el.style.transform = "translateY(0)";
-        });
-      });
-    };
-    if (sessionStorage.getItem("mvx_intro_v6")) {
-      playEntry();
-    } else {
-      window.addEventListener("mvx:intro-done", playEntry, { once: true });
-    }
+    // NOTA: La entry animation post-intro ahora la maneja GSAP en
+    // src/scripts/intro-reveal.ts (timeline orquestado, mismo pattern
+    // que MVP). El código viejo de CSS transitions + setTimeout fue
+    // removido para evitar conflicto.
 
   })();
 </script>
