@@ -6,10 +6,17 @@
 
 ---
 
+## 📋 Plan de animaciones detallado
+
+Ver **[`docs/PLAN-ANIMACIONES.md`](./PLAN-ANIMACIONES.md)** — mapa completo
+de cada animación del sitio, sección por sección, con status, configs, y
+mejoras pendientes. Read it first antes de tocar animaciones.
+
 ## 🔥 Crítico (próxima sesión)
 
 - [ ] **(usuario)** Revisar visualmente https://movex-web.vercel.app después del deploy y confirmar que todo funciona en browser real (no solo en MCP que tiene throttling)
 - [ ] **(usuario)** Cambiar repo a **privado** si se quiere ocultar el código fuente (Settings → Danger Zone → Change visibility). Vercel + colaboración siguen funcionando igual.
+- [x] **HECHO (2026-05-26)** Orden cambiado: ahora es Hero → Servicios → Empresa → Quiénes Somos → ...  Servicios sube sobre el Hero pinned (border-radius arriba + shadow).
 
 ---
 

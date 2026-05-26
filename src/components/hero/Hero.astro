@@ -4,13 +4,14 @@ import { brand } from "../../data/site";
 
 <!--
   HERO simple — el barco protagonista + título + body + CTAs.
-  Sin elementos extra (la card de servicios la quité, Jon notó que NO
-  existe así en el ref). MVP en su hero solo tiene: video, título grande,
-  copy corto, CTAs. Sin distracciones.
+  Sin elementos extra. Solo: video, título grande, copy corto, CTAs.
 
-  El "feel del referente" que Jon quiere viene de las ANIMACIONES, no
-  de copiar elementos visuales — eso se trabaja en animation.ts (Lenis
-  lerp, easing soft, parallax tied, reveals smooth).
+  Scroll-stacking: el Hero queda pinned (sticky top:0) mientras la
+  siguiente sección (SERVICIOS — ya no Empresa) sube sobre él con
+  rounded-t-[40px] + bg-navy-900 + z-20.
+
+  El "feel del referente" viene de las ANIMACIONES, no de copiar
+  componentes visuales (Lenis lerp, easing soft, parallax tied).
 -->
 <div class="relative" style="height: 100vh">
 <section id="hero" class="sticky top-0 left-0 right-0 isolate h-[100vh] flex flex-col overflow-hidden z-0 bg-navy-900">
