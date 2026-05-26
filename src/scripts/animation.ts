@@ -19,16 +19,15 @@ const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let lenis: Lenis | null = null;
 if (!reduce) {
   lenis = new Lenis({
-    // Lerp más SLOW (0.07 vs 0.1 antes) — el scroll se siente premium,
-    // las cosas se "asientan" en su sitio en vez de cortar bruscamente.
-    // wheelMultiplier 0.85 → el wheel envía menos delta por click → más
-    // control fino del usuario al scrollear, sensación menos abrupta.
-    duration: 1.4,
+    // Lerp MUY SLOW (0.05) — sensación premium estilo MVP/Awwwards.
+    // El scroll se "asienta" lentamente, las cosas se mueven como
+    // mantequilla. wheelMultiplier 0.7 reduce más el delta por click.
+    duration: 1.6,
     easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smoothWheel: true,
-    wheelMultiplier: 0.85,
-    touchMultiplier: 1.5,
-    lerp: 0.07,
+    wheelMultiplier: 0.7,
+    touchMultiplier: 1.4,
+    lerp: 0.05,
   });
 
   const root = document.documentElement;

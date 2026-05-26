@@ -23,15 +23,10 @@ import { brand } from "../../data/site";
     <div class="absolute inset-0 [background:radial-gradient(ellipse_at_55%_50%,rgba(45,138,138,0.35)_0%,transparent_55%)]"></div>
   </div>
 
-  <!-- Background video PALINDROME (forward + reverse concatenado con ffmpeg).
-       Al llegar al final el browser hace loop al frame 0 — pero como el último
-       frame es el reverso del primero, ya está visualmente en el frame 0.
-       Resultado: loop seamless SIN salto. Generado con:
-         ffmpeg -i cargo-ship-aerial.mp4 -filter_complex
-                "[0:v]reverse[r];[0:v][r]concat=n=2:v=1[v]"
-                -map "[v]" -an -c:v libx264 -crf 23
-                cargo-ship-aerial-loop.mp4
-  -->
+  <!-- Background video PALINDROME (loop seamless con ffmpeg reverse).
+       SCALE 1.35: el video se "zoom-in" 35% al centro → el barco se ve mucho
+       más grande (igual MVP que tiene el camión enorme). El overflow-hidden
+       del section recorta los bordes que sobresalen. -->
   <video
     id="hero-video"
     class="absolute inset-0 size-full object-cover -z-20 opacity-0 transition-opacity duration-700 ease-out"
@@ -42,8 +37,7 @@ import { brand } from "../../data/site";
     playsinline
     preload="auto"
     aria-hidden="true"
-    data-parallax="0.15"
-    data-parallax-from="page"
+    style="transform: scale(1.35); transform-origin: center;"
   ></video>
 
   <!-- Overlay SUTIL (no oculta el video como antes). Solo un degradado del
