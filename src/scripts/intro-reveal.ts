@@ -56,10 +56,16 @@ export function playPostIntroReveal() {
   }
 
   // ─── 2) HERO: brand label + título + body + CTAs en cascada ───
-  // Cada elemento del hero ya tiene data-hero-entry="N" con opacity:0 inline.
-  // Lo seteamos a opacity:1 inmediato y dejamos que GSAP haga el from().
+  // CRITICAL: los elementos tienen la clase Tailwind `opacity-0` que mantiene
+  // su computed opacity en 0. Si dejamos esa clase y hacemos gsap.from(),
+  // GSAP anima desde opacity:0 hacia el "estado final del DOM" → que sigue
+  // siendo opacity:0 (la clase no se quitó). Resultado: invisible para siempre.
+  // Fix: remover `opacity-0` ANTES del .from() así el estado final es opacity:1.
   const heroEntries = document.querySelectorAll<HTMLElement>("[data-hero-entry]");
-  heroEntries.forEach((el) => (el.style.opacity = ""));
+  heroEntries.forEach((el) => {
+    el.classList.remove("opacity-0"); // ← key del fix
+    el.style.opacity = ""; // por si quedó inline también
+  });
 
   if (heroEntries.length) {
     tl.from(
