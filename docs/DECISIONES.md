@@ -6,6 +6,49 @@
 
 ---
 
+## 2026-05-26 — FOUC guard + fluidez M/wordmark
+
+**Problema 1 (FOUC)**: User reportó "por unos milisegundos sale la página normal y luego la animación". El `<Intro3D client:only="react" />` es client-only — React monta DESPUÉS del paint inicial del HTML estático. Resultado: el user ve hero/secciones por ~100-300ms antes de que el Intro3D cubra la pantalla con su `<div fixed inset-0 z-50 bg-navy-900>`.
+
+**Fix**: agregado `<div id="intro-cover">` directamente en el body del Layout, ANTES del slot. Es un sólido navy-900 fullscreen z-45 que está ya en el primer paint del browser (porque es HTML estático, no React).
+
+```html
+<body>
+  <div id="intro-cover"></div>  <!-- cubre todo desde paint 1 -->
+  <slot />                       <!-- el sitio detrás -->
+</body>
+```
+
+CSS inline en `<head>`:
+```css
+html.intro-locked body > *:not(#intro-cover) { visibility: hidden; }
+html:not(.intro-locked) #intro-cover { opacity: 0; }
+html:not(.intro-locked) #intro-cover { animation: introCoverHide 0s linear 800ms forwards; }
+```
+
+Cuando `intro-locked` está activo (set por script `is:inline` ANTES del paint):
+- `#intro-cover` visible (navy puro fullscreen)
+- Resto del body: `visibility: hidden`
+
+Cuando `finish()` corre y remueve `intro-locked`:
+- Cover hace fade-out 400ms
+- Después de 800ms total, `display: none` lo saca del flow
+
+Resultado: el usuario NUNCA ve el sitio antes del intro. Cero FOUC.
+
+**Problema 2 (fluidez M y movex)**: User dijo "mejora la fluidez de la M y el movex cuando aparecen y se van". Las transiciones del lockup usaban `transition: all` + `ease-out` + duraciones 700-1000ms. Se sentían acartonadas.
+
+**Fix**: refactor del lockup con:
+- **Easing Apple-like**: `cubic-bezier(0.16, 1, 0.3, 1)` — soft, anticipatorio, premium feel.
+- **Transiciones explícitas por propiedad** (no `all`) — el browser optimiza mejor y no se animan props que no queremos.
+- **Duraciones más largas**: 1100-1300ms (vs 700-1000ms).
+- **Stagger del wordmark**: opacity con delay 150ms y transform delay 100ms — entra DESPUÉS de que la M empieza a transicionar a lockup-pair, no exactamente al mismo tiempo.
+- **`willChange: 'transform, opacity'`** en cada elemento animado — el browser sube esos elementos a su propio compositor layer.
+- **Glow de la M más fuerte en lockup-big** (60px) y más sutil en lockup-pair (30px) — refuerza visualmente la transición.
+- **Wordmark translateX inicial 60px** (vs 40px) — distancia más notoria, entrada más cinematográfica.
+
+---
+
 ## 2026-05-26 — Fix definitivo del "cuadro": mask-image radial
 
 **Problema persistía**: Tras quitar el `filter: blur`, el user mandó screenshot mostrando que **el cuadro alrededor del globo sigue visible** en la transición a la M.

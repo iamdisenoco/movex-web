@@ -461,23 +461,34 @@ export default function Intro3D() {
           Trick: we anchor a child wrapper at the lockup center for stages 1/2, then
           flip the wrapper to top-left + a calc()'d translate so the scale collapses
           toward the corner instead of toward the screen center. */}
+      {/* Lockup container — easing super-soft (Apple-like cubic-bezier),
+          duraciones largas, will-change para que el browser optimice. */}
       <div
         ref={lockupRef}
-        className="absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-[1000ms] ease-[cubic-bezier(0.65,0,0.35,1)]"
+        className="absolute inset-0 flex items-center justify-center pointer-events-none"
         style={{
+          transition: "transform 1300ms cubic-bezier(0.16, 1, 0.3, 1)",
           transformOrigin: phase === "matchmove" ? "0% 50%" : "center",
           transform:
             phase === "matchmove"
               ? "translate(calc(-50vw + 1.5rem), calc(-50vh + 2.4rem)) scale(0.32)"
               : "translate(0, 0) scale(1)",
+          willChange: "transform",
         }}
       >
-        <div className="flex items-center" style={{ gap: phase === "lockup-big" ? "0" : "clamp(0.75rem, 1.5vw, 1.5rem)" }}>
+        <div
+          className="flex items-center"
+          style={{
+            gap: phase === "lockup-big" ? "0" : "clamp(0.75rem, 1.5vw, 1.5rem)",
+            transition: "gap 900ms cubic-bezier(0.16, 1, 0.3, 1)",
+          }}
+        >
           <img
             src="/brand/movex-isotipo-white.svg"
             alt=""
-            className="transition-all duration-[900ms] ease-[cubic-bezier(0.65,0,0.35,1)]"
             style={{
+              transition:
+                "height 1100ms cubic-bezier(0.16, 1, 0.3, 1), opacity 700ms cubic-bezier(0.32, 0.72, 0, 1), filter 900ms ease-out",
               height:
                 phase === "lockup-big"
                   ? "60vh"
@@ -490,23 +501,30 @@ export default function Intro3D() {
                 phase === "matchmove"
                   ? 1
                   : 0,
-              filter: "drop-shadow(0 0 40px rgba(45,138,138,0.55))",
+              filter:
+                phase === "lockup-big"
+                  ? "drop-shadow(0 0 60px rgba(45,138,138,0.7))"
+                  : "drop-shadow(0 0 30px rgba(45,138,138,0.45))",
+              willChange: "height, opacity, filter",
             }}
           />
           <span
-            className="text-white leading-[0.95] transition-all duration-700 ease-out whitespace-nowrap overflow-hidden"
+            className="text-white leading-[0.95] whitespace-nowrap overflow-hidden"
             style={{
               fontFamily: '"Saira Variable", system-ui, sans-serif',
               fontVariationSettings: '"wght" 400, "wdth" 125',
               letterSpacing: "-0.01em",
               fontSize: "clamp(3.5rem, 8vw, 7rem)",
+              transition:
+                "max-width 1000ms cubic-bezier(0.16, 1, 0.3, 1), opacity 700ms cubic-bezier(0.32, 0.72, 0, 1) 150ms, transform 1000ms cubic-bezier(0.16, 1, 0.3, 1) 100ms",
               maxWidth:
                 phase === "lockup-pair" || phase === "matchmove" ? "60vw" : "0",
               opacity: phase === "lockup-pair" || phase === "matchmove" ? 1 : 0,
               transform:
                 phase === "lockup-pair" || phase === "matchmove"
                   ? "translateX(0)"
-                  : "translateX(40px)",
+                  : "translateX(60px)",
+              willChange: "max-width, opacity, transform",
             }}
           >
             movex

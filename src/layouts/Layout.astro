@@ -25,13 +25,35 @@ const {
     <link rel="icon" type="image/svg+xml" href="/brand/movex-isotipo-black.svg" />
     <title>{title}</title>
     <script is:inline>
-      // Lock scroll while the intro is mounted (set before paint so users don't see a jump).
+      // Set ANTES de paint inicial:
+      //  1) Lock scroll mientras la intro corre.
+      //  2) Marca html.intro-locked → CSS oculta el body hasta que React monta
+      //     el Intro3D (evita FOUC: ver el sitio normal por unos ms antes
+      //     de que arranque la animación).
       if (typeof window !== "undefined" && !sessionStorage.getItem("mvx_intro_v6")) {
         document.documentElement.classList.add("intro-locked");
       }
     </script>
+    <style is:inline>
+      /* FOUC guard: mientras intro está locked, escondemos el body original.
+         El #intro-cover (sólido navy) sigue visible. Cuando React monta el
+         Intro3D y luego llama a finish() → removemos intro-locked → body
+         se vuelve visible. */
+      html.intro-locked body > *:not(#intro-cover) { visibility: hidden; }
+      #intro-cover {
+        position: fixed; inset: 0; z-index: 45; background: #1a2940;
+        pointer-events: none; transition: opacity 400ms ease-out;
+      }
+      html:not(.intro-locked) #intro-cover { opacity: 0; pointer-events: none; }
+      /* Tras 1s sin intro-locked, removemos el cover del flow */
+      html:not(.intro-locked) #intro-cover { animation: introCoverHide 0s linear 800ms forwards; }
+      @keyframes introCoverHide { to { display: none; } }
+    </style>
   </head>
   <body class="bg-navy-900 text-white antialiased">
+    <!-- Cover SIEMPRE primero — visible desde el primer paint, antes de que
+         React monte el Intro3D. Evita el flash del sitio normal. -->
+    <div id="intro-cover" aria-hidden="true"></div>
     <slot />
 
     <!--
