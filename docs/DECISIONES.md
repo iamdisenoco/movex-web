@@ -6,6 +6,49 @@
 
 ---
 
+## 2026-05-26 — Intro timeline reescalonado + transición smooth globe→M
+
+**Problema 1**: User dijo "la transición cuando sale el mundo no es tan smooth". El globe canvas hacía fade-out de opacity 1→0 en 700ms, sin más cambio. Se sentía un swap brusco.
+
+**Problema 2**: User dijo "primero debe aparecer el mundo, luego que se resalte Colombia, luego que salgan las líneas". El timeline previo tenía:
+- `setTimeout(highlight, 100)` ← 100ms
+- `setTimeout(routes, 200)` ← 100ms más
+Las 3 phases iniciales pasaban en 200ms total — el user no percibía la secuencia.
+
+**Solución 1 (transición smooth globe→M)** en `Intro3D.tsx`:
+- Globe canvas ahora transiciona `opacity + transform + filter` en 1400ms con easing `cubic-bezier(0.32,0.72,0,1)` (soft, anticipatorio).
+- En lockup phases: el globe encoge a `scale(0.45)` + blur `18px` + opacity 0 simultáneamente.
+- Resultado: el globo "se difumina hacia el centro" como morpheándose, no un fade plano.
+
+**Solución 2 (timeline con respiración)**:
+```
+0.00s  globe        → mundo aparece (TODOS los países neutral, Colombia indistinguible)
+0.90s  highlight    → applyColombiaHighlight(): cap teal + stroke + altitud +
+                     se ve la transición REAL del país destacándose
+1.80s  routes       → empiezan a salir las arcs (con bloom luminoso)
+3.80s  lockup-big   → M gigante aparece, globe se difumina (1400ms)
+4.90s  lockup-pair  → wordmark "movex" entra desde derecha
+6.00s  matchmove    → todo el lockup vuela a la esquina del nav
+7.00s  finish       → desbloquea scroll
+```
+
+**Cambio clave del highlight**: antes los polygons cargaban con Colombia YA destacada → el user nunca veía "el resaltado" porque era el estado inicial. Ahora cargan neutrales y a 900ms se aplica `applyColombiaHighlight()` que actualiza `polygonAltitude` + `polygonCapColor` + `polygonStrokeColor` dinámicamente. Visible.
+
+**Progress bar** ajustado para reflejar los nuevos tiempos:
+```
+globe       12%   (era 8%)
+highlight   25%   (era 12%)
+routes      55%   (era 45%)
+lockup-big  72%
+lockup-pair 88%
+matchmove   98%
+done        100%
+```
+
+Total intro: **7s** (vs 5.2s anterior) — más largo pero mejor narrativa secuencial.
+
+---
+
 ## 2026-05-26 — Hero video robusto (autoplay policy fix)
 
 **Problema**: User reportó "ya no está el video en el hero" en producción.

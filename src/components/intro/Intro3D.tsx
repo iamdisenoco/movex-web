@@ -211,35 +211,59 @@ export default function Intro3D() {
         colombiaFeature = countryFeatures.find((f: any) => f.id === "170");
         setStatus(`Loaded ${countryFeatures.length} countries · Colombia ${colombiaFeature ? "✓" : "✗"}`);
         if (disposed) return;
-        // Render polygons
+        // Render polygons — estado INICIAL neutral: Colombia se ve igual al
+        // resto del mundo. Esto deja una "pausa visual" donde se ve el
+        // planeta entero antes de que se resalte Colombia.
         globe
           .polygonsData(countryFeatures)
-          .polygonAltitude((f: any) => (f === colombiaFeature ? 0.015 : 0.008))
-          .polygonCapColor((f: any) =>
-            f === colombiaFeature ? "rgba(45,138,138,0.95)" : "rgba(143,160,196,0.32)",
-          )
+          .polygonAltitude(() => 0.008)
+          .polygonCapColor(() => "rgba(143,160,196,0.32)")
           .polygonSideColor(() => "rgba(45,138,138,0)")
-          .polygonStrokeColor((f: any) =>
-            f === colombiaFeature ? "#5fb3b3" : "rgba(255,255,255,0.55)",
-          );
+          .polygonStrokeColor(() => "rgba(255,255,255,0.55)");
         setPhase("globe");
-        // Timeline ajustado SIN tiempos muertos — total ~5.4s (era 8s):
-        // 0.00s  globe aparece
-        // 0.20s  arcs empiezan (era 1.2s — eliminado tiempo muerto entre globo y arcs)
-        // 2.20s  arcs done (último arc 450 + 27*40 = 1530ms; conservamos ~200ms margen)
-        // 2.20s  M gigante aparece (era 4.8s)
-        // 3.20s  M se reduce y wordmark entra
-        // 4.30s  matchmove a esquina
-        // 5.20s  finish
-        setTimeout(() => setPhase("highlight"), 100);
+
+        // ─────────────────────────────────────────────────────────────────
+        // Timeline ESCALONADO (con respiración entre fases):
+        //   0.00s  globe aparece (mundo neutral, sin destacar Colombia)
+        //   0.90s  ↑ se ve el planeta entero un momento
+        //   0.90s  highlight: Colombia se ilumina (cap teal + stroke + altitud)
+        //   1.80s  ↑ se ve Colombia destacada un momento
+        //   1.80s  routes: empiezan a salir las líneas
+        //   3.80s  ↑ arcs ya terminaron de salir (último 450+27*40=1530ms)
+        //   3.80s  lockup-big: M gigante aparece (globe se difumina)
+        //   4.90s  lockup-pair: M se reduce + wordmark entra
+        //   6.00s  matchmove: el lockup vuela a la esquina del nav
+        //   7.00s  finish: removemos la intro y desbloqueamos scroll
+        // ─────────────────────────────────────────────────────────────────
+
+        // Función que aplica el "highlight" a Colombia — cambio visible que
+        // el usuario percibe como "ahora me están mostrando MI país".
+        const applyColombiaHighlight = () => {
+          if (disposed) return;
+          globe
+            .polygonAltitude((f: any) => (f === colombiaFeature ? 0.022 : 0.008))
+            .polygonCapColor((f: any) =>
+              f === colombiaFeature
+                ? "rgba(45,138,138,0.95)"
+                : "rgba(143,160,196,0.32)",
+            )
+            .polygonStrokeColor((f: any) =>
+              f === colombiaFeature ? "#5fb3b3" : "rgba(255,255,255,0.55)",
+            );
+        };
+
+        setTimeout(() => {
+          setPhase("highlight");
+          applyColombiaHighlight();
+        }, 900);
         setTimeout(() => {
           setPhase("routes");
           startArcAccumulation();
-        }, 200);
-        setTimeout(() => setPhase("lockup-big"), 2200);
-        setTimeout(() => setPhase("lockup-pair"), 3200);
-        setTimeout(() => setPhase("matchmove"), 4300);
-        setTimeout(finish, 5200);
+        }, 1800);
+        setTimeout(() => setPhase("lockup-big"), 3800);
+        setTimeout(() => setPhase("lockup-pair"), 4900);
+        setTimeout(() => setPhase("matchmove"), 6000);
+        setTimeout(finish, 7000);
       } catch (err) {
         console.warn("[intro] countries failed, falling back", err);
         // Fallback: skip straight to lockup sin status text
@@ -378,16 +402,16 @@ export default function Intro3D() {
 
   if (!enabled || phase === "done") return null;
 
-  // Progress 0→1 basado en la phase actual (5.2s total).
-  // El JSX usa esto para llenar la barra de carga de 0 a 100%.
+  // Progress 0→1 basado en la phase actual (7s total).
+  // Distribución reflejando los tiempos del timeline (0.9 / 1.8 / 3.8 / 4.9 / 6.0 / 7.0):
   const progressByPhase: Record<Phase, number> = {
     boot: 0,
-    globe: 0.08,
-    highlight: 0.12,
-    routes: 0.45,
-    "lockup-big": 0.72,
-    "lockup-pair": 0.88,
-    matchmove: 0.98,
+    globe: 0.12,        // 0.9s   — mundo aparece
+    highlight: 0.25,    // 1.8s   — Colombia se destaca
+    routes: 0.55,       // 3.8s   — líneas terminaron de salir
+    "lockup-big": 0.72, // 4.9s   — M grande
+    "lockup-pair": 0.88,// 6.0s   — M + wordmark
+    matchmove: 0.98,    // 7.0s   — match-move al nav
     done: 1,
   };
   const pct = Math.round(progressByPhase[phase] * 100);
@@ -401,15 +425,27 @@ export default function Intro3D() {
         pointerEvents: phase === "matchmove" ? "none" : "auto",
       }}
     >
-      {/* Globe canvas container — fades out when the GIANT M takes over */}
+      {/* Globe canvas container — encoge + difumina + desvanece para "morphear"
+          hacia la M. Duración 1400ms con easing material-soft. Synced con el
+          lockup container abajo para que ambos animen al mismo tiempo y se
+          sienta una transición orgánica (no un swap brusco). */}
       <div
         ref={containerRef}
-        className="absolute inset-0 transition-opacity duration-700"
+        className="absolute inset-0 transition-[opacity,transform,filter] duration-[1400ms] ease-[cubic-bezier(0.32,0.72,0,1)]"
         style={{
           opacity:
             phase === "lockup-big" || phase === "lockup-pair" || phase === "matchmove"
               ? 0
               : 1,
+          transform:
+            phase === "lockup-big" || phase === "lockup-pair" || phase === "matchmove"
+              ? "scale(0.45)"
+              : "scale(1)",
+          filter:
+            phase === "lockup-big" || phase === "lockup-pair" || phase === "matchmove"
+              ? "blur(18px)"
+              : "blur(0px)",
+          transformOrigin: "center center",
         }}
       />
 

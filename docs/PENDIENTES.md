@@ -21,8 +21,8 @@
 - [x] **HECHO** (2026-05-26): primer intento engrosó las arcs (stroke 1.6) sin glow real. User dijo "no las pusiste luminosas solo las engrosaste". Fix correcto: bajado stroke a 0.55 + agregado **UnrealBloomPass** (post-processing) con strength 0.85, radius 0.55, threshold 0.18. Ver `docs/DECISIONES.md` para detalle.
 
 ### Punto 4 — Tiempos muertos + cleanup visual del intro
-- [ ] Eliminar tiempo muerto **entre fase globe y fase routes** (las líneas tardan en empezar)
-- [ ] Eliminar tiempo muerto **entre routes completas y aparición de la M** (la M tarda en salir)
+- [x] **HECHO** (2026-05-26): Timeline reescalonado con respiración intencional entre fases. Después de feedback del user "primero el mundo, luego se resalta Colombia, luego salen las líneas" → fases ya tienen 900ms cada una. Detalle en `DECISIONES.md`.
+- [x] **HECHO** (2026-05-26): Transición globe→M ahora con scale 0.45 + blur 18px + ease soft (1400ms). Se siente morpheándose.
 - [ ] **Quitar TODOS los textos de los lados del intro**:
   - `MVX // 04°53'N · 75°50'W` (esquina sup izq)
   - `LOADED 177 COUNTRIES · COLOMBIA ✓` (esquina sup der)
