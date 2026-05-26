@@ -6,6 +6,33 @@
 
 ---
 
+## 2026-05-26 — Logo nuevo (3 rayas) — reemplaza la M antigua
+
+**Contexto**: Jon entregó logo oficial nuevo (movex-09.svg y movex-10.svg, 24MB cada uno con imagen raster embebida). El isotipo ya NO es una M — son **3 rayas paralelas inclinadas** que forman una figura tipo "deslizando hacia adelante".
+
+**Extraído del SVG oficial** (limpiando el raster embebido de 24MB):
+- 6 paths totales: 1 path con 3 sub-paths (las 3 rayas) + 5 paths (letras m-o-v-e-x)
+- viewBox 668.33 × 196.57
+
+**Implementación**:
+1. Creados 4 SVGs limpios en `public/brand/`:
+   - `movex-isotipo-3lines-white.svg` (3 paths separados con IDs r-top, r-mid, r-bot)
+   - `movex-isotipo-3lines-black.svg`
+   - `movex-wordmark-white.svg` (5 paths de las letras)
+   - `movex-wordmark-black.svg`
+2. Actualizado `Nav.astro` → usa el nuevo isotipo
+3. Actualizado favicon en `Layout.astro` → versión black
+4. **Intro3D.tsx ahora usa SVG inline** (no `<img>`) para poder animar cada raya individualmente:
+   - r-top entra desde la izquierda (translateX -120% → 0)
+   - r-mid entra desde la derecha (translateX +120% → 0)
+   - r-bot entra desde la izquierda
+   - Stagger 120ms entre cada una
+   - Easing cubic-bezier(0.16, 1, 0.3, 1) — 1100ms transform + 700ms opacity
+
+**Por qué inline SVG vs `<img>`**: con `<img>` no puedes animar paths individuales del SVG via CSS — todo el SVG es un solo elemento. Inline SVG permite tratar cada `<path>` como un elemento React/HTML con su propio style/transform.
+
+---
+
 ## 2026-05-26 — FOUC guard + fluidez M/wordmark
 
 **Problema 1 (FOUC)**: User reportó "por unos milisegundos sale la página normal y luego la animación". El `<Intro3D client:only="react" />` es client-only — React monta DESPUÉS del paint inicial del HTML estático. Resultado: el user ve hero/secciones por ~100-300ms antes de que el Intro3D cubra la pantalla con su `<div fixed inset-0 z-50 bg-navy-900>`.

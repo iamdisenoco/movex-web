@@ -482,9 +482,18 @@ export default function Intro3D() {
             transition: "gap 900ms cubic-bezier(0.16, 1, 0.3, 1)",
           }}
         >
-          <img
-            src="/brand/movex-isotipo-white.svg"
-            alt=""
+          {/* Isotipo nuevo de 3 RAYAS (en vez de la M antigua). SVG inline
+              para poder animar cada raya individualmente con stagger.
+              Cada raya entra desde un eje distinto:
+                r-top  → slide desde la izquierda (translateX -120%)
+                r-mid  → slide desde la derecha (translateX +120%)
+                r-bot  → slide desde la izquierda (translateX -120%)
+              Transición 1100ms cubic-bezier(0.16,1,0.3,1) con stagger 120ms. */}
+          <svg
+            viewBox="0 0 210 170"
+            fill="#ffffff"
+            preserveAspectRatio="xMidYMid meet"
+            aria-hidden="true"
             style={{
               transition:
                 "height 1100ms cubic-bezier(0.16, 1, 0.3, 1), opacity 700ms cubic-bezier(0.32, 0.72, 0, 1), filter 900ms ease-out",
@@ -506,7 +515,43 @@ export default function Intro3D() {
                   : "drop-shadow(0 0 30px rgba(45,138,138,0.45))",
               willChange: "height, opacity, filter",
             }}
-          />
+          >
+            {/* 3 rayas separadas. Cuando phase >= lockup-big, cada una
+                desliza desde un lado distinto con stagger 120ms.
+                r-top (i=0, desde izq) → r-mid (i=1, desde der) → r-bot (i=2, desde izq) */}
+            {(() => {
+              const lineVisible =
+                phase === "lockup-big" || phase === "lockup-pair" || phase === "matchmove";
+              const lineStyle = (i: number, dir: "left" | "right") => ({
+                transition:
+                  "transform 1100ms cubic-bezier(0.16,1,0.3,1), opacity 700ms cubic-bezier(0.16,1,0.3,1)",
+                transitionDelay: `${i * 120}ms`,
+                transform: lineVisible
+                  ? "translateX(0)"
+                  : dir === "left"
+                    ? "translateX(-120%)"
+                    : "translateX(120%)",
+                opacity: lineVisible ? 1 : 0,
+                willChange: "transform, opacity",
+              });
+              return (
+                <>
+                  <path
+                    d="M122.8,31.47c-.68-.4-1.22-.29-1.74-.29-25.29,0-50.57,0-75.86-.01-1.21,0-2.1.4-2.98,1.21-5.04,4.7-9.56,9.9-14.59,14.62-3.78,3.55-7.49,7.2-10.91,11.12-.38.43-1.2.81-1.01,1.31.23.65,1.1.28,1.7.37.1.01.19,0,.29,0,25.33,0,50.67,0,76,.03.98,0,1.63-.32,2.26-1.01,3.33-3.59,6.96-6.89,10.26-10.53,2.63-2.9,5.62-5.48,8.43-8.21,2.81-2.73,5.55-5.53,8.14-8.62Z"
+                    style={lineStyle(0, "left")}
+                  />
+                  <path
+                    d="M192.27,70.99c-.04-.13-.09-.26-.13-.39-.8,0-1.61,0-2.41,0-2.13-.03-18.51.03-22.21.03-25.25,0-50.49,0-75.74,0-19.31,0-38.62,0-57.93,0-.73,0-1.43-.04-2.02.56-4.73,4.73-9.44,9.48-14.23,14.14-4.28,4.16-8.21,8.68-12.81,12.52-.41.34-.93.65-1.06,1.42.93,0,1.75,0,2.57,0,45.68,0,91.35,0,137.03.01,6.42,0,12.84,0,19.26-.01.5,0,.99.12,1.47-.36,2.47-2.47,5.02-4.85,7.49-7.32,2.68-2.67,5.21-5.51,7.95-8.09,4.35-4.09,8.37-8.49,12.79-12.5Z"
+                    style={lineStyle(1, "right")}
+                  />
+                  <path
+                    d="M35.25,140.28c.74.05,1.22.1,1.69.1,25.68,0,51.35,0,77.03.02.67,0,1.19-.14,1.67-.67,1.49-1.64,3.11-3.16,4.68-4.71,4.07-4.02,8.11-8.09,12.09-12.2,3.06-3.16,6.28-6.2,9.44-9.29.41-.4,1.07-.84.84-1.41-.24-.59-1.04-.36-1.6-.36-25.38,0-50.77,0-76.15-.02-1,0-1.78.28-2.45,1.01-1.78,1.91-3.55,3.85-5.41,5.69-3.51,3.48-7.12,6.88-10.63,10.36-2.85,2.83-5.38,5.96-8.51,8.53-.95.78-1.93,1.6-2.69,2.95Z"
+                    style={lineStyle(2, "left")}
+                  />
+                </>
+              );
+            })()}
+          </svg>
           <span
             className="text-white leading-[0.95] whitespace-nowrap overflow-hidden"
             style={{
