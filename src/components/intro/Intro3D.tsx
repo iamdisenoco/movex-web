@@ -552,15 +552,20 @@ export default function Intro3D() {
               );
             })()}
           </svg>
-          <span
-            className="text-white leading-[0.95] whitespace-nowrap overflow-hidden"
+          {/* Wordmark "movex" — usa el SVG oficial del logo (paths de la
+              fuente Neurial Grotesk del manual de marca), NO texto HTML
+              con Saira Variable. Fidelidad 100% al logo oficial. */}
+          <img
+            src="/brand/movex-wordmark-white.svg"
+            alt="movex"
             style={{
-              fontFamily: '"Saira Variable", system-ui, sans-serif',
-              fontVariationSettings: '"wght" 400, "wdth" 125',
-              letterSpacing: "-0.01em",
-              fontSize: "clamp(3.5rem, 8vw, 7rem)",
+              display: "block",
               transition:
-                "max-width 1000ms cubic-bezier(0.16, 1, 0.3, 1), opacity 700ms cubic-bezier(0.32, 0.72, 0, 1) 150ms, transform 1000ms cubic-bezier(0.16, 1, 0.3, 1) 100ms",
+                "max-width 1000ms cubic-bezier(0.16, 1, 0.3, 1), opacity 700ms cubic-bezier(0.32, 0.72, 0, 1) 150ms, transform 1000ms cubic-bezier(0.16, 1, 0.3, 1) 100ms, height 1100ms cubic-bezier(0.16,1,0.3,1)",
+              height:
+                phase === "lockup-pair" || phase === "matchmove"
+                  ? "clamp(3rem, 6vw, 5rem)"
+                  : "0",
               maxWidth:
                 phase === "lockup-pair" || phase === "matchmove" ? "60vw" : "0",
               opacity: phase === "lockup-pair" || phase === "matchmove" ? 1 : 0,
@@ -568,11 +573,10 @@ export default function Intro3D() {
                 phase === "lockup-pair" || phase === "matchmove"
                   ? "translateX(0)"
                   : "translateX(60px)",
-              willChange: "max-width, opacity, transform",
+              willChange: "max-width, opacity, transform, height",
+              filter: "drop-shadow(0 0 30px rgba(45,138,138,0.35))",
             }}
-          >
-            movex
-          </span>
+          />
         </div>
       </div>
 

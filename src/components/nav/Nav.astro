@@ -19,10 +19,12 @@ import { nav } from "../../data/site";
   data-scrolled="false"
 >
   <div class="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-6 md:px-10 py-4">
-    <!-- 1) Logo (izquierda) — nuevo isotipo de 3 rayas, siempre visible -->
+    <!-- 1) Logo (izquierda) — isotipo + wordmark del LOGO OFICIAL (no texto).
+         Usamos SVGs con las paths originales para fidelidad 100% al manual
+         de marca (la fuente "Neurial Grotesk" del wordmark es comercial). -->
     <a href="/" class="flex items-center gap-2.5 text-white shrink-0" aria-label="Movex inicio">
       <img id="nav-isotipo" src="/brand/movex-isotipo-3lines-white.svg" alt="" class="h-7 w-auto" />
-      <span class="font-display text-xl leading-none tracking-tight">movex</span>
+      <img id="nav-wordmark" src="/brand/movex-wordmark-white.svg" alt="movex" class="h-5 w-auto" />
     </a>
 
     <!-- 2) Nav central — pill flotante glass/crystal, solo aparece tras scroll -->
