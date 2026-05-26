@@ -425,13 +425,14 @@ export default function Intro3D() {
         pointerEvents: phase === "matchmove" ? "none" : "auto",
       }}
     >
-      {/* Globe canvas container — encoge + difumina + desvanece para "morphear"
-          hacia la M. Duración 1400ms con easing material-soft. Synced con el
-          lockup container abajo para que ambos animen al mismo tiempo y se
-          sienta una transición orgánica (no un swap brusco). */}
+      {/* Globe canvas container — encoge + desvanece para dar paso a la M.
+          NO usamos filter:blur porque revela el rectángulo del canvas al
+          difuminar sus bordes (el user lo notó: "encerraste en un cuadro el
+          mundo cuando aparece la M"). Solo opacity + transform — el canvas
+          tiene clearColor transparente, así que al encoger no deja borde. */}
       <div
         ref={containerRef}
-        className="absolute inset-0 transition-[opacity,transform,filter] duration-[1400ms] ease-[cubic-bezier(0.32,0.72,0,1)]"
+        className="absolute inset-0 transition-[opacity,transform] duration-[1400ms] ease-[cubic-bezier(0.32,0.72,0,1)]"
         style={{
           opacity:
             phase === "lockup-big" || phase === "lockup-pair" || phase === "matchmove"
@@ -439,12 +440,8 @@ export default function Intro3D() {
               : 1,
           transform:
             phase === "lockup-big" || phase === "lockup-pair" || phase === "matchmove"
-              ? "scale(0.45)"
+              ? "scale(0.6)"
               : "scale(1)",
-          filter:
-            phase === "lockup-big" || phase === "lockup-pair" || phase === "matchmove"
-              ? "blur(18px)"
-              : "blur(0px)",
           transformOrigin: "center center",
         }}
       />

@@ -6,6 +6,18 @@
 
 ---
 
+## 2026-05-26 — Quitado blur del fade-out del globe (revelaba cuadro)
+
+**Problema**: User dijo "no me gustó que encerraste en un cuadro el mundo cuando se va y aparece la M, de resto está perfecto".
+
+**Causa**: usé `filter: blur(18px)` en el container del canvas (que ocupa `inset-0` fullscreen). CSS blur difumina cada píxel del elemento incluyendo los bordes — eso revela el rectángulo del canvas como un halo borroso. Al combinarlo con `scale(0.45)`, el rectángulo se hace más chico pero visible.
+
+**Fix**: removido el `filter: blur`. Dejado solo `opacity + transform: scale(0.6)`. El canvas tiene `setClearColor(0x000000, 0)` (transparente), así que al encoger NO deja borde — solo se ve el globo encogiendo y desapareciendo.
+
+**Lección**: `filter: blur` en elementos absoluto-fullscreen **siempre** revela el rectángulo. Para difuminar contornos de un canvas, usar `mask-image: radial-gradient(...)` en su lugar (que no toca el área externa).
+
+---
+
 ## 2026-05-26 — Intro timeline reescalonado + transición smooth globe→M
 
 **Problema 1**: User dijo "la transición cuando sale el mundo no es tan smooth". El globe canvas hacía fade-out de opacity 1→0 en 700ms, sin más cambio. Se sentía un swap brusco.
