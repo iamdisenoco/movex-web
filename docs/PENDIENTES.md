@@ -20,6 +20,34 @@ mejoras pendientes. Read it first antes de tocar animaciones.
 
 ---
 
+## 💡 IDEAS futuras (anotadas, NO implementar todavía)
+
+### Animación del isotipo: 3 contenedores cayendo apilados → forman las 3 rayas
+
+**Idea de Jon (2026-05-26)** — concepto temático que conecta con el negocio:
+
+Reemplazar la animación actual del isotipo en el intro (las 3 rayas que aparecen sliding desde lados alternos con stagger 120ms) por algo más narrativo y propio del rubro:
+
+1. **3 contenedores 3D caen** desde arriba del viewport (uno tras otro o simultáneos con stagger).
+2. **Se apilan** uno encima del otro al aterrizar (con sutil bounce físico).
+3. **Pausa breve** (200-400ms) mostrando los 3 contenedores apilados como una torre.
+4. **Se separan** ligeramente (cada uno hace slide hacia su posición inclinada final).
+5. **Forman las 3 rayas del isotipo** (con la inclinación característica del logo nuevo).
+
+**Por qué tiene sentido**:
+- Movex = logística portuaria → **contenedores** son el ícono visual del negocio.
+- Las 3 rayas del logo nuevo YA tienen forma alargada/apilable que sugiere contenedores.
+- Conexión narrativa: "manejamos contenedores" → la animación lo dice visualmente antes de que aparezca el wordmark.
+
+**Posibles implementaciones**:
+- **Vanilla CSS**: 3 divs con `perspective` + `rotate3d` + `keyframes` con easing bounce (`cubic-bezier(0.34, 1.56, 0.64, 1)` para el aterrizaje).
+- **3D real en three.js**: usar el canvas que ya tenemos del Intro3D, mostrar 3 cajas con texturas de contenedor (necesitaría asset o textura procedural).
+- **Lottie**: animación pre-hecha en After Effects exportada a JSON, montada con `lottie-web`.
+
+**Status**: 💤 ANOTADO, NO IMPLEMENTAR TODAVÍA. Esperar luz verde de Jon.
+
+---
+
 ## 🎨 Animación intro (puntos 3 y 4 del último brief de Jon, pendientes de implementar)
 
 > Jon mandó imágenes que no llegaron al chat. **Punto 1 y 2 quedaron sin hacer** porque dependen de ver las imágenes. Punto 3 y 4 sí pueden hacerse:
