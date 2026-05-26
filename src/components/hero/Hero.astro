@@ -59,27 +59,26 @@ import { brand } from "../../data/site";
     - ZONA BOTTOM-RIGHT (abajo a la derecha): párrafo + CTAs alineados der.
   -->
   <div class="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10 h-full grid grid-rows-[auto_1fr_auto] pt-24 pb-12">
-    <!-- TOP-LEFT: brand label + headline -->
-    <div class="max-w-3xl">
-      <div
-        data-hero-entry="0"
-        class="flex items-center gap-3 mb-6 opacity-0"
-      >
-        <span class="size-2 rounded-full bg-teal-500"></span>
-        <span class="text-sm tracking-[0.05em] uppercase text-white font-mono">Movex International</span>
-      </div>
+    <!-- TOP-LEFT: brand label (pill) -->
+    <div
+      data-hero-entry="0"
+      class="flex items-center gap-3 mb-6 opacity-0"
+    >
+      <span class="size-2 rounded-full bg-teal-500"></span>
+      <span class="text-sm tracking-[0.05em] uppercase text-white font-mono">Movex International</span>
+    </div>
 
+    <!-- CENTRO: título centrado verticalmente, alineado a la izquierda -->
+    <div class="max-w-3xl flex items-center">
       <h1
         data-hero-entry="1"
         class="font-display-xl text-[clamp(2.8rem,7.5vw,6.5rem)] leading-[0.92] opacity-0"
       >
-        <span data-split class="block text-white">Conectamos tu carga</span>
+        <span data-split class="block text-white">Conectamos</span>
+        <span data-split class="block text-white">tu carga</span>
         <span data-split="slow" class="block text-teal-300">con el mundo.</span>
       </h1>
     </div>
-
-    <!-- CENTRO: vacío (barco visible) -->
-    <div></div>
 
     <!-- BOTTOM-RIGHT: párrafo + CTAs alineados a la derecha -->
     <div class="flex justify-end">
