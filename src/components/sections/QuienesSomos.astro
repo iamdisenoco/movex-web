@@ -1,5 +1,5 @@
 ---
-import { timeline } from "../../data/site";
+import { timeline, counters } from "../../data/site";
 
 const advantages = [
   { title: "20+ años", body: "de experiencia operativa heredada del grupo Cargoban." },
@@ -15,6 +15,49 @@ const advantages = [
 
 <!-- MVP "Our Advantages" pattern: giant sticky title left + stacked cards right -->
 <section id="quienes-somos" class="relative bg-white text-navy-900 py-32 sm:py-48">
+
+  <!-- INTRO BLOCK (movido desde Empresa): heritage + counters -->
+  <div class="mx-auto max-w-7xl px-6 lg:px-10 mb-32 sm:mb-40">
+    <div class="max-w-3xl">
+      <div class="text-[11px] font-mono uppercase tracking-[0.25em] text-teal-500 mb-6">
+        ● Movex Company
+      </div>
+      <h2 data-split class="font-display-xl text-[clamp(2.5rem,6vw,5rem)] text-navy-900 leading-[0.95] mb-10">
+        Movex Company.
+      </h2>
+      <div data-reveal="up" style="--reveal-delay:120ms" class="space-y-6 text-base sm:text-lg leading-relaxed text-navy-700">
+        <p>
+          Heredamos la experiencia operativa de <strong class="text-navy-900">Cargoban</strong>,
+          operador logístico portuario referente en el Caribe colombiano desde 2012.
+          Movex extiende ese músculo a una escala internacional.
+        </p>
+        <p>
+          Trabajamos en estiba, consolidación, trazabilidad digital y agenciamiento aduanero —
+          manejando carga general, refrigerada, granel y proyectos especiales.
+        </p>
+      </div>
+    </div>
+
+    <!-- Counter grid: 4 columns of numeric metrics -->
+    <div class="mt-20 pt-12 border-t border-navy-900/10 grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6">
+      {counters.map((c, i) => {
+        const numeric = parseInt(String(c.value).replace(/\D/g, ""), 10);
+        const animatable = isFinite(numeric) && numeric > 0;
+        return (
+          <div data-reveal="up" style={`--reveal-delay:${i * 100}ms`}>
+            <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-teal-500 mb-3">
+              0{i + 1}
+            </div>
+            <div class="font-display text-4xl sm:text-5xl text-navy-900 mb-2">
+              {animatable ? <span data-countup={numeric}>0</span> : c.value}
+            </div>
+            <div class="text-xs text-navy-500 leading-relaxed">{c.label}</div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+
   <div class="mx-auto max-w-7xl px-6 lg:px-10 grid lg:grid-cols-[1fr_1.4fr] gap-12 lg:gap-20">
     <!-- Left: sticky giant title -->
     <div data-reveal="left" class="lg:sticky lg:top-32 lg:self-start">

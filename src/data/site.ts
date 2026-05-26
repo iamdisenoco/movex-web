@@ -11,7 +11,6 @@ export const brand = {
 } as const;
 
 export const nav = [
-  { label: "Empresa", href: "#empresa" },
   { label: "Quiénes Somos", href: "#quienes-somos" },
   { label: "Servicios", href: "#servicios" },
   { label: "Sostenibilidad", href: "#sostenibilidad" },
