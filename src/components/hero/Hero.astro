@@ -23,11 +23,19 @@ import { brand } from "../../data/site";
     <div class="absolute inset-0 [background:radial-gradient(ellipse_at_55%_50%,rgba(45,138,138,0.35)_0%,transparent_55%)]"></div>
   </div>
 
-  <!-- Background video — protagonista, parallax sutil al scrollear -->
+  <!-- Background video PALINDROME (forward + reverse concatenado con ffmpeg).
+       Al llegar al final el browser hace loop al frame 0 — pero como el último
+       frame es el reverso del primero, ya está visualmente en el frame 0.
+       Resultado: loop seamless SIN salto. Generado con:
+         ffmpeg -i cargo-ship-aerial.mp4 -filter_complex
+                "[0:v]reverse[r];[0:v][r]concat=n=2:v=1[v]"
+                -map "[v]" -an -c:v libx264 -crf 23
+                cargo-ship-aerial-loop.mp4
+  -->
   <video
     id="hero-video"
     class="absolute inset-0 size-full object-cover -z-20 opacity-0 transition-opacity duration-700 ease-out"
-    src="/assets/videos/cargo-ship-aerial.mp4"
+    src="/assets/videos/cargo-ship-aerial-loop.mp4"
     autoplay
     muted
     loop
@@ -50,45 +58,61 @@ import { brand } from "../../data/site";
     aria-hidden="true"
   ></div>
 
-  <!-- Content: una sola columna, izquierda, espacioso. Sin distracciones. -->
-  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10 h-full flex flex-col justify-center pt-24 pb-28">
-    <div
-      data-hero-entry="0"
-      class="flex items-center gap-3 mb-8 opacity-0"
-    >
-      <span class="size-2 rounded-full bg-teal-500"></span>
-      <span class="text-sm tracking-[0.05em] uppercase text-white font-mono">Movex International</span>
+  <!--
+    LAYOUT según las "zonas amarillas" del screenshot de Jon:
+    - ZONA TOP-LEFT (arriba a la izquierda): brand label + título
+    - ZONA CENTRO: vacía, deja ver el barco
+    - ZONA BOTTOM-RIGHT (abajo a la derecha): párrafo + CTAs alineados der.
+  -->
+  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10 h-full grid grid-rows-[auto_1fr_auto] pt-24 pb-12">
+    <!-- TOP-LEFT: brand label + headline -->
+    <div class="max-w-3xl">
+      <div
+        data-hero-entry="0"
+        class="flex items-center gap-3 mb-6 opacity-0"
+      >
+        <span class="size-2 rounded-full bg-teal-500"></span>
+        <span class="text-sm tracking-[0.05em] uppercase text-white font-mono">Movex International</span>
+      </div>
+
+      <h1
+        data-hero-entry="1"
+        class="font-display-xl text-[clamp(2.8rem,7.5vw,6.5rem)] leading-[0.92] opacity-0"
+      >
+        <span data-split class="block text-white">Avance.</span>
+        <span data-split="slow" class="block text-teal-300 italic">Movilidad global.</span>
+      </h1>
     </div>
 
-    <h1
-      data-hero-entry="1"
-      class="font-display-xl text-[clamp(3rem,9vw,8rem)] leading-[0.92] mb-10 opacity-0 max-w-5xl"
-    >
-      <span data-split class="block text-white">Avance.</span>
-      <span data-split="slow" class="block text-teal-300 italic">Movilidad global.</span>
-    </h1>
+    <!-- CENTRO: vacío (barco visible) -->
+    <div></div>
 
-    <p
-      data-hero-entry="2"
-      class="text-base sm:text-lg lg:text-xl leading-relaxed text-white/90 max-w-2xl mb-10 opacity-0"
-    >
-      Operador logístico portuario premium — desde Apartadó y Santa Marta
-      hacia el mundo. Servicio integral, seguro y sin fricción.
-    </p>
+    <!-- BOTTOM-RIGHT: párrafo + CTAs alineados a la derecha -->
+    <div class="flex justify-end">
+      <div class="max-w-xl text-right">
+        <p
+          data-hero-entry="2"
+          class="text-base sm:text-lg leading-relaxed text-white/90 mb-8 opacity-0"
+        >
+          Operador logístico portuario premium — desde Apartadó y Santa Marta
+          hacia el mundo. Servicio integral, seguro y sin fricción.
+        </p>
 
-    <div data-hero-entry="3" class="flex flex-wrap gap-4 opacity-0">
-      <a
-        href="#empresa"
-        class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-teal-500 hover:bg-teal-300 text-navy-900 font-semibold px-7 py-4 text-base transition-all hover:scale-[1.03]"
-      >
-        Sobre Movex
-      </a>
-      <a
-        href="#contacto"
-        class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-semibold px-7 py-4 text-base transition-all border border-white/25"
-      >
-        Contáctanos
-      </a>
+        <div data-hero-entry="3" class="flex flex-wrap gap-4 justify-end opacity-0">
+          <a
+            href="#empresa"
+            class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-teal-500 hover:bg-teal-300 text-navy-900 font-semibold px-7 py-4 text-base transition-all hover:scale-[1.03]"
+          >
+            Sobre Movex
+          </a>
+          <a
+            href="#contacto"
+            class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-semibold px-7 py-4 text-base transition-all border border-white/25"
+          >
+            Contáctanos
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 
