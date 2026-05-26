@@ -1,0 +1,33 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Nav from "../components/nav/Nav.astro";
+import Hero from "../components/hero/Hero.astro";
+import Empresa from "../components/sections/Empresa.astro";
+import QuienesSomos from "../components/sections/QuienesSomos.astro";
+import Servicios from "../components/sections/Servicios.astro";
+import LogisticaDigital from "../components/sections/LogisticaDigital.astro";
+import Sostenibilidad from "../components/sections/Sostenibilidad.astro";
+import Confianza from "../components/sections/Confianza.astro";
+import Contacto from "../components/sections/Contacto.astro";
+import Footer from "../components/sections/Footer.astro";
+import Intro3D from "../components/intro/Intro3D";
+---
+
+<Layout>
+  <!-- client:only="react": three.js requiere window, no SSR-able.
+       El componente retorna null inmediatamente si sessionStorage.mvx_intro_v6 está set,
+       evitando cargar three.js en reloads. -->
+  <Intro3D client:only="react" />
+  <Nav />
+  <main>
+    <Hero />
+    <Empresa />
+    <Servicios />
+    <QuienesSomos />
+    <LogisticaDigital />
+    <Sostenibilidad />
+    <Confianza />
+    <Contacto />
+  </main>
+  <Footer />
+</Layout>

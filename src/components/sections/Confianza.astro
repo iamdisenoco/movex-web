@@ -1,0 +1,26 @@
+---
+const placeholders = Array.from({ length: 8 }, (_, i) => `LOGO ${String(i + 1).padStart(2, "0")}`);
+---
+
+<section class="relative bg-white text-navy-900 py-24 sm:py-32">
+  <div class="mx-auto max-w-7xl px-6 lg:px-10">
+    <!-- Header strip -->
+    <div class="flex justify-between items-center mb-12 text-[11px] font-mono uppercase tracking-[0.25em] text-navy-500">
+      <span>● Confianza</span>
+      <span class="hidden sm:inline">Certificaciones &amp; Aliados</span>
+    </div>
+
+    <h2 class="font-display-xl text-[clamp(2.5rem,5vw,4.5rem)] text-navy-900 leading-[0.95] mb-12 max-w-3xl">
+      <span data-split>Certificaciones</span>
+      <span data-split="slow" class="italic text-teal-500">y aliados.</span>
+    </h2>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-px bg-gray-100 border border-gray-100 rounded-3xl overflow-hidden">
+      {placeholders.map((p) => (
+        <div class="aspect-[3/2] bg-white flex items-center justify-center grayscale opacity-40 hover:opacity-100 hover:grayscale-0 transition-all">
+          <span class="font-display text-sm tracking-[0.18em] text-navy-500">{p}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

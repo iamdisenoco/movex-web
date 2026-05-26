@@ -1,0 +1,50 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Movex — Avance & Movilidad",
+  description = "Operador logístico portuario premium para carga internacional desde Apartadó y Santa Marta hacia el mundo.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#1a2940" />
+    <link rel="icon" type="image/svg+xml" href="/brand/movex-isotipo-black.svg" />
+    <title>{title}</title>
+    <script is:inline>
+      // Lock scroll while the intro is mounted (set before paint so users don't see a jump).
+      if (typeof window !== "undefined" && !sessionStorage.getItem("mvx_intro_v6")) {
+        document.documentElement.classList.add("intro-locked");
+      }
+    </script>
+  </head>
+  <body class="bg-navy-900 text-white antialiased">
+    <slot />
+
+    <!--
+      Animation stack — bundled by Astro/Vite (resuelve 'lenis' bare import):
+        1) Lenis smooth scroll
+        2) SplitText reveal
+        3) Parallax tied a scroll position
+        4) IntersectionObserver classic reveal
+        5) Nav ready post-intro
+        6) Counter countup
+    -->
+    <script>
+      import "../scripts/animation.ts";
+    </script>
+  </body>
+</html>

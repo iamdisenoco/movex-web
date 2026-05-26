@@ -1,0 +1,55 @@
+---
+import { sustainability } from "../../data/site";
+---
+
+<!-- Sage palette section, Viamaster-style headline + card grid -->
+<section id="sostenibilidad" class="relative bg-sage-light text-navy-900 py-32 sm:py-48">
+  <div class="mx-auto max-w-7xl px-6 lg:px-10">
+    <!-- Header strip -->
+    <div class="flex justify-between items-center mb-16 text-[11px] font-mono uppercase tracking-[0.25em] text-sage-700">
+      <span>● Sostenibilidad</span>
+      <span class="hidden sm:inline">Programas Movex</span>
+    </div>
+
+    <!-- Title split + intro -->
+    <div class="grid lg:grid-cols-2 gap-12 items-end mb-20">
+      <h2 class="font-display-xl text-[clamp(3rem,7vw,7rem)] text-navy-900 leading-[0.95]">
+        <span data-split class="block">Crecemos</span>
+        <span data-split="slow" class="block italic">donde operamos.</span>
+      </h2>
+      <p data-reveal="right" style="--reveal-delay:120ms" class="text-base sm:text-lg leading-relaxed text-navy-700 max-w-md justify-self-end">
+        Inversión continua en programas que fortalecen las comunidades de Urabá y Santa Marta,
+        el bienestar del equipo Movex y operaciones con mínimo impacto ambiental.
+      </p>
+    </div>
+
+    <!-- Card grid -->
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {sustainability.map((s, i) => (
+        <article data-reveal="up" style={`--reveal-delay:${i * 100}ms`} class="rounded-3xl bg-white overflow-hidden group hover:translate-y-[-4px] transition-transform">
+          <div class="aspect-[4/3] overflow-hidden">
+            <img
+              src="/assets/images/05-sostenibilidad.jpg"
+              alt=""
+              class="size-full object-cover transition-transform duration-700 group-hover:scale-110"
+              style={`filter: hue-rotate(${i * 18}deg);`}
+              loading="lazy"
+            />
+          </div>
+          <div class="p-7">
+            <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-sage-700 mb-3">
+              0{i + 1}/04
+            </div>
+            <h3 class="font-display text-xl sm:text-2xl text-navy-900 mb-3 leading-tight">
+              {s.title}
+            </h3>
+            <p class="text-sm text-navy-700 leading-relaxed mb-5">{s.body}</p>
+            <a href="#contacto" class="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-[0.2em] text-teal-500 hover:text-teal-300">
+              Conocer más <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,68 @@
+---
+import { timeline } from "../../data/site";
+
+const advantages = [
+  { title: "20+ años", body: "de experiencia operativa heredada del grupo Cargoban." },
+  { title: "Flota moderna", body: "capaz de manejar carga general, refrigerada, granel y proyectos." },
+  { title: "Bodegas estratégicas", body: "en Apartadó y Santa Marta para logística ágil y eficiente." },
+  { title: "Soporte 24/7", body: "siempre cerca para que tengas control total de tu carga." },
+  { title: "Optimización de ruta", body: "para reducir tiempos y costos en cada despacho." },
+  { title: "Equipo propio", body: "logísticos experimentados controlando cada etapa." },
+  { title: "Seguro de carga", body: "para máxima seguridad y tranquilidad operacional." },
+  { title: "Términos flexibles", body: "y soluciones a medida para cada cliente." },
+];
+---
+
+<!-- MVP "Our Advantages" pattern: giant sticky title left + stacked cards right -->
+<section id="quienes-somos" class="relative bg-white text-navy-900 py-32 sm:py-48">
+  <div class="mx-auto max-w-7xl px-6 lg:px-10 grid lg:grid-cols-[1fr_1.4fr] gap-12 lg:gap-20">
+    <!-- Left: sticky giant title -->
+    <div data-reveal="left" class="lg:sticky lg:top-32 lg:self-start">
+      <div class="text-[11px] font-mono uppercase tracking-[0.25em] text-teal-500 mb-6">
+        ● Nuestras Ventajas
+      </div>
+      <h2 data-split class="font-display-xl text-[clamp(3rem,7vw,7rem)] text-navy-900 leading-[0.95] mb-8">
+        Nuestras ventajas.
+      </h2>
+      <p class="text-base text-navy-700 leading-relaxed max-w-md">
+        Lo que define cómo operamos y por qué los importadores y exportadores nos eligen para
+        mover sus cargas estratégicas.
+      </p>
+    </div>
+
+    <!-- Right: stacked cards -->
+    <div class="space-y-4">
+      {advantages.map((adv, i) => (
+        <article data-reveal="right" style={`--reveal-delay:${i * 60}ms`} class="rounded-3xl bg-gray-100 p-8 sm:p-10 grid grid-cols-[auto_1fr_2fr] gap-6 items-start hover:bg-gray-100/80 transition-colors">
+          <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-navy-500 pt-2">
+            0{i + 1}/08
+          </div>
+          <h3 class="font-display text-2xl sm:text-3xl text-navy-900 leading-tight">
+            {adv.title}
+          </h3>
+          <p class="text-sm sm:text-base text-navy-700 leading-relaxed pt-1">
+            {adv.body}
+          </p>
+        </article>
+      ))}
+    </div>
+  </div>
+
+  <!-- Timeline strip at the bottom -->
+  <div class="mx-auto max-w-7xl px-6 lg:px-10 mt-32 pt-16 border-t border-navy-900/10">
+    <div class="text-[11px] font-mono uppercase tracking-[0.25em] text-teal-500 mb-8">● Nuestra historia</div>
+    <div class="relative">
+      <div class="absolute inset-x-0 top-5 h-px bg-navy-900/10"></div>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6">
+        {timeline.map((t) => (
+          <div class="relative">
+            <span class="block size-3 rounded-full bg-teal-500 ring-4 ring-white relative z-10"></span>
+            <div class="mt-6 font-display text-2xl text-navy-900">{t.year}</div>
+            <div class="mt-1 text-sm font-semibold text-navy-700">{t.label}</div>
+            <div class="mt-2 text-sm text-navy-500 leading-relaxed">{t.detail}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

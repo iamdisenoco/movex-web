@@ -1,0 +1,103 @@
+---
+import { brand, contact } from "../../data/site";
+---
+
+<footer class="relative bg-navy-900 text-white pt-32 pb-12 overflow-hidden">
+  <!-- Decorative giant bg text -->
+  <div
+    aria-hidden="true"
+    class="absolute -bottom-8 inset-x-0 text-center text-[clamp(8rem,28vw,28rem)] leading-none font-display-xl text-white/[0.025] whitespace-nowrap select-none pointer-events-none"
+  >
+    movex
+  </div>
+
+  <div class="relative mx-auto max-w-7xl px-6 lg:px-10">
+    <!-- Top: tagline / address giant -->
+    <div class="grid lg:grid-cols-[1.5fr_1fr] gap-12 mb-24">
+      <div>
+        <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-teal-300 mb-6">● {brand.parent} · Est. {brand.established}</div>
+        <h3 class="font-display-xl text-[clamp(2rem,5vw,4rem)] text-white leading-[0.95] mb-6">
+          {brand.tagline}.
+        </h3>
+        <a href={`mailto:${contact.primary.email}`} class="font-display text-2xl sm:text-3xl text-white hover:text-teal-300 transition-colors">
+          {contact.primary.email}
+        </a>
+        <div class="font-display text-xl text-white/55 mt-2">
+          {contact.primary.tel}
+        </div>
+      </div>
+      <div class="flex flex-col items-start lg:items-end gap-3">
+        <div class="flex items-center gap-3">
+          <img src="/brand/movex-isotipo-white.svg" alt="" class="h-16 sm:h-20" />
+          <span class="font-display text-3xl sm:text-4xl text-white">movex</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 column nav -->
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 py-12 border-y border-white/10">
+      <div>
+        <h4 class="text-[10px] font-mono uppercase tracking-[0.25em] text-white/40 mb-4">Empresa</h4>
+        <ul class="space-y-2.5 text-sm">
+          <li><a href="#empresa" class="text-white hover:text-teal-300 transition-colors">Nuestra empresa</a></li>
+          <li><a href="#quienes-somos" class="text-white hover:text-teal-300 transition-colors">Historia</a></li>
+          <li><a href="#sostenibilidad" class="text-white hover:text-teal-300 transition-colors">Sostenibilidad</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-[10px] font-mono uppercase tracking-[0.25em] text-white/40 mb-4">Servicios</h4>
+        <ul class="space-y-2.5 text-sm">
+          <li><a href="#servicios" class="text-white hover:text-teal-300 transition-colors">Operaciones</a></li>
+          <li><a href="#logistica-digital" class="text-white hover:text-teal-300 transition-colors">Logística Digital</a></li>
+          <li><a href="#servicios" class="text-white hover:text-teal-300 transition-colors">Agenciamiento</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-[10px] font-mono uppercase tracking-[0.25em] text-white/40 mb-4">Contacto</h4>
+        <ul class="space-y-2.5 text-sm">
+          <li><a href="mailto:accounts@movex.com.co" class="text-white hover:text-teal-300 transition-colors">accounts@movex.com.co</a></li>
+          <li><a href="mailto:operations@movex.com.co" class="text-white hover:text-teal-300 transition-colors">operations@movex.com.co</a></li>
+          <li><a href="#contacto" class="text-white hover:text-teal-300 transition-colors">Cotizar carga</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-[10px] font-mono uppercase tracking-[0.25em] text-white/40 mb-4">Social</h4>
+        <ul class="space-y-2.5 text-sm">
+          <li><a href="https://instagram.com/cargobanoperador" target="_blank" rel="noopener" class="text-white hover:text-teal-300 transition-colors">Instagram</a></li>
+          <li><a href="#" class="text-white hover:text-teal-300 transition-colors">LinkedIn</a></li>
+          <li><a href="#" class="text-white hover:text-teal-300 transition-colors">YouTube</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-8 flex flex-wrap items-center justify-between gap-4 text-xs text-white/40">
+      <span>© {new Date().getFullYear()} Movex by {brand.parent}. Todos los derechos reservados.</span>
+      <span class="font-mono uppercase tracking-[0.25em]">Apartadó · Santa Marta · World</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Back to top -->
+<button
+  id="back-to-top"
+  class="fixed bottom-6 right-6 z-30 size-12 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-teal-500 hover:border-teal-500 hover:text-navy-900 transition-all opacity-0 translate-y-2 pointer-events-none data-[visible=true]:opacity-100 data-[visible=true]:translate-y-0 data-[visible=true]:pointer-events-auto flex items-center justify-center"
+  data-visible="false"
+  aria-label="Volver al inicio"
+>
+  <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.6">
+    <path d="M12 19V5M5 12l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+</button>
+
+<script>
+  const btn = document.getElementById("back-to-top");
+  if (btn) {
+    btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+    const onScroll = () => {
+      const show = window.scrollY > window.innerHeight * 0.6;
+      btn.setAttribute("data-visible", show ? "true" : "false");
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
+</script>

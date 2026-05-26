@@ -1,0 +1,126 @@
+---
+import { services } from "../../data/site";
+const total = services.length;
+---
+
+<!--
+  Servicios — Card Stack scroll-driven (estilo MVP services__items):
+  -----------------------------------------------------------------
+  En MVP descubrí que los 6 services-item están todos position:absolute en
+  el MISMO punto, con transforms que coordina GSAP ScrollTrigger:
+    item-1: matrix(1, 0, 0, 1, -298.9, -300.5)  ← ya salió arriba
+    items-2..6: matrix(1, 0, 0, 1, -298.9, +736) ← apilados abajo
+
+  Replico el patrón con vanilla JS:
+  - El section tiene altura (N+1) × 100vh = pin-space para scrollear.
+  - Inner div es position:sticky top:0 h:100vh → se queda pegado durante el pin.
+  - Cada card está position:absolute inset-0 dentro del inner, alternando bg.
+  - El script lee scroll progress y aplica translateY% a cada card:
+      stage = progress * N - i
+      stage < 0 → translateY 100% (abajo, no entró)
+      stage in [0,1] → translateY (-stage * 100)% (transición)
+      stage > 1 → translateY -100% (arriba, ya salió)
+  - Resultado: card 0 visible, scrolleas un viewport, card 0 sube y card 1
+    aparece desde abajo. Cada card "deal" toma 1 viewport de scroll.
+-->
+<section
+  id="servicios"
+  data-card-stack
+  data-card-stack-count={total}
+  class="relative bg-navy-900 text-white"
+  style={`height: ${(total + 1) * 100}vh`}
+>
+  <!-- Decorative giant bg headline -->
+  <div
+    aria-hidden="true"
+    class="pointer-events-none select-none absolute top-12 left-0 right-0 z-0 overflow-hidden"
+  >
+    <div class="font-display-xl text-[clamp(8rem,22vw,22rem)] leading-none text-white/[0.03] whitespace-nowrap pl-6 lg:pl-10">
+      SERVICIOS GLOBALES
+    </div>
+  </div>
+
+  <!-- Sticky stage: queda fijo durante todo el pin space -->
+  <div class="sticky top-0 h-screen overflow-hidden flex items-center">
+    <div class="mx-auto w-full max-w-7xl px-6 lg:px-10">
+      <!-- Header strip -->
+      <div class="flex justify-between items-center mb-6 text-[11px] font-mono uppercase tracking-[0.25em] text-white/55">
+        <span>● Servicios</span>
+        <span class="hidden sm:inline" data-stack-counter>01 / 0{total}</span>
+      </div>
+
+      <!-- Title compacto (queda fijo, no se mueve con las cards) -->
+      <h2 class="font-display-xl text-[clamp(2rem,4.5vw,4rem)] text-white leading-[0.95] mb-8 max-w-3xl">
+        <span data-split class="block">Lo que hacemos —</span>
+        <span data-split="slow" class="block text-teal-300 italic">end-to-end.</span>
+      </h2>
+
+      <!-- Card stack: 2 columnas → imagen (izq) + card-content (der) -->
+      <div class="relative grid lg:grid-cols-[1fr_1.2fr] gap-6 lg:gap-10 items-stretch h-[clamp(280px,38vh,400px)]">
+        <!-- Imagen del service activo (cross-fade entre cards) -->
+        <div class="relative aspect-[4/3] lg:aspect-auto rounded-3xl overflow-hidden bg-navy-700">
+          {services.map((s, i) => (
+            <img
+              src={s.image}
+              alt={s.title}
+              data-stack-image={i}
+              class={`absolute inset-0 size-full object-cover transition-opacity duration-500 ${i === 0 ? "opacity-100" : "opacity-0"}`}
+              loading="lazy"
+            />
+          ))}
+          <!-- Overlay sutil para mejor contraste -->
+          <div class="absolute inset-0 bg-gradient-to-t from-navy-900/60 via-transparent to-transparent pointer-events-none"></div>
+          <!-- Counter sobre la imagen -->
+          <div class="absolute top-6 left-6 font-display text-3xl text-white" data-stack-image-counter>
+            01<span class="text-white/40">/0{total}</span>
+          </div>
+        </div>
+
+        <!-- Stack de cards: todas posicionadas en el mismo lugar -->
+        <div class="relative">
+          {services.map((s, i) => {
+            const isAccent = i % 2 === 1;
+            const isFeatured = (s as any).featured === true;
+            return (
+              <article
+                data-stack-card={i}
+                style={`--stack-i:${i}; --stack-total:${total}; transform: translate3d(0, ${i === 0 ? "0%" : "100%"}, 0); opacity: ${i === 0 ? 1 : 0}; z-index: ${100 - i};`}
+                class={`absolute inset-0 rounded-3xl p-8 sm:p-10 flex flex-col justify-between will-change-transform transition-opacity duration-500 ${isAccent ? "bg-navy-700 text-white" : "bg-white text-navy-900"}`}
+              >
+                <div>
+                  <div class={`text-[10px] font-mono uppercase tracking-[0.25em] mb-4 ${isAccent ? "text-teal-300" : "text-teal-500"}`}>
+                    0{i + 1} / 0{total}
+                    {isFeatured && (
+                      <span class={`ml-3 ${isAccent ? "text-teal-300" : "text-teal-500"}`}>★ Diferenciador Movex</span>
+                    )}
+                  </div>
+                  <h3 class={`font-display text-3xl sm:text-4xl mb-6 leading-tight ${isAccent ? "text-white" : "text-navy-900"}`}>
+                    {s.title}
+                  </h3>
+                </div>
+                <ul class={`grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-6 text-sm sm:text-base ${isAccent ? "text-white/85" : "text-navy-700"}`}>
+                  {s.items.slice(0, 8).map((item) => (
+                    <li class="flex items-start gap-2.5">
+                      <span class={`mt-2 size-1 rounded-full flex-shrink-0 ${isAccent ? "bg-teal-300" : "bg-teal-500"}`}></span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+
+      <!-- Progress dots -->
+      <div class="mt-8 flex gap-2 justify-center" data-stack-dots>
+        {services.map((_, i) => (
+          <span
+            data-stack-dot={i}
+            class={`block h-1 rounded-full transition-all duration-300 ${i === 0 ? "bg-teal-300 w-8" : "bg-white/20 w-4"}`}
+          ></span>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

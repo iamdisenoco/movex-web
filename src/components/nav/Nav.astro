@@ -1,0 +1,104 @@
+---
+import { nav } from "../../data/site";
+---
+
+<!--
+  Nav estilo muffment-web/Header.tsx:
+  3 elementos horizontales independientes:
+    [LOGO]          [PILL GLASS con menú]          [CTA]
+  La franja NO ocupa el ancho completo — solo el pill central tiene
+  el efecto glass/crystal (bg-white/10 + border-white/20 + backdrop-blur-md).
+  En el hero (data-scrolled=false) el pill es invisible (vacío).
+-->
+<header
+  id="site-nav"
+  class="fixed top-0 inset-x-0 z-40 transition-all duration-300
+         opacity-0 -translate-y-2
+         data-[ready=true]:opacity-100 data-[ready=true]:translate-y-0"
+  data-ready="false"
+  data-scrolled="false"
+>
+  <div class="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-6 md:px-10 py-4">
+    <!-- 1) Logo (izquierda) — siempre visible, sin caja -->
+    <a href="/" class="flex items-center gap-2.5 text-white shrink-0" aria-label="Movex inicio">
+      <img id="nav-isotipo" src="/brand/movex-isotipo-white.svg" alt="" class="h-7 w-auto" />
+      <span class="font-display text-xl leading-none tracking-tight">movex</span>
+    </a>
+
+    <!-- 2) Nav central — pill flotante glass/crystal, solo aparece tras scroll -->
+    <nav
+      id="nav-pill"
+      class="hidden md:flex items-center gap-1 rounded-full px-2 py-1.5
+             transition-all duration-300
+             border border-transparent bg-transparent backdrop-blur-0
+             data-[active=true]:border-white/20
+             data-[active=true]:bg-white/10
+             data-[active=true]:backdrop-blur-md
+             data-[active=true]:shadow-[0_8px_32px_rgba(0,0,0,0.18)]"
+      data-active="false"
+    >
+      {nav.map((item, i) => (
+        <a
+          href={item.href}
+          style={`--nav-i:${i}`}
+          class="nav-link rounded-full px-4 py-1.5 text-sm tracking-wide
+                 text-white/85 hover:text-white hover:bg-white/10
+                 transition-colors opacity-0
+                 [transition-delay:calc(var(--nav-i)*60ms+250ms)]
+                 data-[ready=true]:opacity-100"
+          data-ready="false"
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <!-- 3) CTA (derecha) — pill teal sólido -->
+    <a
+      href="#contacto"
+      class="hidden sm:inline-flex items-center gap-2 rounded-full
+             bg-teal-500 hover:bg-teal-300 text-navy-900 font-semibold
+             px-5 py-2.5 text-sm transition-all hover:scale-[1.03]
+             shrink-0"
+    >
+      Cotizar carga
+      <span aria-hidden="true">→</span>
+    </a>
+
+    <!-- Burger mobile -->
+    <button id="nav-burger" class="md:hidden text-white/85" aria-label="Abrir menú">
+      <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M3 7h18M3 12h18M3 17h18" stroke-linecap="round" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<script>
+  // Activa el efecto glass del pill central CUANDO el hero deja de estar visible.
+  // Usamos IntersectionObserver con un sentinel justo debajo del hero —
+  // más confiable que window.scrollY cuando Lenis maneja el smooth scroll.
+  const header = document.getElementById("site-nav");
+  const pill = document.getElementById("nav-pill");
+  if (header && pill) {
+    const setScrolled = (scrolled: boolean) => {
+      header.setAttribute("data-scrolled", scrolled ? "true" : "false");
+      pill.setAttribute("data-active", scrolled ? "true" : "false");
+    };
+    // Sentinel: un div invisible 60vh por debajo del top que vigila el viewport
+    const sentinel = document.createElement("div");
+    sentinel.setAttribute("aria-hidden", "true");
+    sentinel.style.cssText =
+      "position:absolute;top:60vh;left:0;width:1px;height:1px;pointer-events:none";
+    document.body.appendChild(sentinel);
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          setScrolled(!e.isIntersecting);
+        }
+      },
+      { rootMargin: "0px 0px 0px 0px", threshold: 0 }
+    );
+    io.observe(sentinel);
+  }
+</script>

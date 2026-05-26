@@ -1,0 +1,87 @@
+---
+import { brand } from "../../data/site";
+---
+
+<!--
+  Técnica scroll-stacking (estilo MVP):
+  - Hero envuelto en un "pin space" que ocupa 100vh.
+  - El hero mismo es position:sticky top:0 h:100vh → se queda PEGADO al top
+    del viewport mientras scrolleas, hasta que el pin space termina.
+  - La siguiente sección (Empresa) tiene z-index mayor → sube TAPANDO al hero
+    mientras éste sigue sticky.
+  Resultado: video + título se quedan fijos, card de Empresa sube cubriéndolos.
+-->
+<div class="relative" style="height: 100vh">
+<section id="hero" class="sticky top-0 left-0 right-0 isolate h-[100vh] flex flex-col overflow-hidden z-0">
+  <!-- Background video — aerial cargo ship -->
+  <video
+    class="absolute inset-0 size-full object-cover -z-20"
+    src="/assets/videos/cargo-ship-aerial.mp4"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="auto"
+    aria-hidden="true"
+  ></video>
+
+  <!-- Layered overlays: gradient + bokeh + subtle vignette -->
+  <div class="absolute inset-0 -z-10 bg-gradient-to-br from-navy-900/85 via-navy-900/55 to-navy-900/85"></div>
+  <div class="absolute inset-0 -z-10 [background:radial-gradient(ellipse_at_75%_45%,rgba(45,138,138,0.18)_0%,transparent_55%)]"></div>
+
+  <!-- Content container — Viamaster-style left-aligned with generous breathing -->
+  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10 pt-28 pb-16 flex-1 flex flex-col justify-center">
+    <!-- Brand mark label with dot, Viamaster pattern -->
+    <div class="flex items-center gap-3 mb-8">
+      <span class="size-2 rounded-full bg-teal-500"></span>
+      <span class="text-sm tracking-[0.02em] text-white/90">Movex International</span>
+    </div>
+
+    <!-- Headline: split por chars con stagger (estilo MVP animated-text) -->
+    <h1 class="font-display-xl text-[clamp(3.2rem,9vw,8rem)] mb-12 max-w-5xl">
+      <span data-split class="block text-teal-300">Avance.</span>
+      <span data-split="slow" class="block text-white">Movilidad global.</span>
+    </h1>
+
+    <!-- Body copy: 3 paragraph blocks, generous line-height (~1.6), max-w narrow -->
+    <div class="max-w-2xl space-y-6 text-base sm:text-lg leading-relaxed text-white/85 mb-12">
+      <p>
+        Nuestro equipo de operaciones está listo para gestionar tu carga — desde Apartadó al Caribe,
+        de Sudamérica al mundo — con un servicio integral, seguro y sin fricción.
+      </p>
+      <p>
+        Acompañamos cada etapa de transporte y asumimos responsabilidad operativa sobre todo el
+        proceso. Estiba, consolidación, trazabilidad digital, agenciamiento aduanero.
+      </p>
+      <p>
+        Somos un equipo de origen colombiano con cultura de trabajo cercano: directos, exigentes,
+        confiables — valores que definen cómo operamos y por qué nuestros clientes nos eligen.
+      </p>
+    </div>
+
+    <!-- CTAs as pills, Viamaster style -->
+    <div class="flex flex-wrap gap-4">
+      <a
+        href="#empresa"
+        class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-teal-500 hover:bg-teal-300 text-navy-900 font-semibold px-7 py-4 text-base transition-colors"
+      >
+        Sobre Movex
+      </a>
+      <a
+        href="#contacto"
+        class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-white/15 hover:bg-white/25 backdrop-blur text-white font-semibold px-7 py-4 text-base transition-colors border border-white/20"
+      >
+        Contáctanos
+      </a>
+    </div>
+  </div>
+
+  <!-- Scroll hint bottom-right -->
+  <span class="absolute bottom-6 right-8 text-[10px] font-mono uppercase tracking-[0.3em] text-white/45">
+    Scroll ↓
+  </span>
+
+  <!-- Decorative corner cut, Viamaster aesthetic touch -->
+  <div class="absolute bottom-0 right-0 w-32 h-32 -z-10 [clip-path:polygon(100%_0,100%_100%,0_100%)] bg-navy-900/60"></div>
+</section>
+</div><!-- /hero pin space -->
