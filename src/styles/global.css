@@ -153,8 +153,13 @@ html.intro-locked body {
   display: inline-block;
   overflow: hidden;
   vertical-align: top;
-  /* Pequeño padding-bottom para no recortar descendientes (g, p, y) */
-  padding-bottom: 0.12em;
+  /* Padding generoso para no recortar:
+     - Bottom: descenders (g, j, p, q, y)
+     - Right: slant de italics (las letras inclinadas se salen del bounding box)
+     - Top: ascenders altos en algunas fuentes */
+  padding-bottom: 0.28em;
+  padding-right: 0.08em;
+  padding-top: 0.04em;
 }
 
 [data-split] .char {
