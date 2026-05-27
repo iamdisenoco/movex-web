@@ -78,7 +78,7 @@ export const services = [
     featured: true,
     image: "/assets/images/04-digital-dashboard.jpg",
     items: [
-      "Trazabilidad end-to-end",
+      "Trazabilidad integral",
       "Auditoría de cadena de frío",
       "Consultoría de procesos",
       "Tarja y chequeo",
