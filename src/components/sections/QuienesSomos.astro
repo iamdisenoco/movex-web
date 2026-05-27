@@ -16,45 +16,72 @@ const advantages = [
 <!-- MVP "Our Advantages" pattern: giant sticky title left + stacked cards right -->
 <section id="quienes-somos" class="relative bg-white text-navy-900 py-32 sm:py-48">
 
-  <!-- INTRO BLOCK (movido desde Empresa): heritage + counters -->
-  <div class="mx-auto max-w-7xl px-6 lg:px-10 mb-32 sm:mb-40">
-    <div class="max-w-3xl">
-      <div class="text-[11px] font-mono uppercase tracking-[0.25em] text-teal-500 mb-6">
-        ● Movex Company
-      </div>
-      <h2 data-split class="font-display-xl text-[clamp(2.5rem,6vw,5rem)] text-navy-900 leading-[0.95] mb-10">
-        Movex Company.
-      </h2>
-      <div data-reveal="up" style="--reveal-delay:120ms" class="space-y-6 text-base sm:text-lg leading-relaxed text-navy-700">
-        <p>
-          Heredamos la experiencia operativa de <strong class="text-navy-900">Cargoban</strong>,
-          operador logístico portuario referente en el Caribe colombiano desde 2012.
-          Movex extiende ese músculo a una escala internacional.
-        </p>
-        <p>
-          Trabajamos en estiba, consolidación, trazabilidad digital y agenciamiento aduanero —
-          manejando carga general, refrigerada, granel y proyectos especiales.
-        </p>
-      </div>
-    </div>
+  <!-- INTRO BLOCK (movido desde Empresa): heritage + counters CON VIDEO DE FONDO -->
+  <div class="relative isolate overflow-hidden mb-32 sm:mb-40 -mt-32 sm:-mt-48 pt-32 sm:pt-48 pb-24 sm:pb-32 bg-navy-900 text-white">
+    <!-- Video de fondo. El #t=1.5 hace que empiece en segundo 1.5 (corta el principio).
+         Sin loop nativo: el script más abajo loopea de 1.5s a final. -->
+    <video
+      id="quienes-somos-video"
+      class="absolute inset-0 size-full object-cover -z-20 opacity-0 transition-opacity duration-700 ease-out"
+      src="/assets/videos/contenedores-quienes-somos.mp4#t=1.5"
+      autoplay
+      muted
+      playsinline
+      preload="auto"
+      aria-hidden="true"
+      data-start-time="1.5"
+      onloadeddata="this.classList.remove('opacity-0')"
+    ></video>
+    <!-- Overlay degradado (mismo estilo que el hero: izq oscura, der un poco más limpia) -->
+    <div
+      class="absolute inset-0 -z-10 [background:linear-gradient(95deg,rgba(26,41,64,0.88)_0%,rgba(26,41,64,0.70)_30%,rgba(26,41,64,0.55)_60%,rgba(26,41,64,0.65)_100%)]"
+      aria-hidden="true"
+    ></div>
+    <!-- Capa global navy/30 -->
+    <div class="absolute inset-0 -z-10 bg-navy-900/35" aria-hidden="true"></div>
 
-    <!-- Counter grid: 4 columns of numeric metrics -->
-    <div class="mt-20 pt-12 border-t border-navy-900/10 grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6">
-      {counters.map((c, i) => {
-        const numeric = parseInt(String(c.value).replace(/\D/g, ""), 10);
-        const animatable = isFinite(numeric) && numeric > 0;
-        return (
-          <div data-reveal="up" style={`--reveal-delay:${i * 100}ms`}>
-            <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-teal-500 mb-3">
-              0{i + 1}
+    <div class="relative mx-auto max-w-7xl px-6 lg:px-10">
+      <div class="max-w-3xl">
+        <!-- Label y título FUERA de la burbuja -->
+        <div class="text-[11px] font-mono uppercase tracking-[0.25em] text-teal-300 mb-6">
+          ● Movex Company
+        </div>
+        <h2 data-split class="font-display-xl text-[clamp(2.5rem,6vw,5rem)] text-white leading-[0.95] mb-10">
+          Movex <span class="text-[#cfe091]">Company.</span>
+        </h2>
+
+        <!-- BUBBLE GLASS-PILL: SOLO los párrafos van adentro, estilo nav pill -->
+        <div data-reveal="up" style="--reveal-delay:120ms" class="rounded-3xl bg-white/5 border border-white/15 backdrop-blur-sm shadow-[0_8px_32px_rgba(0,0,0,0.18)] p-8 sm:p-10 space-y-6 text-base sm:text-lg leading-relaxed text-white/90">
+          <p>
+            Heredamos la experiencia operativa de <strong class="text-white">Cargoban</strong>,
+            operador logístico portuario referente en el Caribe colombiano desde 2012.
+            Movex extiende ese músculo a una escala internacional.
+          </p>
+          <p>
+            Trabajamos en estiba, consolidación, trazabilidad digital y agenciamiento aduanero —
+            manejando carga general, refrigerada, granel y proyectos especiales.
+          </p>
+        </div>
+      </div>
+
+      <!-- Counter grid: 4 columns of numeric metrics -->
+      <div class="mt-20 pt-12 border-t border-white/15 grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6">
+        {counters.map((c, i) => {
+          const numeric = parseInt(String(c.value).replace(/\D/g, ""), 10);
+          const animatable = isFinite(numeric) && numeric > 0;
+          return (
+            <div data-reveal="up" style={`--reveal-delay:${i * 100}ms`}>
+              <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-teal-300 mb-3">
+                0{i + 1}
+              </div>
+              <div class="font-display text-4xl sm:text-5xl text-white mb-2">
+                {animatable ? <span data-countup={numeric}>0</span> : c.value}
+              </div>
+              <div class="text-xs text-white/55 leading-relaxed">{c.label}</div>
             </div>
-            <div class="font-display text-4xl sm:text-5xl text-navy-900 mb-2">
-              {animatable ? <span data-countup={numeric}>0</span> : c.value}
-            </div>
-            <div class="text-xs text-navy-500 leading-relaxed">{c.label}</div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   </div>
 
@@ -109,3 +136,41 @@ const advantages = [
     </div>
   </div>
 </section>
+
+<script>
+  // Video Quienes Somos: corta el inicio (empieza en startTime) y loopea
+  // desde ahí, no desde 0. Patrón inspirado en Hero.astro.
+  (() => {
+    const v = document.getElementById("quienes-somos-video") as HTMLVideoElement | null;
+    if (!v) return;
+    const startTime = parseFloat(v.dataset.startTime || "0");
+    v.muted = true;
+    v.playsInline = true;
+    v.removeAttribute("loop");
+    const goToStart = () => {
+      try { v.currentTime = startTime; } catch (_) {}
+    };
+    v.addEventListener("loadedmetadata", goToStart, { once: true });
+    if (v.readyState >= 1) goToStart();
+    const tryPlay = () => v.play().catch(() => {
+      const onGesture = () => { v.play().catch(()=>{}); cleanup(); };
+      const cleanup = () => {
+        ["click","touchstart","keydown","wheel"].forEach(ev =>
+          window.removeEventListener(ev, onGesture)
+        );
+      };
+      ["click","touchstart","keydown","wheel"].forEach(ev =>
+        window.addEventListener(ev, onGesture, { once: true, passive: true })
+      );
+    });
+    tryPlay();
+    // Custom loop: cuando se acerca al final, vuelve a startTime
+    v.addEventListener("timeupdate", () => {
+      if (!v.duration || isNaN(v.duration)) return;
+      if (v.currentTime >= v.duration - 0.15) {
+        v.currentTime = startTime;
+        v.play().catch(() => {});
+      }
+    });
+  })();
+</script>
