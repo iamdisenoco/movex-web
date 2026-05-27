@@ -109,9 +109,9 @@ export const services = [
 ] as const;
 
 export const sustainability = [
-  { title: "Fundación Movex", body: "Programas sociales en Urabá y Santa Marta." },
-  { title: "Bienestar Laboral", body: "Programas integrales para el equipo Movex." },
-  { title: "Ambiente", body: "Operaciones con mínimo impacto ecológico." },
+  { title: "Fundación Movex", body: "Programas sociales en Urabá y Santa Marta.", image: "/assets/images/sostenibilidad-fundacion.jpg" },
+  { title: "Bienestar Laboral", body: "Programas integrales para el equipo Movex.", image: "/assets/images/05-sostenibilidad.jpg" },
+  { title: "Ambiente", body: "Operaciones con mínimo impacto ecológico.", image: "/assets/images/sostenibilidad-ambiente.jpg" },
 ] as const;
 
 export const contact = {

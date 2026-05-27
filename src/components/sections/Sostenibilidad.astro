@@ -29,10 +29,9 @@ import { sustainability } from "../../data/site";
         <article data-reveal="up" style={`--reveal-delay:${i * 100}ms`} class="rounded-3xl bg-white overflow-hidden group hover:translate-y-[-4px] transition-transform">
           <div class="aspect-[4/3] overflow-hidden">
             <img
-              src="/assets/images/05-sostenibilidad.jpg"
-              alt=""
+              src={s.image}
+              alt={s.title}
               class="size-full object-cover transition-transform duration-700 group-hover:scale-110"
-              style={`filter: hue-rotate(${i * 18}deg);`}
               loading="lazy"
             />
           </div>
