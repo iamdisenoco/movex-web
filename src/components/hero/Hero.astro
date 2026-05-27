@@ -40,15 +40,20 @@ import { brand } from "../../data/site";
     style="transform: scale(1.35); transform-origin: center;"
   ></video>
 
-  <!-- Overlay SUTIL (no oculta el video como antes). Solo un degradado del
-       lado izquierdo para que el texto sea legible. -->
+  <!-- Overlay general más oscuro para legibilidad estilo Viamaster.
+       Horizontal: izquierda más oscura (título), derecha también oscurecida (subtexto). -->
   <div
-    class="absolute inset-0 -z-10 [background:linear-gradient(95deg,rgba(26,41,64,0.78)_0%,rgba(26,41,64,0.55)_35%,rgba(26,41,64,0.15)_70%,rgba(26,41,64,0.35)_100%)]"
+    class="absolute inset-0 -z-10 [background:linear-gradient(95deg,rgba(26,41,64,0.82)_0%,rgba(26,41,64,0.55)_30%,rgba(26,41,64,0.45)_60%,rgba(26,41,64,0.70)_100%)]"
     aria-hidden="true"
   ></div>
-  <!-- Vignette inferior sutil para que los CTAs/scroll hint se lean -->
+  <!-- Capa global sutil para reducir contraste del video y mejorar legibilidad -->
   <div
-    class="absolute inset-x-0 bottom-0 h-48 -z-10 [background:linear-gradient(to_top,rgba(26,41,64,0.7)_0%,transparent_100%)]"
+    class="absolute inset-0 -z-10 bg-navy-900/30"
+    aria-hidden="true"
+  ></div>
+  <!-- Vignette inferior más extendido para fundir el barco con el fondo -->
+  <div
+    class="absolute inset-x-0 bottom-0 h-[60%] -z-10 [background:linear-gradient(to_top,rgba(26,41,64,0.75)_0%,rgba(26,41,64,0.25)_55%,transparent_100%)]"
     aria-hidden="true"
   ></div>
 
@@ -58,12 +63,19 @@ import { brand } from "../../data/site";
     - ZONA CENTRO: vacía, deja ver el barco
     - ZONA BOTTOM-RIGHT (abajo a la derecha): párrafo + CTAs alineados der.
   -->
-  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10 h-full grid grid-rows-[auto_1fr_auto] pt-24 pb-12">
-    <!-- ROW 1: vacío (brand label removido) -->
-    <div></div>
+  <!-- LAYOUT:
+       - Grid 2 cols x 2 rows
+       - ROW 1 (auto, full width): vacío arriba (deja espacio para el nav)
+       - ROW 2 LEFT: título centrado vertical, alineado izquierda
+       - ROW 2 RIGHT: subtexto + CTAs centrados vertical, alineados a la derecha
+       Esto pone el bloque derecho a la MISMA altura del título — "más arriba y a la derecha"
+       que la versión bottom-right anterior. -->
+  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10 h-full grid grid-cols-1 lg:grid-cols-2 grid-rows-[auto_1fr] gap-y-8 lg:gap-y-0 pt-24 pb-12">
+    <!-- ROW 1: vacío arriba (col-span) -->
+    <div class="lg:col-span-2"></div>
 
-    <!-- CENTRO: título centrado verticalmente, alineado a la izquierda -->
-    <div class="max-w-3xl flex items-center">
+    <!-- ROW 2 LEFT: título -->
+    <div class="flex items-center">
       <h1
         data-hero-entry="1"
         class="font-display-xl text-[clamp(2.8rem,7.5vw,6.5rem)] leading-[0.92] opacity-0"
@@ -74,8 +86,8 @@ import { brand } from "../../data/site";
       </h1>
     </div>
 
-    <!-- BOTTOM-RIGHT: párrafo + CTAs alineados a la derecha -->
-    <div class="flex justify-end">
+    <!-- ROW 2 RIGHT: subtexto + CTAs alineados a la derecha, centrados verticalmente -->
+    <div class="flex items-center justify-end">
       <div class="max-w-xl text-right">
         <p
           data-hero-entry="2"
@@ -86,7 +98,7 @@ import { brand } from "../../data/site";
 
         <div data-hero-entry="3" class="flex flex-wrap gap-4 justify-end opacity-0">
           <a
-            href="#empresa"
+            href="#quienes-somos"
             class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-teal-500 hover:bg-teal-300 text-navy-900 font-semibold px-7 py-4 text-base transition-all hover:scale-[1.03]"
           >
             Sobre Movex
