@@ -25,9 +25,8 @@ import HeroReveal from "./HeroReveal";
   </div>
 
   <!-- Background video PALINDROME (loop seamless con ffmpeg reverse).
-       SCALE 1.35: el video se "zoom-in" 35% al centro → el barco se ve mucho
-       más grande (igual MVP que tiene el camión enorme). El overflow-hidden
-       del section recorta los bordes que sobresalen. -->
+       SCALE 1.85: barco protagonista, domina el hero estilo MVP (camión enorme).
+       El overflow-hidden del section recorta los bordes que sobresalen. -->
   <video
     id="hero-video"
     class="absolute inset-0 size-full object-cover -z-20 opacity-0 transition-opacity duration-700 ease-out"
@@ -38,7 +37,7 @@ import HeroReveal from "./HeroReveal";
     playsinline
     preload="auto"
     aria-hidden="true"
-    style="transform: scale(1.35); transform-origin: center;"
+    style="transform: scale(1.85); transform-origin: center 60%;"
   ></video>
 
   <!-- Overlay degradado IZQUIERDA-A-DERECHA:
