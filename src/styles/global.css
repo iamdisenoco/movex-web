@@ -217,6 +217,202 @@ html.intro-locked body {
 }
 
 /* ─────────────────────────────────────────────────────────────────────
+   MICRO-INTERACTIONS — ripple, cursor custom, scroll progress, hover
+   helpers para los botones/cards/nav. Driven por src/scripts/microinteractions.ts
+   ─────────────────────────────────────────────────────────────────── */
+
+/* Magnetic hover — will-change vía CSS para evitar hydration mismatch
+   con SSR de los CTAs del Hero (React island). */
+[data-magnetic] {
+  will-change: transform;
+}
+
+/* Ripple — onda teal expandiéndose desde el punto de click */
+@keyframes mvx-ripple-grow {
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+.mvx-ripple {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(95, 179, 179, 0.55) 0%,
+    rgba(95, 179, 179, 0.22) 35%,
+    rgba(95, 179, 179, 0) 70%
+  );
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0.9;
+  pointer-events: none;
+  animation: mvx-ripple-grow 650ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  z-index: 0;
+}
+/* Asegurar que el contenido del botón quede por encima del ripple */
+[data-ripple] > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Custom cursor — dot + ring siguiendo el mouse con lerp */
+.mvx-cursor-dot,
+.mvx-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 9999px;
+  will-change: transform;
+}
+.mvx-cursor-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--color-teal-300);
+  box-shadow: 0 0 12px rgba(95, 179, 179, 0.7);
+  mix-blend-mode: difference;
+}
+.mvx-cursor-ring {
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  transition: width 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    height 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 200ms ease, background-color 200ms ease;
+}
+.mvx-cursor-ring--active {
+  width: 56px;
+  height: 56px;
+  border-color: rgba(95, 179, 179, 0.85);
+  background: rgba(95, 179, 179, 0.08);
+}
+/* Hide custom cursor on touch devices */
+@media (pointer: coarse) {
+  .mvx-cursor-dot,
+  .mvx-cursor-ring {
+    display: none;
+  }
+}
+
+/* Scroll progress bar (top of page) */
+.mvx-scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--color-teal-500),
+    var(--color-teal-300)
+  );
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  z-index: 9998;
+  box-shadow: 0 0 12px rgba(95, 179, 179, 0.5);
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Animated underline para nav links — línea teal que se dibuja al hover */
+.mvx-link-underline {
+  position: relative;
+}
+.mvx-link-underline::after {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: 4px;
+  height: 1px;
+  background: var(--color-teal-300);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mvx-link-underline:hover::after,
+.mvx-link-underline:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Glow pulsante para CTA primario */
+@keyframes mvx-pulse-glow {
+  0%, 100% {
+    box-shadow:
+      0 0 0 0 rgba(95, 179, 179, 0.45),
+      0 8px 24px rgba(45, 138, 138, 0.35);
+  }
+  50% {
+    box-shadow:
+      0 0 0 8px rgba(95, 179, 179, 0),
+      0 12px 32px rgba(45, 138, 138, 0.55);
+  }
+}
+.mvx-pulse-glow {
+  animation: mvx-pulse-glow 2800ms ease-in-out infinite;
+}
+
+/* Shimmer diagonal sweep al hover (overlay sutil) */
+.mvx-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.mvx-shimmer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 60%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  transition: transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+.mvx-shimmer:hover::before {
+  transform: translateX(100%);
+}
+
+/* Logo isotipo (3 rayas) — wiggle sutil al hover del logo */
+@keyframes mvx-isotipo-wiggle {
+  0% { transform: translateX(0) rotate(0); }
+  30% { transform: translateX(2px) rotate(2deg); }
+  60% { transform: translateX(-1px) rotate(-1deg); }
+  100% { transform: translateX(0) rotate(0); }
+}
+.mvx-logo-hover:hover #nav-isotipo {
+  animation: mvx-isotipo-wiggle 550ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* CTA con flecha que aparece al hover (sin cambiar ancho) */
+.mvx-arrow-cta {
+  position: relative;
+}
+.mvx-arrow-cta .mvx-arrow {
+  display: inline-block;
+  transform: translateX(-6px);
+  opacity: 0;
+  transition: transform 350ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 250ms ease;
+  margin-left: 0;
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.mvx-arrow-cta:hover .mvx-arrow,
+.mvx-arrow-cta:focus-visible .mvx-arrow {
+  transform: translateX(0);
+  opacity: 1;
+  margin-left: 0.4rem;
+  width: 1em;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
    REDUCED MOTION
    ─────────────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
@@ -233,4 +429,6 @@ html.intro-locked body {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+  [data-magnetic] { transform: none !important; }
+  .mvx-cursor-dot, .mvx-cursor-ring { display: none; }
 }
