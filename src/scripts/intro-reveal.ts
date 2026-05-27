@@ -1,10 +1,19 @@
 /**
- * Reveal post-intro — SOLO maneja la remoción del cover navy.
+ * Reveal post-intro usando Web Animations API (WAAPI).
  *
- * Las animaciones del hero son CSS @keyframes puras (en global.css)
- * disparadas automáticamente cuando html no tiene la clase intro-locked.
- * Sin JS interference, sin race conditions, sin opacity stuck.
+ * Por qué WAAPI y no CSS o JS transitions:
+ *   - CSS @keyframes: se RESETEAN constantemente por algún loop interno
+ *     (Lenis/parallax/MutationObserver). currentTime queda en 0.
+ *   - JS CSS transitions: idem, las transitions quedan "stuck running".
+ *   - WAAPI: independiente del DOM, NO se afecta por mutations al style
+ *     del elemento, fill:forwards persiste el estado final.
+ *
+ * Hace 2 cosas:
+ *   1. Remueve #intro-cover del DOM cuando intro-locked se quita
+ *   2. Aplica WAAPI animation a cada [data-hero-entry] con stagger
  */
+
+const EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
 
 function removeCover() {
   const cover = document.getElementById("intro-cover");
@@ -14,25 +23,67 @@ function removeCover() {
   setTimeout(() => cover.remove(), 600);
 }
 
+function revealHero() {
+  if (typeof window === "undefined") return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.querySelectorAll<HTMLElement>("[data-hero-entry]").forEach((el) => {
+      el.style.opacity = "1";
+      el.style.transform = "none";
+    });
+    return;
+  }
+  // Web Animations API — persiste, no se resetea con mutations
+  const entries = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-hero-entry]"),
+  );
+  entries.forEach((el) => {
+    const i = parseInt(el.dataset.heroEntry || "0", 10);
+    const delay = 200 + i * 140;
+    const anim = el.animate(
+      [
+        { opacity: 0, transform: "translateY(40px)" },
+        { opacity: 1, transform: "translateY(0px)" },
+      ],
+      {
+        duration: 900,
+        delay,
+        easing: EASE,
+        fill: "forwards",
+      },
+    );
+    // Aplicar el estado final también via inline style (backup en caso
+    // de que algo elimine la WAAPI animation)
+    anim.onfinish = () => {
+      el.style.opacity = "1";
+      el.style.transform = "translateY(0px)";
+    };
+  });
+}
+
+function finish() {
+  removeCover();
+  revealHero();
+}
+
 function init() {
   if (typeof window === "undefined") return;
 
-  // Si intro-locked no está al cargar, remover cover inmediato
+  // Si intro-locked no está al cargar, correr finish inmediato
   if (!document.documentElement.classList.contains("intro-locked")) {
-    removeCover();
+    finish();
     return;
   }
 
   let done = false;
-  const finish = () => {
+  const onceFinish = () => {
     if (done) return;
     done = true;
-    removeCover();
+    finish();
   };
 
-  window.addEventListener("mvx:intro-done", finish, { once: true });
+  window.addEventListener("mvx:intro-done", onceFinish, { once: true });
 
-  // Polling cada 200ms: detecta cuando intro-locked se quita
+  // Polling cada 200ms
   const poll = setInterval(() => {
     if (done) {
       clearInterval(poll);
@@ -40,17 +91,17 @@ function init() {
     }
     if (!document.documentElement.classList.contains("intro-locked")) {
       clearInterval(poll);
-      finish();
+      onceFinish();
     }
   }, 200);
 
-  // Safety net: 12s — fuerza unlock pase lo que pase
+  // Safety net 12s
   setTimeout(() => {
     if (!done) {
       console.warn("[mvx] reveal safety net firing at 12s");
       document.documentElement.classList.remove("intro-locked");
       clearInterval(poll);
-      finish();
+      onceFinish();
     }
   }, 12000);
 }
