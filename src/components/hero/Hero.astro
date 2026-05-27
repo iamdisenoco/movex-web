@@ -64,53 +64,44 @@ import { brand } from "../../data/site";
     - ZONA BOTTOM-RIGHT (abajo a la derecha): párrafo + CTAs alineados der.
   -->
   <!-- LAYOUT:
-       - Grid 2 cols x 2 rows
-       - ROW 1 (auto, full width): vacío arriba (deja espacio para el nav)
-       - ROW 2 LEFT: título centrado vertical, alineado izquierda
-       - ROW 2 RIGHT: subtexto + CTAs centrados vertical, alineados a la derecha
-       Esto pone el bloque derecho a la MISMA altura del título — "más arriba y a la derecha"
-       que la versión bottom-right anterior. -->
-  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10 h-full grid grid-cols-1 lg:grid-cols-2 grid-rows-[auto_1fr] gap-y-8 lg:gap-y-0 pt-24 pb-12">
-    <!-- ROW 1: vacío arriba (col-span) -->
-    <div class="lg:col-span-2"></div>
+       - Título: ancho completo a la izquierda, centrado verticalmente
+       - Subtexto+CTAs: posición absoluta abajo-derecha (no en el grid)
+         con bottom moderado para que no quede pegado al fondo ni muy arriba
+  -->
+  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10 h-full flex items-center pt-24 pb-32">
+    <h1
+      data-hero-entry="1"
+      class="max-w-4xl font-display-xl text-[clamp(2.8rem,7.5vw,6.5rem)] leading-[0.92] opacity-0"
+    >
+      <span data-split class="block text-white">Conectamos</span>
+      <span data-split class="block text-white">tu carga</span>
+      <span data-split="slow" class="block text-teal-300">con el mundo.</span>
+    </h1>
+  </div>
 
-    <!-- ROW 2 LEFT: título -->
-    <div class="flex items-center">
-      <h1
-        data-hero-entry="1"
-        class="font-display-xl text-[clamp(2.8rem,7.5vw,6.5rem)] leading-[0.92] opacity-0"
+  <!-- Subtexto + CTAs: posición absoluta. bottom-32 = ~8rem del fondo (no tan abajo como antes).
+       right-6 lg:right-10 = pegado al borde derecho (más que con max-w-7xl mx-auto). -->
+  <div class="absolute bottom-32 right-6 lg:right-10 z-10 max-w-md sm:max-w-lg lg:max-w-xl text-right">
+    <p
+      data-hero-entry="2"
+      class="text-base sm:text-lg leading-relaxed text-white/90 mb-8 opacity-0"
+    >
+      Soluciones logísticas, portuarias y digitales diseñadas para una operación más eficiente, conectada y precisa.
+    </p>
+
+    <div data-hero-entry="3" class="flex flex-wrap gap-4 justify-end opacity-0">
+      <a
+        href="#quienes-somos"
+        class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-teal-500 hover:bg-teal-300 text-navy-900 font-semibold px-7 py-4 text-base transition-all hover:scale-[1.03]"
       >
-        <span data-split class="block text-white">Conectamos</span>
-        <span data-split class="block text-white">tu carga</span>
-        <span data-split="slow" class="block text-teal-300">con el mundo.</span>
-      </h1>
-    </div>
-
-    <!-- ROW 2 RIGHT: subtexto + CTAs alineados a la derecha, centrados verticalmente -->
-    <div class="flex items-center justify-end">
-      <div class="max-w-xl text-right">
-        <p
-          data-hero-entry="2"
-          class="text-base sm:text-lg leading-relaxed text-white/90 mb-8 opacity-0"
-        >
-          Soluciones logísticas, portuarias y digitales diseñadas para una operación más eficiente, conectada y precisa.
-        </p>
-
-        <div data-hero-entry="3" class="flex flex-wrap gap-4 justify-end opacity-0">
-          <a
-            href="#quienes-somos"
-            class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-teal-500 hover:bg-teal-300 text-navy-900 font-semibold px-7 py-4 text-base transition-all hover:scale-[1.03]"
-          >
-            Sobre Movex
-          </a>
-          <a
-            href="#contacto"
-            class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-semibold px-7 py-4 text-base transition-all border border-white/25"
-          >
-            Contáctanos
-          </a>
-        </div>
-      </div>
+        Sobre Movex
+      </a>
+      <a
+        href="#contacto"
+        class="inline-flex items-center justify-center min-w-[180px] rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-semibold px-7 py-4 text-base transition-all border border-white/25"
+      >
+        Contáctanos
+      </a>
     </div>
   </div>
 
