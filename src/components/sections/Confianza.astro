@@ -2,8 +2,17 @@
 const placeholders = Array.from({ length: 8 }, (_, i) => `LOGO ${String(i + 1).padStart(2, "0")}`);
 ---
 
-<section class="relative bg-white text-navy-900 py-24 sm:py-32">
-  <div class="mx-auto max-w-7xl px-6 lg:px-10">
+<section class="relative bg-white text-navy-900 py-24 sm:py-32 overflow-hidden">
+  <!-- Letra decorativa "ALIADOS" — flota detrás del título con parallax -->
+  <div
+    aria-hidden="true"
+    data-parallax="0.35"
+    class="absolute top-16 -right-4 pointer-events-none select-none font-display-xl text-[clamp(8rem,22vw,22rem)] leading-[0.8] text-teal-500/[0.05] whitespace-nowrap"
+  >
+    ALIADOS
+  </div>
+
+  <div class="relative mx-auto max-w-7xl px-6 lg:px-10">
     <!-- Header strip -->
     <div class="flex justify-between items-center mb-12 text-[11px] font-mono uppercase tracking-[0.25em] text-navy-500">
       <span>● Confianza</span>
@@ -16,8 +25,12 @@ const placeholders = Array.from({ length: 8 }, (_, i) => `LOGO ${String(i + 1).p
     </h2>
 
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-px bg-gray-100 border border-gray-100 rounded-3xl overflow-hidden">
-      {placeholders.map((p) => (
-        <div class="aspect-[3/2] bg-white flex items-center justify-center grayscale opacity-40 hover:opacity-100 hover:grayscale-0 transition-all">
+      {placeholders.map((p, i) => (
+        <div
+          data-reveal="up"
+          style={`--reveal-delay:${i * 60}ms`}
+          class="aspect-[3/2] bg-white flex items-center justify-center grayscale opacity-40 hover:opacity-100 hover:grayscale-0 transition-all"
+        >
           <span class="font-display text-sm tracking-[0.18em] text-navy-500">{p}</span>
         </div>
       ))}
