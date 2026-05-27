@@ -1,8 +1,5 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { makeContainerMesh } from "./containerFactory";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -87,18 +84,11 @@ export default function Container3D({
     rim.position.set(-4, 2, 8);
     scene.add(rim);
 
-    // ── Composer + bloom (acentos teal luminosos)
-    const composer = new EffectComposer(renderer);
-    composer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
-    composer.setSize(w, h);
-    composer.addPass(new RenderPass(scene, camera));
-    const bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(w, h),
-      variant === "digital" ? 0.7 : 0.45,
-      0.55,
-      0.5,
-    );
-    composer.addPass(bloomPass);
+    // NOTA: SIN EffectComposer/UnrealBloomPass intencionalmente.
+    // El bloom rellena con negro y rompe el alpha del canvas → se ve una
+    // caja negra rectangular sobre el video del hero (bug visto 2026-05-26).
+    // El glow lo simulamos con drop-shadow CSS en el wrapper + PointLight
+    // teal interno. Sin bloom = canvas verdaderamente transparente.
 
     // ── El contenedor Movex
     const containerMesh = makeContainerMesh({
@@ -175,8 +165,6 @@ export default function Container3D({
       const H = container.clientHeight;
       if (W === 0 || H === 0) return;
       renderer.setSize(W, H);
-      composer.setSize(W, H);
-      bloomPass.setSize(W, H);
       camera.aspect = W / H;
       camera.updateProjectionMatrix();
     });
@@ -225,7 +213,7 @@ export default function Container3D({
         });
       }
 
-      composer.render();
+      renderer.render(scene, camera);
     };
     const ticker = setInterval(() => {
       if (disposed) return;
