@@ -116,6 +116,39 @@ html.intro-locked body {
 }
 
 /* ─────────────────────────────────────────────────────────────────────
+   HERO REVEAL — CSS @keyframes puras, disparadas cuando intro-locked
+   se quita del html. SIN JS que pueda fallar/interferir. Esta era la
+   única forma confiable después de 4 intentos con JS (las transitions
+   JS quedaban "stuck running" porque algún loop las reseteaba).
+   ─────────────────────────────────────────────────────────────────── */
+@keyframes mvxFadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Estado inicial: invisible + offset */
+[data-hero-entry] {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+/* Cuando intro-locked se quita → la animación corre automáticamente */
+html:not(.intro-locked) [data-hero-entry] {
+  animation: mvxFadeInUp 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Stagger por índice */
+html:not(.intro-locked) [data-hero-entry="0"] { animation-delay: 200ms; }
+html:not(.intro-locked) [data-hero-entry="1"] { animation-delay: 340ms; }
+html:not(.intro-locked) [data-hero-entry="2"] { animation-delay: 480ms; }
+html:not(.intro-locked) [data-hero-entry="3"] { animation-delay: 620ms; }
+html:not(.intro-locked) [data-hero-entry="4"] { animation-delay: 760ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-hero-entry] { opacity: 1; transform: none; animation: none; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
    SCROLL-REVEAL — fade/slide en entrada con easing premium
    cubic-bezier(0.16, 1, 0.3, 1) = Apple-like soft, anticipatorio.
    Duración 1100ms (más larga = más slow/cinematográfico).
