@@ -130,34 +130,88 @@ export const contact = {
  */
 export const introDestinations: Array<{ name: string; lat: number; lng: number; from?: "apartado" | "santamarta" | "colombia" }> = [
   // Norteamérica
-  { name: "Vancouver", lat: 50.5, lng: -121.5 },    // BC interior
-  { name: "Los Angeles", lat: 34.5, lng: -118.0 },  // California inland
-  { name: "Long Beach", lat: 33.9, lng: -117.5 },   // LA basin inland
-  { name: "Houston", lat: 30.5, lng: -95.5 },       // Texas inland
-  { name: "New York", lat: 41.2, lng: -74.5 },      // NY/NJ inland
-  { name: "Miami", lat: 26.5, lng: -80.5 },         // Florida interior
-  { name: "Manzanillo", lat: 20, lng: -103.5 },     // Jalisco interior
-  { name: "Veracruz", lat: 19.5, lng: -96.5 },      // Mexico east coast inland
+  { name: "Vancouver", lat: 50.5, lng: -121.5 },
+  { name: "Seattle", lat: 47.4, lng: -121.6 },
+  { name: "Portland", lat: 45.3, lng: -122.0 },
+  { name: "San Francisco", lat: 37.6, lng: -121.6 },
+  { name: "Los Angeles", lat: 34.5, lng: -118.0 },
+  { name: "Long Beach", lat: 33.9, lng: -117.5 },
+  { name: "San Diego", lat: 32.7, lng: -116.8 },
+  { name: "Phoenix", lat: 33.4, lng: -111.9 },
+  { name: "Houston", lat: 30.5, lng: -95.5 },
+  { name: "New Orleans", lat: 30.2, lng: -89.7 },
+  { name: "Mobile", lat: 30.7, lng: -88.0 },
+  { name: "Savannah", lat: 32.1, lng: -81.0 },
+  { name: "Charleston", lat: 32.8, lng: -79.8 },
+  { name: "Norfolk", lat: 36.9, lng: -76.2 },
+  { name: "Philadelphia", lat: 39.9, lng: -75.0 },
+  { name: "New York", lat: 41.2, lng: -74.5 },
+  { name: "Boston", lat: 42.4, lng: -71.0 },
+  { name: "Halifax", lat: 44.7, lng: -63.6 },
+  { name: "Miami", lat: 26.5, lng: -80.5 },
+  { name: "Tampa", lat: 27.9, lng: -82.5 },
+  { name: "Manzanillo", lat: 20, lng: -103.5 },
+  { name: "Veracruz", lat: 19.5, lng: -96.5 },
+  { name: "Mazatlán", lat: 23.2, lng: -106.4 },
+  { name: "Tijuana", lat: 32.5, lng: -116.9 },
+  { name: "Chicago", lat: 41.8, lng: -87.6 },
 
   // Centroamérica & Caribe
-  { name: "Kingston", lat: 18.1, lng: -77.0 },      // Jamaica interior
-  { name: "Santo Domingo", lat: 18.7, lng: -70.0 }, // DR interior
-  { name: "Panama", lat: 8.5, lng: -80.5 },         // Panama interior
+  { name: "Habana", lat: 23.1, lng: -82.4 },
+  { name: "Kingston", lat: 18.1, lng: -77.0 },
+  { name: "Santo Domingo", lat: 18.7, lng: -70.0 },
+  { name: "San Juan", lat: 18.4, lng: -66.1 },
+  { name: "Panama", lat: 8.5, lng: -80.5 },
+  { name: "San José", lat: 9.9, lng: -84.0 },
+  { name: "Limón", lat: 10.0, lng: -83.0 },
+  { name: "San Pedro Sula", lat: 15.5, lng: -88.0 },
+  { name: "Cartagena", lat: 10.4, lng: -75.5 },
+  { name: "Barranquilla", lat: 10.9, lng: -74.8 },
 
   // Sudamérica
-  { name: "Callao", lat: -12, lng: -76.5, from: "apartado" }, // Lima interior
-  { name: "Valparaíso", lat: -33, lng: -71, from: "santamarta" }, // Central Chile
-  { name: "Buenos Aires", lat: -34, lng: -60, from: "apartado" }, // Pampas interior
-  { name: "Santos", lat: -23, lng: -47 },           // São Paulo interior
-  { name: "Rio de Janeiro", lat: -22, lng: -43.5 }, // RJ interior
+  { name: "Guayaquil", lat: -2.2, lng: -79.9 },
+  { name: "Manta", lat: -1.0, lng: -80.7 },
+  { name: "Callao", lat: -12, lng: -76.5, from: "apartado" },
+  { name: "Iquique", lat: -20.2, lng: -70.1 },
+  { name: "Antofagasta", lat: -23.6, lng: -70.4 },
+  { name: "Valparaíso", lat: -33, lng: -71, from: "santamarta" },
+  { name: "Buenos Aires", lat: -34, lng: -60, from: "apartado" },
+  { name: "Montevideo", lat: -34.9, lng: -56.2 },
+  { name: "Santos", lat: -23, lng: -47 },
+  { name: "Rio de Janeiro", lat: -22, lng: -43.5 },
+  { name: "Salvador", lat: -12.9, lng: -38.5 },
+  { name: "Belém", lat: -1.4, lng: -48.5 },
+  { name: "Manaus", lat: -3.1, lng: -60.0 },
 
-  // Europa occidental (hemisferio visible)
-  { name: "Algeciras", lat: 37, lng: -5 },          // Andalucía interior
-  { name: "Le Havre", lat: 49, lng: 1.5, from: "apartado" }, // Normandy interior
-  { name: "Antwerp", lat: 50.85, lng: 4.7 },        // Belgium interior
-  { name: "Rotterdam", lat: 52.13, lng: 5.29 },     // Netherlands centroid
-  { name: "Hamburg", lat: 52.5, lng: 10.5 },        // Germany north
+  // Europa occidental
+  { name: "Lisbon", lat: 38.7, lng: -9.1 },
+  { name: "Porto", lat: 41.1, lng: -8.6 },
+  { name: "Algeciras", lat: 37, lng: -5 },
+  { name: "Valencia", lat: 39.5, lng: -0.4 },
+  { name: "Barcelona", lat: 41.4, lng: 2.2 },
+  { name: "Marseille", lat: 43.3, lng: 5.4 },
+  { name: "Genoa", lat: 44.4, lng: 8.9 },
+  { name: "Naples", lat: 40.8, lng: 14.3 },
+  { name: "Athens", lat: 37.9, lng: 23.7 },
+  { name: "Istanbul", lat: 41.0, lng: 29.0 },
+  { name: "Le Havre", lat: 49, lng: 1.5, from: "apartado" },
+  { name: "Antwerp", lat: 50.85, lng: 4.7 },
+  { name: "Rotterdam", lat: 52.13, lng: 5.29 },
+  { name: "Hamburg", lat: 52.5, lng: 10.5 },
+  { name: "Bremen", lat: 53.1, lng: 8.8 },
+  { name: "Felixstowe", lat: 51.9, lng: 1.3 },
+  { name: "Liverpool", lat: 53.4, lng: -3.0 },
+  { name: "Dublin", lat: 53.3, lng: -6.2 },
+  { name: "Copenhagen", lat: 55.7, lng: 12.6 },
+  { name: "Gothenburg", lat: 57.7, lng: 11.9 },
+  { name: "Oslo", lat: 59.9, lng: 10.7 },
+  { name: "Gdansk", lat: 54.3, lng: 18.6 },
 
   // África occidental
-  { name: "Lagos", lat: 8, lng: 4 },                // Nigeria south interior
+  { name: "Casablanca", lat: 33.5, lng: -7.5 },
+  { name: "Dakar", lat: 14.6, lng: -17.4 },
+  { name: "Abidjan", lat: 5.3, lng: -4.0 },
+  { name: "Accra", lat: 5.5, lng: -0.2 },
+  { name: "Lagos", lat: 8, lng: 4 },
+  { name: "Cape Town", lat: -33.9, lng: 18.4 },
 ];

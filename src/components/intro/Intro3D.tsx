@@ -57,6 +57,10 @@ export default function Intro3D() {
   const containerRef = useRef<HTMLDivElement>(null);
   const lockupRef = useRef<HTMLDivElement>(null);
   const [phase, setPhase] = useState<Phase>("boot");
+  // Color de las 3 rayas del isotipo — empieza teal (como las arcs) y
+  // pasa a blanco tras un delay para dar la sensación de "energía
+  // canalizándose en el logo".
+  const [linesWhite, setLinesWhite] = useState(false);
   // Early-skip si ya se vio la intro o el usuario prefiere reduced motion.
   // Esto evita inicializar three.js / WebGL — ahorra ~700KB de CPU/GPU en
   // re-cargas y permite que el resto del page (Lenis, SplitText) no se congele.
@@ -93,6 +97,18 @@ export default function Intro3D() {
       return;
     }
   }, [enabled]);
+
+  // Trigger del cambio teal → blanco cuando entran las rayas.
+  // Las rayas empiezan a animar en "lockup-big". A ~800ms (cuando ya
+  // están casi en su posición final, stagger total = 240ms + 1100ms anim
+  // = ~1340ms; metemos el cambio a la mitad para que se vea cómo cambian)
+  // se hace el fade a blanco.
+  useEffect(() => {
+    if (phase === "lockup-big") {
+      const t = setTimeout(() => setLinesWhite(true), 700);
+      return () => clearTimeout(t);
+    }
+  }, [phase]);
 
   // Skip handler
   useEffect(() => {
@@ -310,7 +326,7 @@ export default function Intro3D() {
       // NO subir el stroke — el glow viene del bloom, no del grosor.
       globe
         .arcColor("color")
-        .arcStroke(0.55)
+        .arcStroke(0.32) // más delgado — Jon pidió líneas más finas con más cantidad
         .arcAltitude("altitude")
         .arcDashLength(1)
         .arcDashGap(0)
@@ -491,12 +507,13 @@ export default function Intro3D() {
               Transición 1100ms cubic-bezier(0.16,1,0.3,1) con stagger 120ms. */}
           <svg
             viewBox="0 0 210 170"
-            fill="#ffffff"
+            fill="currentColor"
             preserveAspectRatio="xMidYMid meet"
+            shape-rendering="geometricPrecision"
             aria-hidden="true"
             style={{
               transition:
-                "height 1100ms cubic-bezier(0.16, 1, 0.3, 1), opacity 700ms cubic-bezier(0.32, 0.72, 0, 1), filter 900ms ease-out",
+                "height 1100ms cubic-bezier(0.16, 1, 0.3, 1), opacity 700ms cubic-bezier(0.32, 0.72, 0, 1), filter 900ms ease-out, color 900ms cubic-bezier(0.32, 0.72, 0, 1)",
               height:
                 phase === "lockup-big"
                   ? "60vh"
@@ -509,11 +526,20 @@ export default function Intro3D() {
                 phase === "matchmove"
                   ? 1
                   : 0,
+              // Color de las rayas: arranca en teal-300 (mismo color de las
+              // arcs) y se vuelve blanco a los 700ms del lockup-big.
+              color: linesWhite ? "#ffffff" : COLORS.teal300,
               filter:
                 phase === "lockup-big"
-                  ? "drop-shadow(0 0 60px rgba(45,138,138,0.7))"
+                  ? linesWhite
+                    ? "drop-shadow(0 0 60px rgba(45,138,138,0.7))"
+                    : "drop-shadow(0 0 80px rgba(95,179,179,0.85))"
                   : "drop-shadow(0 0 30px rgba(45,138,138,0.45))",
-              willChange: "height, opacity, filter",
+              willChange: "height, opacity, filter, color",
+              // Force GPU layer — ayuda con el rasterizado de los paths
+              // grandes (60vh) que se veían pixelados a veces.
+              transform: "translateZ(0)",
+              backfaceVisibility: "hidden",
             }}
           >
             {/* 3 rayas separadas. Cuando phase >= lockup-big, cada una
