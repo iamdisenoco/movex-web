@@ -222,34 +222,41 @@ if (!reduce) {
     if (!total) return;
     const cards = section.querySelectorAll<HTMLElement>("[data-stack-card]");
     const images = section.querySelectorAll<HTMLElement>("[data-stack-image]");
+    const titles = section.querySelectorAll<HTMLElement>("[data-stack-title]");
     const counter = section.querySelector<HTMLElement>("[data-stack-counter]");
     const imageCounter = section.querySelector<HTMLElement>("[data-stack-image-counter]");
+    const watermark = section.querySelector<HTMLElement>("[data-stack-watermark]");
     const dots = section.querySelectorAll<HTMLElement>("[data-stack-dot]");
+
+    // Easing con HOLD cerca del centro — `pow(abs, 2.2)` hace que cuando
+    // stage está cerca de 0 (card centrada), el movimiento es pequeño →
+    // la card "respira" en su posición. Lejos del centro (|stage|→1) el
+    // movimiento es completo (±100%). Es lo que pidió Jon: que la card
+    // se "detenga" cuando está alineada horizontalmente.
+    const holdEase = (stage: number): number => {
+      const s = Math.sign(stage);
+      const a = Math.min(1, Math.abs(stage));
+      return s * Math.pow(a, 2.2) * 100;
+    };
 
     const updateStack = () => {
       const rect = section.getBoundingClientRect();
       const vh = window.innerHeight;
-      // Distance scrolled INSIDE the section, normalized [0..1]
-      // Cuando section.top = 0 → progress 0. Cuando section.bottom = vh → progress 1.
       const total_scroll = section.offsetHeight - vh;
       const scrolled = Math.max(0, -rect.top);
       const progress = Math.max(0, Math.min(1, scrolled / total_scroll));
-      // Stage por card: 0 = la primera está centrada; total-1 = última centrada
       const cardProgress = progress * total;
       let activeIdx = Math.min(total - 1, Math.max(0, Math.floor(cardProgress)));
 
       cards.forEach((card, i) => {
-        // stage = -∞ (no llegó), 0 (centrada), 1 (saliendo), +∞ (ya salió)
         const stage = cardProgress - i;
         let ty: number;
         if (stage <= -1) ty = 100;
         else if (stage >= 1) ty = -100;
-        else ty = -stage * 100;
+        else ty = -holdEase(stage);
         card.style.transform = `translate3d(0, ${ty.toFixed(2)}%, 0)`;
-        // opacity para suavizar el fade en los extremos
         const op = stage <= -1 || stage >= 1.05 ? 0 : 1;
         card.style.opacity = String(op);
-        // z-index: más alto el que se acerca a 0
         card.style.zIndex = String(100 - Math.round(Math.abs(stage) * 10));
       });
 
@@ -257,9 +264,16 @@ if (!reduce) {
         img.style.opacity = i === activeIdx ? "1" : "0";
       });
 
+      // Stack de títulos overlay sobre la imagen — mismo opacity toggle
+      titles.forEach((t, i) => {
+        t.style.opacity = i === activeIdx ? "1" : "0";
+      });
+
       const padded = (n: number) => String(n).padStart(2, "0");
       if (counter) counter.textContent = `${padded(activeIdx + 1)} / ${padded(total)}`;
       if (imageCounter) imageCounter.innerHTML = `${padded(activeIdx + 1)}<span class="text-white/40">/${padded(total)}</span>`;
+      // Watermark gigante del número activo — refuerza la variación
+      if (watermark) watermark.textContent = padded(activeIdx + 1);
 
       dots.forEach((dot, i) => {
         if (i === activeIdx) {

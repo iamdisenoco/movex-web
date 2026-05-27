@@ -227,6 +227,27 @@ html.intro-locked body {
   will-change: transform;
 }
 
+/* Ken Burns continuo en imágenes — scale + pan suave en loop.
+   Aplicado en .mvx-ken-burns. Las imágenes inactivas (opacity 0) siguen
+   "animando" pero no se ven, así que cuando vuelven a ser activas ya
+   están a mid-loop = continuo. */
+@keyframes mvx-ken-burns {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.09) translate(-1.5%, -1%);
+  }
+  100% {
+    transform: scale(1) translate(0, 0);
+  }
+}
+.mvx-ken-burns {
+  animation: mvx-ken-burns 18s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+
 /* Ripple — onda teal expandiéndose desde el punto de click */
 @keyframes mvx-ripple-grow {
   to {
