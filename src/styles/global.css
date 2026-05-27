@@ -115,20 +115,9 @@ html.intro-locked body {
     var(--color-navy-900);
 }
 
-/* ─────────────────────────────────────────────────────────────────────
-   HERO REVEAL — Estado inicial INVISIBLE. La animación corre con WAAPI
-   (Web Animations API) desde intro-reveal.ts. WAAPI es la única forma
-   que funciona porque CSS keyframes y transitions se resetean por
-   algún loop interno del proyecto (Lenis/parallax/etc).
-   ─────────────────────────────────────────────────────────────────── */
-[data-hero-entry] {
-  opacity: 0;
-  transform: translateY(80px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [data-hero-entry] { opacity: 1; transform: none; }
-}
+/* HERO REVEAL — manejado por React + Framer Motion (HeroReveal.tsx).
+   Eliminado el CSS [data-hero-entry] que causaba race conditions con
+   los loops internos del proyecto. */
 
 /* ─────────────────────────────────────────────────────────────────────
    SCROLL-REVEAL — fade/slide en entrada con easing premium
