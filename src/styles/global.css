@@ -115,9 +115,29 @@ html.intro-locked body {
     var(--color-navy-900);
 }
 
-/* HERO REVEAL — manejado por React + Framer Motion (HeroReveal.tsx).
-   Eliminado el CSS [data-hero-entry] que causaba race conditions con
-   los loops internos del proyecto. */
+/* ─────────────────────────────────────────────────────────────────────
+   HERO REVEAL — CSS keyframes puro, sin dependencia de JS state.
+   `animation-fill-mode: backwards` aplica el estado del primer frame
+   ANTES de que el animation-delay se cumpla → garantiza que el primer
+   paint muestre el elemento oculto (sin race con la hidratación React).
+   Stagger logrado vía `animation-delay` por item.
+   ─────────────────────────────────────────────────────────────────── */
+@keyframes hero-reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+[data-hero-reveal] {
+  animation: hero-reveal-up 1200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--hero-reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
 
 /* ─────────────────────────────────────────────────────────────────────
    SCROLL-REVEAL — fade/slide en entrada con easing premium
