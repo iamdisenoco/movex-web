@@ -20,11 +20,12 @@ type Props = {
   position: "title" | "subtext";
 };
 
+// Animations EXAGERADAS para que sean imposibles de no ver
 const containerVariants: Variants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.18,
+      staggerChildren: 0.4,    // 400ms entre cada elemento (era 180ms)
       delayChildren: 0.2,
     },
   },
@@ -33,13 +34,13 @@ const containerVariants: Variants = {
 const itemVariants: Variants = {
   hidden: {
     opacity: 0,
-    y: 60,
+    y: 120,                    // 120px de slide (era 60px)
   },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 1.1,
+      duration: 1.6,            // 1.6s duración (era 1.1s)
       ease: [0.16, 1, 0.3, 1],
     },
   },
@@ -75,13 +76,14 @@ export default function HeroReveal({ position }: Props) {
         start();
       }
     }, 200);
-    // Safety net 10s
+    // Safety net 5s — más agresivo (era 10s) para no quedar stuck
     const safetyId = setTimeout(() => {
       if (!done) {
+        document.documentElement.classList.remove("intro-locked");
         clearInterval(poll);
         start();
       }
-    }, 10000);
+    }, 5000);
     return () => {
       window.removeEventListener("mvx:intro-done", start);
       clearInterval(poll);
