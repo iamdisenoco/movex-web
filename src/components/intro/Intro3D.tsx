@@ -25,6 +25,7 @@ const COLORS = {
   teal300: "#5fb3b3",
   sage: "#a8c4a0",
   white: "#fafbfc",
+  arcBlue: "#2c5fc4", // Azul navy futurista para las arcs (antes teal300)
 };
 
 // CDN endpoint with CORS open for world topology.
@@ -259,11 +260,11 @@ export default function Intro3D() {
             .polygonAltitude((f: any) => (f === colombiaFeature ? 0.022 : 0.008))
             .polygonCapColor((f: any) =>
               f === colombiaFeature
-                ? "rgba(45,138,138,0.95)"
+                ? "rgba(44,95,196,0.95)"
                 : "rgba(143,160,196,0.32)",
             )
             .polygonStrokeColor((f: any) =>
-              f === colombiaFeature ? "#5fb3b3" : "rgba(255,255,255,0.55)",
+              f === colombiaFeature ? "#2c5fc4" : "rgba(255,255,255,0.55)",
             );
         };
 
@@ -311,7 +312,7 @@ export default function Intro3D() {
         startLng: from.lng,
         endLat: dst.lat,
         endLng: dst.lng,
-        color: COLORS.teal300,
+        color: COLORS.arcBlue,
         altitude,
         // Stagger más rápido (450..1490ms vs 700..2860ms anterior) — sin tiempo muerto
         animTime: 450 + i * 40,
@@ -320,13 +321,12 @@ export default function Intro3D() {
 
     const startArcAccumulation = () => {
       if (disposed) return;
-      // Líneas LUMINOSAS reales — stroke DELGADO (0.55) pero con
-      // UnrealBloomPass aplicado en post-processing. El bloom hace que
-      // el color teal-300 (#5fb3b3) emita luz visible alrededor del trazo.
-      // NO subir el stroke — el glow viene del bloom, no del grosor.
+      // Líneas LUMINOSAS reales — stroke ULTRA DELGADO (0.35) +
+      // UnrealBloomPass en post-processing. Color #2c5fc4 (azul navy
+      // futurista) emite glow visible gracias al bloom.
       globe
         .arcColor("color")
-        .arcStroke(0.32) // más delgado — Jon pidió líneas más finas con más cantidad
+        .arcStroke(0.32) // más delgado — líneas finas con bloom glow
         .arcAltitude("altitude")
         .arcDashLength(1)
         .arcDashGap(0)
@@ -526,21 +526,16 @@ export default function Intro3D() {
                 phase === "matchmove"
                   ? 1
                   : 0,
-              // Color de las rayas: arranca en teal-300 (mismo color de las
-              // arcs) y se vuelve blanco a los 700ms del lockup-big.
-              color: linesWhite ? "#ffffff" : COLORS.teal300,
-              filter:
-                phase === "lockup-big"
-                  ? linesWhite
-                    ? "drop-shadow(0 0 60px rgba(45,138,138,0.7))"
-                    : "drop-shadow(0 0 80px rgba(95,179,179,0.85))"
-                  : "drop-shadow(0 0 30px rgba(45,138,138,0.45))",
-              willChange: "height, opacity, filter, color",
-              // Force GPU layer — ayuda con el rasterizado de los paths
-              // grandes (60vh) que se veían pixelados a veces.
+              // Color de las rayas: arranca en arcBlue (mismo color de las arcs
+              // del globo) y se vuelve blanco a los 700ms del lockup-big.
+              color: linesWhite ? "#ffffff" : COLORS.arcBlue,
+              // Sin drop-shadow filter — causaba rasterización del SVG y pixelación
+              // cuando el isotipo crecía a 60vh. GPU layer mantiene crisp.
+              filter: "none",
+              willChange: "height, opacity, color",
               transform: "translateZ(0)",
               backfaceVisibility: "hidden",
-            }}
+
           >
             {/* 3 rayas separadas. Cuando phase >= lockup-big, cada una
                 desliza desde un lado distinto con stagger 120ms.
@@ -578,12 +573,14 @@ export default function Intro3D() {
               );
             })()}
           </svg>
-          {/* Wordmark "movex" — usa el SVG oficial del logo (paths de la
-              fuente Neurial Grotesk del manual de marca), NO texto HTML
-              con Saira Variable. Fidelidad 100% al logo oficial. */}
-          <img
-            src="/brand/movex-wordmark-white.svg"
-            alt="movex"
+          {/* Wordmark "movex" — SVG INLINE (no <img>) para crisp en cualquier tamaño.
+              Antes con <img + drop-shadow> el browser rasterizaba el SVG → pixelación
+              al escalar. Inline SVG se renderiza como vector siempre. */}
+          <svg
+            viewBox="220 25 440 130"
+            fill="#ffffff"
+            preserveAspectRatio="xMidYMid meet"
+            aria-label="movex"
             style={{
               display: "block",
               transition:
@@ -600,9 +597,15 @@ export default function Intro3D() {
                   ? "translateX(0)"
                   : "translateX(60px)",
               willChange: "max-width, opacity, transform, height",
-              filter: "drop-shadow(0 0 30px rgba(45,138,138,0.35))",
+              filter: "none",
             }}
-          />
+          >
+            <path d="m282.29,119.63c-1.47-4.2-2.98-8.39-4.41-12.6-2.74-8.07-5.42-16.17-8.18-24.24-1.99-5.84-4.11-11.64-6.08-17.49-2.13-6.3-4.14-12.64-6.24-18.95-1.48-4.46-3.14-8.86-4.5-13.35-.58-1.92-1.44-2.84-3.5-2.81-5.35.07-10.71.1-16.06-.02-2.4-.05-3.26.71-3.24,3.24.13,11.14.06,22.27.06,33.41,0,22.77.02,45.54-.06,68.31,0,2.39.53,3.42,3.11,3.18,2.56-.24,5.17-.26,7.73-.01,2.82.27,3.72-.62,3.71-3.54-.12-26.25-.1-52.5-.12-78.75,0-1.68,0-3.36,0-5.03,2.2,3.74,3.13,7.74,4.52,11.58,2.79,7.7,4.83,15.67,7.64,23.37,3.14,8.63,6.06,17.33,8.91,26.06,2.71,8.3,5.8,16.46,8.6,24.73.41,1.22.97,1.55,2.08,1.55,4.07-.02,8.13,0,12.2-.02.66,0,1.64.16,1.71-.74.16-1.96,1.31-3.5,1.89-5.27,2.02-6.14,3.98-12.31,6.05-18.43,2.08-6.14,4.3-12.23,6.39-18.36,2.28-6.69,4.5-13.39,6.7-20.11,1.43-4.37,2.73-8.79,4.18-13.16,1.26-3.81,2.66-7.57,4-11.35.5,1.82.55,3.59.5,5.35-.63,21.67-.27,43.35-.37,65.02-.02,4.47.11,8.95-.07,13.42-.11,2.71.52,4.02,3.56,3.71,2.75-.28,5.55-.16,8.32-.02,2.02.11,2.48-.71,2.48-2.6-.05-33.91-.07-67.81.01-101.72,0-3-1.29-3.8-3.92-3.76-4.86.07-9.72.15-14.58-.04-2.33-.09-3.02,1-3.61,2.94-1.45,4.69-3.15,9.31-4.69,13.97-2.06,6.24-4.01,12.52-6.1,18.75-1.46,4.36-3.1,8.67-4.63,13.01-1.4,3.97-2.8,7.93-4.15,11.92-1.59,4.71-3.2,9.42-4.66,14.18-1.49,4.86-3.54,9.53-5.19,14.69Z" />
+            <path d="m417.26,84.43c-1.25-5.29-3.1-10.13-6.52-14.25-6.62-7.99-14.92-12.62-25.57-12.68-7.02-.04-13.84-.02-20.33,3.53-11.66,6.38-17.06,16.75-19.11,29.22-1.02,6.24-.92,12.58-.16,18.93.75,6.28,2.53,12.21,6.01,17.31,6.96,10.23,16.82,15.32,29.05,14.74,8.46.26,16.14-1.49,22.71-6.46,9.96-7.54,13.56-18.42,15-30.27.82-6.74.52-13.37-1.07-20.07Zm-13.43,19.92c-1.07,5.2-2.07,10.41-4.61,15.16-2.8,5.23-6.91,8.37-12.93,9.23-3.5.51-6.95.44-10.31-.15-5.5-.98-9.53-4.31-12.26-9.18-3.36-6-4.38-12.56-4.49-19.69.32-8.75,1.64-17.64,8.04-24.68,4.73-5.21,10.98-6.5,17.84-5.63,6.95.88,12.63,4.07,15.47,10.38,3.47,7.71,5.02,15.99,3.25,24.56Z" />
+            <path d="m458.03,122.22c-1.21-2.94-1.85-5.3-2.61-7.56-3.3-9.85-6.25-19.81-9.46-29.69-2.42-7.45-4.98-14.86-7.59-22.25-.52-1.48-.95-3.3-3.27-3.25-3.57.08-7.14-.04-10.71-.03-1.76,0-2.38.8-2.1,2.65.42,2.77,1.75,5.2,2.65,7.77,2.51,7.21,5.61,14.22,8.02,21.46,2.57,7.72,5.65,15.23,8.36,22.89,2.67,7.55,5.67,14.98,8.4,22.51.38,1.06.82,1.49,1.81,1.49,4.07.02,8.13,0,12.2.03,1.04,0,1.71-.45,2.04-1.39,1.67-4.72,3.48-9.39,5.29-14.06,3.93-10.13,7.42-20.43,11.22-30.61,3.73-10,7.61-19.95,11.48-29.91.62-1.61.7-2.69-1.42-2.72-3.76-.05-7.53-.06-11.29-.11-1.4-.02-1.96,1.03-2.28,2.02-1.22,3.72-2.54,7.4-3.87,11.08-2.86,7.95-5.43,16.01-8.14,24.01-2.8,8.26-5.61,16.51-8.72,25.64Z" />
+            <path d="m569.4,92.07c-.83-7.14-2.02-14.25-6.31-20.3-4.73-6.67-11.15-10.65-19.07-12.85-7.78-2.16-15.37-1.7-22.67.85-9.11,3.18-15.52,9.92-19.64,18.57-5.07,10.64-5.57,22.15-3.44,33.36,2.6,13.73,10.24,24.04,24.45,28.01,11.95,3.34,23.25,1.92,33.29-5.65,6.24-4.7,10.47-10.92,11.95-18.84.35-1.86-.34-2.05-1.75-2.06-2.48-.01-5.02.28-7.41-.19-3.1-.62-4.38,1-5.26,3.37-4.68,12.7-21.51,15.92-31.4,9.53-6.96-4.5-8.75-11.93-9.82-19.58-.33-2.33.57-3.1,2.87-3.08,8.62.09,17.25.04,25.87.04v-.04c8.62,0,17.25-.05,25.87.04,1.92.02,2.66-.53,2.56-2.53-.14-2.87.24-5.79-.09-8.64Zm-16.68.27c-6.34-.16-12.69-.06-19.03-.05-6.34,0-12.69-.07-19.03.04-2.06.03-2.54-.62-2.1-2.58,1.51-6.82,4.39-12.7,10.33-16.81,3.41-2.36,7.27-3.1,11.18-3.15,6.77-.09,12.69,2.16,16.67,7.99,2.4,3.52,3.39,7.69,4.38,11.79.45,1.86-.12,2.83-2.4,2.77Z" />
+            <path d="m609.49,86.51c-5.56-8.5-11.09-16.88-16.53-25.31-.71-1.09-1.31-1.82-2.73-1.79-4.26.08-8.53-.03-12.79.06-2.62.05-2.98.78-1.51,3.06,1.95,3.04,4,6.01,6.04,8.99,5.61,8.21,11.16,16.46,16.93,24.55.96,1.35,1.02,2.16.21,3.35-8.33,12.17-16.66,24.34-25,36.5-.38.56-1.12,1-.82,1.77.33.84,1.2.53,1.84.54,4.46.04,8.92,0,13.38.05,1.24.01,1.86-.49,2.53-1.56,5.25-8.37,10.64-16.65,15.91-25.01,1.13-1.79,2.17-1.89,3.23-.17,5.22,8.43,10.79,16.64,16.28,24.9.84,1.27,1.61,1.84,3.01,1.83,4.26-.03,8.53-.05,12.79-.05,2.02,0,2.91-.38,1.42-2.52-3.18-4.56-6.18-9.25-9.3-13.85-5.16-7.59-10.35-15.16-15.57-22.72-.59-.86-1.12-1.47-.3-2.57,3.11-4.22,6.13-8.51,9.16-12.79,4.91-6.95,9.82-13.91,14.67-20.91.53-.76,1.14-1.95.89-2.64-.34-.93-1.69-.78-2.67-.78-1.88-.01-3.81.25-5.64-.06-5.22-.86-9.16.6-11.41,5.64-.16.36-.32.72-.53,1.04-4.45,6.77-8.92,13.53-13.48,20.45Z" />
+          </svg>
         </div>
       </div>
 
