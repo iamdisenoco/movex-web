@@ -1,0 +1,31 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Movex — Explore 3D",
+  description = "Operador logístico portuario premium para carga internacional desde Apartadó y Santa Marta hacia el mundo.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#0d1626" />
+    <link rel="icon" type="image/svg+xml" href="/brand/movex-isotipo-3lines-black.svg" />
+    <title>{title}</title>
+  </head>
+  <body class="bg-[#0d1626] text-white antialiased">
+    <slot />
+  </body>
+</html>

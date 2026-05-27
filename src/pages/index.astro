@@ -1,31 +1,179 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import Nav from "../components/nav/Nav.astro";
-import Hero from "../components/hero/Hero.astro";
-import QuienesSomos from "../components/sections/QuienesSomos.astro";
-import Servicios from "../components/sections/Servicios.astro";
-import LogisticaDigital from "../components/sections/LogisticaDigital.astro";
-import Sostenibilidad from "../components/sections/Sostenibilidad.astro";
-import Confianza from "../components/sections/Confianza.astro";
-import Contacto from "../components/sections/Contacto.astro";
-import Footer from "../components/sections/Footer.astro";
-import Intro3D from "../components/intro/Intro3D";
+import LayoutExplore from "../layouts/LayoutExplore.astro";
+import Explore3D from "../components/explore/Explore3D";
 ---
 
-<Layout>
-  <!-- client:only="react": three.js requiere window, no SSR-able.
-       El componente retorna null inmediatamente si sessionStorage.mvx_intro_v6 está set,
-       evitando cargar three.js en reloads. -->
-  <Intro3D client:only="react" />
-  <Nav />
-  <main>
-    <Hero />
-    <Servicios />
-    <QuienesSomos />
-    <LogisticaDigital />
-    <Sostenibilidad />
-    <Confianza />
-    <Contacto />
+<LayoutExplore>
+  <!-- Canvas 3D fixed background (z-0) -->
+  <Explore3D client:only="react" />
+
+  <!-- Nav overlay -->
+  <header
+    class="fixed top-0 inset-x-0 z-40 flex items-center justify-between px-6 lg:px-10 py-5 pointer-events-none"
+  >
+    <a href="/" class="flex items-center gap-3 pointer-events-auto">
+      <img
+        src="/brand/movex-isotipo-3lines-white.svg"
+        alt="movex"
+        class="h-7 w-auto"
+        onerror="this.src='/brand/movex-isotipo-white.svg'"
+      />
+      <span
+        class="font-mono text-[10px] tracking-[0.3em] text-white/55 hidden md:inline"
+      >
+        EXPLORE · v7
+      </span>
+    </a>
+    <nav class="flex items-center gap-6 pointer-events-auto">
+      <a
+        href="#contacto"
+        class="font-mono text-[11px] tracking-[0.25em] text-white/70 hover:text-teal-300 transition-colors uppercase"
+      >
+        Contacto
+      </a>
+    </nav>
+  </header>
+
+  <!-- Scroll sections — cada una empuja la cámara a su keyframe -->
+  <main class="relative z-10">
+    <!-- Section 0: Hero — aérea sobre el puerto -->
+    <section class="min-h-screen flex items-end px-6 lg:px-12 pb-24">
+      <div class="max-w-3xl">
+        <p
+          class="font-mono text-[10px] tracking-[0.35em] text-teal-300/90 mb-6 uppercase"
+        >
+          Operador logístico portuario · Apartadó · Santa Marta
+        </p>
+        <h1
+          class="font-[Archivo] font-semibold tracking-tight text-5xl md:text-7xl lg:text-8xl leading-[0.95]"
+          style="font-stretch:125%;"
+        >
+          Avance
+          <span class="text-teal-300">&</span>
+          movilidad
+        </h1>
+        <p class="mt-8 text-white/75 text-lg md:text-xl max-w-xl leading-relaxed">
+          Mueve carga internacional desde el Caribe colombiano hacia el mundo.
+          Operaciones terrestres, portuarias, logística digital y global —
+          una sola red premium.
+        </p>
+        <div class="mt-10 flex items-center gap-3 font-mono text-[10px] tracking-[0.3em] text-white/55">
+          <span class="w-8 h-px bg-white/30"></span>
+          <span>Scroll para explorar</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 1: Descenso al puerto -->
+    <section class="min-h-screen flex items-center px-6 lg:px-12">
+      <div class="max-w-2xl ml-auto text-right">
+        <p class="font-mono text-[10px] tracking-[0.35em] text-teal-300/90 mb-5 uppercase">
+          01 — El puerto
+        </p>
+        <h2
+          class="font-[Archivo] font-semibold tracking-tight text-4xl md:text-6xl leading-[1.0]"
+          style="font-stretch:125%;"
+        >
+          Donde la carga<br />se vuelve global.
+        </h2>
+        <p class="mt-6 text-white/70 text-base md:text-lg leading-relaxed">
+          Operamos en Apartadó (Urabá) y Santa Marta — dos puertos clave para
+          el comercio del Caribe colombiano. Refrigerados, granel, proyectos,
+          maquinaria y vehículos.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 2: El patio -->
+    <section class="min-h-screen flex items-center px-6 lg:px-12">
+      <div class="max-w-2xl">
+        <p class="font-mono text-[10px] tracking-[0.35em] text-teal-300/90 mb-5 uppercase">
+          02 — Operaciones terrestres
+        </p>
+        <h2
+          class="font-[Archivo] font-semibold tracking-tight text-4xl md:text-6xl leading-[1.0]"
+          style="font-stretch:125%;"
+        >
+          Cada contenedor,<br />trazado.
+        </h2>
+        <p class="mt-6 text-white/70 text-base md:text-lg leading-relaxed">
+          Descargue, consolidación, etiquetado, inspecciones y manejo de equipo
+          portuario. Cada movimiento queda registrado.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 3: Container HÉROE Movex — logística digital -->
+    <section class="min-h-screen flex items-center justify-center px-6 lg:px-12">
+      <div class="max-w-xl text-center">
+        <p class="font-mono text-[10px] tracking-[0.35em] text-teal-300/90 mb-5 uppercase">
+          03 — Logística digital
+        </p>
+        <h2
+          class="font-[Archivo] font-semibold tracking-tight text-4xl md:text-6xl leading-[1.0]"
+          style="font-stretch:125%;"
+        >
+          Tu carga, en<br />tiempo real.
+        </h2>
+        <p class="mt-6 text-white/75 text-base md:text-lg leading-relaxed">
+          Trazabilidad punta a punta, cadena de frío auditada, software embebido
+          en operaciones. El diferenciador.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 4: Buque — logística global -->
+    <section class="min-h-screen flex items-center px-6 lg:px-12">
+      <div class="max-w-2xl">
+        <p class="font-mono text-[10px] tracking-[0.35em] text-teal-300/90 mb-5 uppercase">
+          04 — Logística global
+        </p>
+        <h2
+          class="font-[Archivo] font-semibold tracking-tight text-4xl md:text-6xl leading-[1.0]"
+          style="font-stretch:125%;"
+        >
+          Del Caribe<br />al mundo.
+        </h2>
+        <p class="mt-6 text-white/70 text-base md:text-lg leading-relaxed">
+          Coordinación marítima y terrestre, agenciamiento aduanero, seguros y
+          asesoría regulatoria. Operadores conectados con navieras top-tier.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 5: Cierre + contacto -->
+    <section
+      id="contacto"
+      class="min-h-screen flex items-center justify-center px-6 lg:px-12"
+    >
+      <div class="max-w-2xl text-center">
+        <p class="font-mono text-[10px] tracking-[0.35em] text-teal-300/90 mb-5 uppercase">
+          05 — Movex
+        </p>
+        <h2
+          class="font-[Archivo] font-semibold tracking-tight text-5xl md:text-7xl leading-[0.95]"
+          style="font-stretch:125%;"
+        >
+          ¿Listos para mover<br />tu próxima carga?
+        </h2>
+        <div class="mt-12 flex items-center justify-center gap-4">
+          <a
+            href="mailto:contacto@movex.com.co"
+            class="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-teal-300 text-[#0d1626] font-semibold tracking-tight hover:bg-teal-200 transition-colors"
+          >
+            Hablemos
+          </a>
+          <a
+            href="https://movex-web.vercel.app"
+            class="inline-flex items-center gap-2 px-7 py-3 rounded-full border border-white/25 text-white font-medium tracking-tight hover:border-teal-300 hover:text-teal-300 transition-colors"
+          >
+            Ver propuesta A
+          </a>
+        </div>
+        <p class="mt-10 font-mono text-[10px] tracking-[0.3em] text-white/40 uppercase">
+          Apartadó · Santa Marta · Colombia
+        </p>
+      </div>
+    </section>
   </main>
-  <Footer />
-</Layout>
+</LayoutExplore>
