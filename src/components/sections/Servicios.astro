@@ -66,8 +66,9 @@ const total = services.length;
         <span data-split="slow" class="block text-teal-300">servicios.</span>
       </h2>
 
-      <!-- Card stack: 2 columnas → imagen (izq) + card-content (der) -->
-      <div class="relative grid lg:grid-cols-[1fr_1.2fr] gap-6 lg:gap-10 items-stretch h-[clamp(280px,38vh,400px)]">
+      <!-- Card stack: 2 columnas → imagen (izq) + card-content (der).
+           Altura aumentada para que los cards con muchos items (Terrestres: 10) no se corten. -->
+      <div class="relative grid lg:grid-cols-[1fr_1.2fr] gap-6 lg:gap-10 items-stretch h-[clamp(380px,52vh,560px)]">
         <!-- Imagen del service activo (cross-fade entre cards) -->
         <div class="relative aspect-[4/3] lg:aspect-auto rounded-3xl overflow-hidden bg-navy-700">
           {services.map((s, i) => (
