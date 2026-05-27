@@ -96,8 +96,9 @@ const total = services.length;
               <article
                 data-stack-card={i}
                 style={`--stack-i:${i}; --stack-total:${total}; transform: translate3d(0, ${i === 0 ? "0%" : "100%"}, 0); opacity: ${i === 0 ? 1 : 0}; z-index: ${100 - i};`}
-                class={`absolute inset-0 rounded-3xl p-8 sm:p-10 flex flex-col justify-between will-change-transform transition-opacity duration-500 ${isAccent ? "bg-navy-700 text-white" : "bg-white text-navy-900"}`}
+                class={`absolute inset-0 rounded-3xl p-8 sm:p-10 flex flex-col gap-6 will-change-transform transition-opacity duration-500 ${isAccent ? "bg-navy-700 text-white" : "bg-white text-navy-900"}`}
               >
+                <!-- Header del card: número + título. Mismo lugar en TODOS los cards -->
                 <div>
                   <div class={`text-[10px] font-mono uppercase tracking-[0.25em] mb-4 ${isAccent ? "text-teal-300" : "text-teal-500"}`}>
                     0{i + 1} / 0{total}
@@ -105,12 +106,14 @@ const total = services.length;
                       <span class={`ml-3 ${isAccent ? "text-teal-300" : "text-teal-500"}`}>★ Diferenciador Movex</span>
                     )}
                   </div>
-                  <h3 class={`font-display text-3xl sm:text-4xl mb-6 leading-tight ${isAccent ? "text-white" : "text-navy-900"}`}>
+                  <h3 class={`font-display text-3xl sm:text-4xl leading-tight ${isAccent ? "text-white" : "text-navy-900"}`}>
                     {s.title}
                   </h3>
                 </div>
+                <!-- Lista de ítems: queda inmediatamente debajo del título, no en el fondo.
+                     Así todos los cards se ven igual sin importar cuántos ítems tengan. -->
                 <ul class={`grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-6 text-sm sm:text-base ${isAccent ? "text-white/85" : "text-navy-700"}`}>
-                  {s.items.slice(0, 8).map((item) => (
+                  {s.items.slice(0, 10).map((item) => (
                     <li class="flex items-start gap-2.5">
                       <span class={`mt-2 size-1 rounded-full flex-shrink-0 ${isAccent ? "bg-teal-300" : "bg-teal-500"}`}></span>
                       <span>{item}</span>
