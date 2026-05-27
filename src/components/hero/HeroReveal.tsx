@@ -70,15 +70,19 @@ export default function HeroReveal({ position }: Props) {
       >
         <a
           href="#quienes-somos"
-          className="inline-flex items-center justify-center min-w-[180px] rounded-full bg-teal-500 hover:bg-teal-300 text-navy-900 font-semibold px-7 py-4 text-base transition-colors hover:scale-[1.03]"
+          data-magnetic
+          data-ripple
+          className="mvx-shimmer inline-flex items-center justify-center min-w-[180px] rounded-full bg-teal-500 hover:bg-teal-300 text-navy-900 font-semibold px-7 py-4 text-base transition-colors"
         >
-          Sobre Movex
+          <span>Sobre Movex</span>
         </a>
         <a
           href="#contacto"
+          data-magnetic
+          data-ripple
           className="inline-flex items-center justify-center min-w-[180px] rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-semibold px-7 py-4 text-base transition-colors border border-white/25"
         >
-          Contáctanos
+          <span>Contáctanos</span>
         </a>
       </div>
     </div>

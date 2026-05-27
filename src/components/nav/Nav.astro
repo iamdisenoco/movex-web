@@ -21,8 +21,9 @@ import { nav } from "../../data/site";
   <div class="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-6 md:px-10 py-4">
     <!-- 1) Logo (izquierda) — isotipo + wordmark del LOGO OFICIAL (no texto).
          Usamos SVGs con las paths originales para fidelidad 100% al manual
-         de marca (la fuente "Neurial Grotesk" del wordmark es comercial). -->
-    <a href="/" class="flex items-center gap-2.5 text-white shrink-0" aria-label="Movex inicio">
+         de marca (la fuente "Neurial Grotesk" del wordmark es comercial).
+         Class mvx-logo-hover activa el wiggle del isotipo al hover (CSS). -->
+    <a href="/" class="mvx-logo-hover flex items-center gap-2.5 text-white shrink-0" aria-label="Movex inicio">
       <img id="nav-isotipo" src="/brand/movex-isotipo-3lines-white.svg" alt="" class="h-7 w-auto" />
       <img id="nav-wordmark" src="/brand/movex-wordmark-white.svg" alt="movex" class="h-5 w-auto" />
     </a>
@@ -43,8 +44,8 @@ import { nav } from "../../data/site";
         <a
           href={item.href}
           style={`--nav-i:${i}`}
-          class="nav-link rounded-full px-5 py-2 text-base tracking-wide
-                 text-white/85 hover:text-[#bfff1a]
+          class="nav-link mvx-link-underline rounded-full px-5 py-2 text-base tracking-wide
+                 text-white/85 hover:text-teal-300
                  transition-colors duration-200 opacity-0
                  [transition-delay:calc(var(--nav-i)*60ms+250ms)]
                  data-[ready=true]:opacity-100"
@@ -55,15 +56,18 @@ import { nav } from "../../data/site";
       ))}
     </nav>
 
-    <!-- 3) CTA (derecha) — pill teal sólido -->
+    <!-- 3) CTA (derecha) — pill teal sólido con magnetic hover + ripple + glow -->
     <a
       href="#contacto"
-      class="hidden sm:inline-flex items-center gap-2 rounded-full
+      data-magnetic
+      data-magnetic-strength="0.25"
+      data-ripple
+      class="mvx-shimmer mvx-pulse-glow hidden sm:inline-flex items-center gap-2 rounded-full
              bg-teal-500 hover:bg-teal-300 text-navy-900 font-semibold
-             px-5 py-2.5 text-sm transition-all hover:scale-[1.03]
+             px-5 py-2.5 text-sm transition-colors
              shrink-0"
     >
-      Cotizar carga
+      <span>Cotizar carga</span>
       <span aria-hidden="true">→</span>
     </a>
 
