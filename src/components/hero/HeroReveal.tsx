@@ -47,47 +47,29 @@ const itemVariants: Variants = {
 };
 
 export default function HeroReveal({ position }: Props) {
+  // SIMPLE: si sessionStorage tiene mvx_intro_v6 (intro ya vista) → arrancar
+  // inmediato. Si no → esperar máximo 6s (duración de intro + buffer) y
+  // arrancar pase lo que pase. Sin polling, sin eventos. Brutal pero confiable.
   const [ready, setReady] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
-    // Si ya pasó la intro (sessionStorage flag) o no hay intro-locked, arrancar inmediato
-    return (
-      sessionStorage.getItem("mvx_intro_v6") !== null ||
-      !document.documentElement.classList.contains("intro-locked")
-    );
+    return sessionStorage.getItem("mvx_intro_v6") !== null;
   });
 
   useEffect(() => {
     if (ready) return;
-    let done = false;
-    const start = () => {
-      if (done) return;
-      done = true;
+    // Escuchar el evento (camino rápido)
+    const onIntroDone = () => setReady(true);
+    window.addEventListener("mvx:intro-done", onIntroDone, { once: true });
+    // Safety net agresivo: a los 6s pase lo que pase
+    const safety = setTimeout(() => {
       setReady(true);
-    };
-    window.addEventListener("mvx:intro-done", start, { once: true });
-    // Polling backup: si en algún momento intro-locked se quita, arrancar
-    const poll = setInterval(() => {
-      if (done) {
-        clearInterval(poll);
-        return;
-      }
-      if (!document.documentElement.classList.contains("intro-locked")) {
-        clearInterval(poll);
-        start();
-      }
-    }, 200);
-    // Safety net 5s — más agresivo (era 10s) para no quedar stuck
-    const safetyId = setTimeout(() => {
-      if (!done) {
-        document.documentElement.classList.remove("intro-locked");
-        clearInterval(poll);
-        start();
-      }
-    }, 5000);
+      // También limpiar el cover por si quedó stuck
+      document.documentElement.classList.remove("intro-locked");
+      sessionStorage.setItem("mvx_intro_v6", "1");
+    }, 6000);
     return () => {
-      window.removeEventListener("mvx:intro-done", start);
-      clearInterval(poll);
-      clearTimeout(safetyId);
+      window.removeEventListener("mvx:intro-done", onIntroDone);
+      clearTimeout(safety);
     };
   }, [ready]);
 
