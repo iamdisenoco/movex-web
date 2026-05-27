@@ -19,15 +19,16 @@ const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let lenis: Lenis | null = null;
 if (!reduce) {
   lenis = new Lenis({
-    // Lerp MUY SLOW (0.05) — sensación premium estilo MVP/Awwwards.
-    // El scroll se "asienta" lentamente, las cosas se mueven como
-    // mantequilla. wheelMultiplier 0.7 reduce más el delta por click.
-    duration: 1.6,
+    // Lerp 0.12 — scroll responsivo pero todavia smooth (Lenis default es 0.1).
+    // Antes estaba en 0.05 + wheelMultiplier 0.7 + duration 1.6 → daba sensacion
+    // "tostada" (~1s de lag entre rueda y respuesta visual). Subido para que
+    // cada tick del wheel se sienta inmediato sin perder el smoothing.
+    duration: 1.0,
     easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smoothWheel: true,
-    wheelMultiplier: 0.7,
-    touchMultiplier: 1.4,
-    lerp: 0.05,
+    wheelMultiplier: 1.0,
+    touchMultiplier: 1.6,
+    lerp: 0.12,
   });
 
   const root = document.documentElement;
@@ -197,31 +198,37 @@ if (!reduce) {
 
   const scaleEls = [...document.querySelectorAll<HTMLElement>("[data-scale-on-scroll]")];
 
-  let lastY = -1;
-  const tick = () => {
+  // Render coalescido: en lugar de un rAF infinito, escucho scroll/resize y
+  // disparo UN rAF por evento. Ahorra ~60 rAFs/s cuando el user no se mueve.
+  let queued = false;
+  const render = () => {
+    queued = false;
     const y = window.scrollY;
-    if (y !== lastY) {
-      lastY = y;
-      const vh = window.innerHeight;
+    const vh = window.innerHeight;
 
-      parallaxEls.forEach(({ el, speed, anchor, mode }) => {
-        // Para modo "page": el video se traslada DOWN con scrollY (técnica MVP)
-        // Para modo "section": solo cuando la section ha empezado a scrollearse
-        const offset = y - anchor;
-        const ty = offset * speed;
-        el.style.transform = `translate3d(0, ${ty.toFixed(2)}px, 0)`;
-      });
+    parallaxEls.forEach(({ el, speed, anchor }) => {
+      const offset = y - anchor;
+      const ty = offset * speed;
+      el.style.transform = `translate3d(0, ${ty.toFixed(2)}px, 0)`;
+    });
 
-      scaleEls.forEach((el) => {
-        const r = el.getBoundingClientRect();
-        const enter = Math.max(0, Math.min(1, 1 - r.top / vh));
-        const scale = 1.15 - enter * 0.15;
-        el.style.transform = `scale(${scale.toFixed(4)})`;
-      });
-    }
-    requestAnimationFrame(tick);
+    scaleEls.forEach((el) => {
+      const r = el.getBoundingClientRect();
+      const enter = Math.max(0, Math.min(1, 1 - r.top / vh));
+      const scale = 1.15 - enter * 0.15;
+      el.style.transform = `scale(${scale.toFixed(4)})`;
+    });
   };
-  if (parallaxEls.length || scaleEls.length) requestAnimationFrame(tick);
+  const schedule = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(render);
+  };
+  if (parallaxEls.length || scaleEls.length) {
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    render();
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────
