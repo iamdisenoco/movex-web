@@ -3,13 +3,9 @@ import { timeline, counters } from "../../data/site";
 
 const advantages = [
   { title: "20+ años", body: "de experiencia operativa heredada del grupo Cargoban." },
-  { title: "Flota moderna", body: "capaz de manejar carga general, refrigerada, granel y proyectos." },
   { title: "Bodegas estratégicas", body: "en Apartadó y Santa Marta para logística ágil y eficiente." },
-  { title: "Soporte 24/7", body: "siempre cerca para que tengas control total de tu carga." },
-  { title: "Optimización de ruta", body: "para reducir tiempos y costos en cada despacho." },
   { title: "Equipo propio", body: "logísticos experimentados controlando cada etapa." },
   { title: "Seguro de carga", body: "para máxima seguridad y tranquilidad operacional." },
-  { title: "Términos flexibles", body: "y soluciones a medida para cada cliente." },
 ];
 ---
 
@@ -89,10 +85,10 @@ const advantages = [
     <!-- Left: sticky giant title -->
     <div data-reveal="left" class="lg:sticky lg:top-32 lg:self-start">
       <div class="text-[11px] font-mono uppercase tracking-[0.25em] text-teal-500 mb-6">
-        ● Nuestras Ventajas
+        ● Por qué Movex
       </div>
       <h2 data-split class="font-display-xl text-[clamp(3rem,7vw,7rem)] text-navy-900 leading-[0.95] mb-8">
-        Nuestras ventajas.
+        Por qué Movex.
       </h2>
       <p class="text-base text-navy-700 leading-relaxed max-w-md">
         Lo que define cómo operamos y por qué los importadores y exportadores nos eligen para
@@ -105,7 +101,7 @@ const advantages = [
       {advantages.map((adv, i) => (
         <article data-reveal="right" style={`--reveal-delay:${i * 60}ms`} class="rounded-3xl bg-gray-100 p-8 sm:p-10 grid grid-cols-[auto_1fr_2fr] gap-6 items-start hover:bg-gray-100/80 transition-colors">
           <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-navy-500 pt-2">
-            0{i + 1}/08
+            0{i + 1}/0{advantages.length}
           </div>
           <h3 class="font-display text-2xl sm:text-3xl text-navy-900 leading-tight">
             {adv.title}
