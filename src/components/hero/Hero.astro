@@ -24,9 +24,8 @@ import HeroReveal from "./HeroReveal";
     <div class="absolute inset-0 [background:radial-gradient(ellipse_at_55%_50%,rgba(45,138,138,0.35)_0%,transparent_55%)]"></div>
   </div>
 
-  <!-- Background video PALINDROME (loop seamless con ffmpeg reverse).
-       SCALE 1.85: barco protagonista, domina el hero estilo MVP (camión enorme).
-       El overflow-hidden del section recorta los bordes que sobresalen. -->
+  <!-- Background video — sin scale para evitar pixelación del 1920x1080 original.
+       object-cover se encarga de cubrir el viewport sin estirar pixels. -->
   <video
     id="hero-video"
     class="absolute inset-0 size-full object-cover -z-20 opacity-0 transition-opacity duration-700 ease-out"
@@ -37,7 +36,6 @@ import HeroReveal from "./HeroReveal";
     playsinline
     preload="auto"
     aria-hidden="true"
-    style="transform: scale(1.85); transform-origin: center 60%;"
   ></video>
 
   <!-- Overlay degradado IZQUIERDA-A-DERECHA:
