@@ -38,14 +38,16 @@ function revealHero() {
   );
   entries.forEach((el) => {
     const i = parseInt(el.dataset.heroEntry || "0", 10);
-    const delay = 200 + i * 140;
+    // Stagger más AMPLIO + duración más LARGA para que sea visiblemente
+    // perceptible (antes: 200+i*140 / 900ms → demasiado rápido, no se notaba)
+    const delay = 300 + i * 280;
     const anim = el.animate(
       [
-        { opacity: 0, transform: "translateY(40px)" },
+        { opacity: 0, transform: "translateY(80px)" },
         { opacity: 1, transform: "translateY(0px)" },
       ],
       {
-        duration: 900,
+        duration: 1400,
         delay,
         easing: EASE,
         fill: "forwards",
