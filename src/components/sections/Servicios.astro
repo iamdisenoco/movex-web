@@ -62,8 +62,8 @@ const total = services.length;
 
       <!-- Title compacto (queda fijo, no se mueve con las cards) -->
       <h2 class="font-display-xl text-[clamp(2rem,4.5vw,4rem)] text-white leading-[0.95] mb-8 max-w-3xl">
-        <span data-split class="block">Lo que hacemos —</span>
-        <span data-split="slow" class="block text-teal-300 italic">end-to-end.</span>
+        <span data-split class="block">Nuestros</span>
+        <span data-split="slow" class="block text-teal-300">servicios.</span>
       </h2>
 
       <!-- Card stack: 2 columnas → imagen (izq) + card-content (der) -->
@@ -123,15 +123,6 @@ const total = services.length;
         </div>
       </div>
 
-      <!-- Progress dots -->
-      <div class="mt-8 flex gap-2 justify-center" data-stack-dots>
-        {services.map((_, i) => (
-          <span
-            data-stack-dot={i}
-            class={`block h-1 rounded-full transition-all duration-300 ${i === 0 ? "bg-teal-300 w-8" : "bg-white/20 w-4"}`}
-          ></span>
-        ))}
-      </div>
     </div><!-- /cuadro azul -->
   </div><!-- /sticky stage -->
 </section>
