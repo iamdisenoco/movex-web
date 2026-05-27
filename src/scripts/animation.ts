@@ -1,6 +1,6 @@
 /**
  * Movex global animation stack:
- *  1) Lenis smooth scroll (lerp + raf)
+ *  1) Scroll nativo (Lenis removido por perf 2026-05-26)
  *  2) SplitText reveal — divide [data-split] en .word > .char con stagger
  *  3) Parallax tied — [data-parallax="speed"] se transladan con scroll progress
  *  4) IntersectionObserver reveal — para [data-reveal] clásico
@@ -9,82 +9,59 @@
  *
  *  Todo se desactiva con prefers-reduced-motion.
  */
-import Lenis from "lenis";
 
 const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // ─────────────────────────────────────────────────────────────────
-// 1) LENIS — smooth scroll lerp
+// 1) SCROLL — nativo del browser (Lenis removido por perf)
+//
+// Razón: el scroll se sentía "tostado". Lenis smooth-scroll requiere
+// rAF infinito + dispara scroll events en cada tick + agrega un nivel
+// de indirección entre wheel y movement. Con el card-stack handler +
+// parallax + sticky + video escalado, el costo acumulado bajaba el FPS
+// a niveles inaceptables. Volver al scroll nativo es responsivo 1:1.
+//
+// La sensación "premium smooth" la dejamos a las transitions de los
+// elementos (cards entrando, parallax tied, fade-ins).
 // ─────────────────────────────────────────────────────────────────
-let lenis: Lenis | null = null;
+
+// Anchor links → scroll smooth nativo del browser
 if (!reduce) {
-  lenis = new Lenis({
-    // Lerp 0.12 — scroll responsivo pero todavia smooth (Lenis default es 0.1).
-    // Antes estaba en 0.05 + wheelMultiplier 0.7 + duration 1.6 → daba sensacion
-    // "tostada" (~1s de lag entre rueda y respuesta visual). Subido para que
-    // cada tick del wheel se sienta inmediato sin perder el smoothing.
-    duration: 1.0,
-    easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    smoothWheel: true,
-    wheelMultiplier: 1.0,
-    touchMultiplier: 1.6,
-    lerp: 0.12,
-  });
-
-  const root = document.documentElement;
-  lenis.on("scroll", ({ scroll }: { scroll: number }) => {
-    root.style.setProperty("--scroll-y", scroll + "px");
-  });
-
-  const raf = (t: number) => {
-    lenis!.raf(t);
-    requestAnimationFrame(raf);
-  };
-  requestAnimationFrame(raf);
-
-  // Anchor links → Lenis smooth scroll con offset por nav
   document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
     a.addEventListener("click", (e) => {
       const id = a.getAttribute("href");
       if (!id || id.length < 2) return;
-      const target = document.querySelector(id);
+      const target = document.querySelector(id) as HTMLElement | null;
       if (!target) return;
       e.preventDefault();
-      lenis!.scrollTo(target as HTMLElement, { offset: -64, duration: 1.2 });
+      const y = target.getBoundingClientRect().top + window.scrollY - 64;
+      window.scrollTo({ top: y, behavior: "smooth" });
     });
   });
-
-  if (document.documentElement.classList.contains("intro-locked")) {
-    lenis.stop();
-  }
-  const resumeScroll = () => {
-    if (!lenis) return;
-    document.documentElement.classList.remove("intro-locked");
-    lenis.start();
-  };
-  window.addEventListener("mvx:intro-done", resumeScroll);
-
-  // SAFETY NET 1: si en 12s el intro no terminó (bug, error, navegador lento),
-  // forzar unlock — el user nunca debe quedarse atascado sin poder scrollear.
-  setTimeout(() => {
-    if (document.documentElement.classList.contains("intro-locked")) {
-      console.warn("[mvx] Intro animation didn't finish in 12s — forcing unlock");
-      sessionStorage.setItem("mvx_intro_v6", "1");
-      resumeScroll();
-    }
-  }, 12000);
-
-  // SAFETY NET 2: si el user intenta scrollear (wheel/touch) y la intro está
-  // todavía mounted, asumimos que quiere saltar y forzamos unlock.
-  const onEarlyScroll = () => {
-    if (document.documentElement.classList.contains("intro-locked")) {
-      sessionStorage.setItem("mvx_intro_v6", "1");
-      resumeScroll();
-    }
-  };
-  window.addEventListener("wheel", onEarlyScroll, { passive: true });
-  window.addEventListener("touchstart", onEarlyScroll, { passive: true });
 }
+
+// Safety nets de intro — siguen siendo necesarias por si el intro se atora.
+const resumeScroll = () => {
+  document.documentElement.classList.remove("intro-locked");
+};
+window.addEventListener("mvx:intro-done", resumeScroll);
+
+setTimeout(() => {
+  if (document.documentElement.classList.contains("intro-locked")) {
+    console.warn("[mvx] Intro animation didn't finish in 12s — forcing unlock");
+    sessionStorage.setItem("mvx_intro_v6", "1");
+    resumeScroll();
+  }
+}, 12000);
+
+const onEarlyScroll = () => {
+  if (document.documentElement.classList.contains("intro-locked")) {
+    sessionStorage.setItem("mvx_intro_v6", "1");
+    resumeScroll();
+  }
+};
+window.addEventListener("wheel", onEarlyScroll, { passive: true });
+window.addEventListener("touchstart", onEarlyScroll, { passive: true });
 
 // ─────────────────────────────────────────────────────────────────
 // 2) SPLIT TEXT — divide text nodes en spans char-por-char
