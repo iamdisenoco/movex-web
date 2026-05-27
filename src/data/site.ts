@@ -110,7 +110,6 @@ export const services = [
 
 export const sustainability = [
   { title: "Fundación Movex", body: "Programas sociales en Urabá y Santa Marta." },
-  { title: "FONDECAR", body: "Apoyo educativo a familias colaboradoras." },
   { title: "Bienestar Laboral", body: "Programas integrales para el equipo Movex." },
   { title: "Ambiente", body: "Operaciones con mínimo impacto ecológico." },
 ] as const;
