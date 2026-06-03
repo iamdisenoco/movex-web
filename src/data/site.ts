@@ -46,7 +46,7 @@ export const services = [
   {
     id: "terrestres",
     title: "Operaciones Terrestres",
-    image: "/assets/images/02-terrestre.jpg",
+    image: "/assets/images/terrestres-reach-stacker.jpg",
     items: [
       "Descargue de camiones",
       "Consolidación de contenedores",
@@ -88,7 +88,7 @@ export const services = [
   {
     id: "global",
     title: "Logística Global",
-    image: "/assets/images/01-hero.jpg",
+    image: "/assets/images/global-puerto-dusk.jpg",
     items: [
       "Gestión segura de carga",
       "Asesoramiento de transporte",
