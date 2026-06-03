@@ -1,33 +1,47 @@
 ---
 import { services } from "../../data/site";
-const total = services.length;
+
+// Encontrar el index del servicio destacado (featured = Logística Digital).
+// Se usa para asignarle la posición "hero" del bento (card grande).
+const featuredIdx = services.findIndex((s) => (s as any).featured === true);
+
+// Orden bento: featured va primero (card grande). Los demás se acomodan
+// alrededor según el grid CSS abajo.
+const ordered = [
+  services[featuredIdx],
+  ...services.filter((_, i) => i !== featuredIdx),
+];
 ---
 
 <!--
-  Servicios — Card Stack scroll-driven (rediseño 2026-05-26):
-  ------------------------------------------------------------
-  Cambios pedidos por Jon:
-    1. Más diseños/decoraciones para que no quede plano cuando la letra
-       "SERVICIOS GLOBALES" se va. Watermark gigante de número activo
-       cambia con cada card + segunda letra deco "GLOBAL" abajo.
-    2. Hold/respiración en cada card cuando está centrada (easing pow 2.2
-       en animation.ts → la card vive en su posición ~30-40% del slot).
-    3. Imágenes con Ken Burns continuo (scale 1 → 1.08 → 1) — siempre
-       animadas, se ven cuando son la activa (opacity 1).
-    4. Título de cada servicio GRANDE sobre la imagen izquierda; sólo
-       descripción/lista a la derecha.
+  Servicios — Bento grid (rediseño 2026-05-27):
+  ----------------------------------------------
+  Reemplaza el card-stack scroll-driven anterior. Todos los servicios
+  visibles a la vez en grid asimétrico estilo Apple Vision Pro.
+
+  4 niveles de dinamismo (Jon 2026-05-27):
+    1. Entrada cinematográfica — stagger reveal al entrar al viewport
+       (data-bento-card + CSS keyframes + IntersectionObserver)
+    2. Hover rico — tilt 3D según mouse position (animation.ts) +
+       lift + image zoom + sibling fade (CSS)
+    3. Contenido vivo dentro de cada card:
+       - Logística Digital (la grande): dashboard mock con counter
+         animado, dot pulsante, mini gráfica SVG
+       - Global: mini mapa con arcs pulsantes desde Colombia (SVG)
+       - Terrestres: Ken Burns continuo (reusa .mvx-ken-burns)
+       - Portuarias: imagen con zoom on hover
+       - Alquiler: 4 iconos rotando lentos
+    4. Expand on click — abre modal fullscreen con lista completa
+       de items + más detalle (animation.ts maneja open/close)
 -->
 <section
   id="servicios"
-  data-card-stack
-  data-card-stack-count={total}
-  class="relative z-20 text-white -mt-[12vh]"
-  style={`height: ${(total + 1) * 100}vh`}
+  class="relative z-20 text-white -mt-[12vh] bg-navy-900 rounded-t-[40px] sm:rounded-t-[60px] shadow-[0_-20px_60px_rgba(0,0,0,0.4)] pt-24 sm:pt-32 lg:pt-40 pb-32 lg:pb-48 px-4 sm:px-8 lg:px-12 overflow-hidden"
 >
-  <!-- Decorative giant bg headline ARRIBA — la letra que ya teníamos -->
+  <!-- Letras decorativas: SERVICIOS GLOBALES arriba + WORLDWIDE abajo -->
   <div
     aria-hidden="true"
-    class="pointer-events-none select-none absolute top-12 left-0 right-0 z-0 overflow-hidden"
+    class="pointer-events-none select-none absolute top-8 left-0 right-0 z-0 overflow-hidden"
   >
     <div
       data-parallax="0.3"
@@ -36,9 +50,6 @@ const total = services.length;
       SERVICIOS GLOBALES
     </div>
   </div>
-
-  <!-- Segunda letra deco — entra desde abajo cuando "SERVICIOS GLOBALES"
-       ya se fue. Da continuidad visual durante el card stack. -->
   <div
     aria-hidden="true"
     class="pointer-events-none select-none absolute bottom-12 left-0 right-0 z-0 overflow-hidden"
@@ -51,115 +62,287 @@ const total = services.length;
     </div>
   </div>
 
-  <!-- Background dots pattern — sutil grid de puntos teal animados.
-       Vive dentro del sticky stage para mantenerse visible durante
-       todo el card stack (no se va con el scroll). -->
-  <div
-    aria-hidden="true"
-    class="absolute inset-0 z-0 pointer-events-none opacity-25 [background-image:radial-gradient(circle,rgba(95,179,179,0.18)_1px,transparent_1px)] [background-size:32px_32px]"
-  ></div>
-
-  <!-- Sticky stage: queda fijo durante todo el pin space -->
-  <div class="sticky top-0 h-screen overflow-hidden flex items-center justify-center px-4 sm:px-8 lg:px-12">
-    <!-- CUADRO AZUL: container narrow centered con bg navy + radius -->
-    <div class="relative w-full max-w-6xl bg-navy-900 rounded-[24px] sm:rounded-[28px] shadow-[0_-20px_60px_rgba(0,0,0,0.4),0_30px_80px_rgba(0,0,0,0.3)] px-6 sm:px-10 lg:px-14 py-10 sm:py-14 lg:py-16 h-[clamp(620px,84vh,840px)] overflow-hidden flex flex-col justify-center">
-      <!-- Watermark del número activo — gigante atrás del card, cambia
-           con la card activa. Da variación visual por card. -->
-      <div
-        aria-hidden="true"
-        class="absolute -bottom-12 -right-6 pointer-events-none select-none font-display-xl text-[clamp(10rem,26vw,26rem)] leading-[0.8] text-white/[0.04] whitespace-nowrap"
-      >
-        <span data-stack-watermark>0{1}</span>
+  <div class="relative mx-auto max-w-7xl">
+    <!-- Header section -->
+    <div class="flex flex-col items-center text-center mb-12 sm:mb-16">
+      <div class="text-[11px] font-mono uppercase tracking-[0.3em] text-teal-300 mb-4 inline-flex items-center gap-2">
+        <span class="size-1.5 rounded-full bg-teal-300 animate-pulse"></span>
+        Servicios · 5 verticales
       </div>
-
-      <!-- Header strip -->
-      <div class="relative flex justify-between items-center mb-6 text-[11px] font-mono uppercase tracking-[0.25em] text-white/55">
-        <span class="flex items-center gap-2">
-          <span class="size-1.5 rounded-full bg-teal-300 animate-pulse"></span>
-          Servicios
-        </span>
-        <span class="hidden sm:inline" data-stack-counter>01 / 0{total}</span>
-      </div>
-
-      <!-- Title compacto de la sección (queda fijo) -->
-      <h2 class="relative font-display-xl text-[clamp(2rem,4.5vw,4rem)] text-white leading-[0.95] mb-8 max-w-3xl">
+      <h2 class="font-display-xl text-[clamp(2.5rem,5vw,5rem)] leading-[0.95] max-w-3xl">
         <span data-split class="block">Nuestros</span>
         <span data-split="slow" class="block text-teal-300">servicios.</span>
       </h2>
+      <p data-reveal="up" style="--reveal-delay:150ms" class="mt-6 text-base sm:text-lg text-white/70 max-w-xl">
+        Cinco verticales integradas para mover tu carga desde y hacia cualquier
+        parte del mundo.
+      </p>
+    </div>
 
-      <!-- Grid principal: imagen+título a la izquierda (más peso 1.4fr) +
-           descripción/lista a la derecha (1fr). Altura aumentada para
-           respiración del nuevo layout. -->
-      <div class="relative grid lg:grid-cols-[1.4fr_1fr] gap-6 lg:gap-10 items-stretch h-[clamp(400px,55vh,580px)]">
-        <!-- IZQUIERDA: imagen con título overlay GRANDE -->
-        <div class="relative aspect-[4/3] lg:aspect-auto rounded-3xl overflow-hidden bg-navy-700">
-          <!-- Stack de imágenes (todas absolute, JS toggle opacity) -->
-          {services.map((s, i) => (
+    <!--
+      BENTO GRID — 5 cards, alturas/spans distintos:
+        Desktop (lg):
+          [   1 (2x2)  ][ 2 (1x1) ]
+          [            ][ 3 (1x1) ]
+          [ 4 (2x1)    ][ 5 (1x1) ]
+        Tablet (md): 2 columnas, todas alto medio
+        Mobile: 1 columna stack
+    -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 auto-rows-[220px] sm:auto-rows-[260px] lg:auto-rows-[200px]">
+      {ordered.map((s, i) => {
+        // Asignar tamaños bento por posición en el array ordered
+        const sizeClass = (() => {
+          // i=0 → Logística Digital (la featured) — 2x2 (grande)
+          if (i === 0) return "md:col-span-2 md:row-span-2";
+          // i=1 → primera secundaria — 1x1
+          if (i === 1) return "md:col-span-1 md:row-span-1";
+          // i=2 → segunda secundaria — 1x1
+          if (i === 2) return "md:col-span-1 md:row-span-1";
+          // i=3 → tercera — 2x1 (ancha)
+          if (i === 3) return "md:col-span-2 md:row-span-1";
+          // i=4 → cuarta — 1x1
+          return "md:col-span-1 md:row-span-1";
+        })();
+
+        const isHero = i === 0;
+        const id = `srv-${s.id}`;
+
+        return (
+          <article
+            data-bento-card={i}
+            data-srv-id={s.id}
+            data-srv-hero={isHero ? "true" : "false"}
+            style={`--bento-i: ${i}`}
+            class={`mvx-bento-card group relative ${sizeClass} rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer transform-gpu`}
+            aria-label={`Ver detalle de ${s.title}`}
+          >
+            <!-- Background image con Ken Burns -->
             <img
               src={s.image}
-              alt={s.title}
-              data-stack-image={i}
-              class={`mvx-ken-burns absolute inset-0 size-full object-cover transition-opacity duration-500 ${i === 0 ? "opacity-100" : "opacity-0"}`}
-              loading="lazy"
+              alt=""
+              class="mvx-ken-burns absolute inset-0 size-full object-cover"
+              loading={isHero ? "eager" : "lazy"}
+              aria-hidden="true"
             />
-          ))}
-          <!-- Overlay degradado para legibilidad del título -->
-          <div class="absolute inset-0 bg-gradient-to-t from-navy-900/85 via-navy-900/30 to-navy-900/20 pointer-events-none"></div>
+            <!-- Overlay degradado (más fuerte para legibilidad) -->
+            <div class={`absolute inset-0 ${isHero ? "bg-gradient-to-t from-navy-900/95 via-navy-900/55 to-navy-900/30" : "bg-gradient-to-t from-navy-900/90 via-navy-900/40 to-navy-900/20"} group-hover:from-navy-900/85 group-hover:via-navy-900/40 group-hover:to-navy-900/15 transition-colors duration-500`}></div>
 
-          <!-- Counter chico arriba-izquierda -->
-          <div class="absolute top-6 left-6 font-mono text-[10px] tracking-[0.25em] text-white/75" data-stack-image-counter>
-            01<span class="text-white/40">/0{total}</span>
-          </div>
+            <!-- Border glow teal en hover -->
+            <div class="absolute inset-0 rounded-2xl sm:rounded-3xl pointer-events-none ring-1 ring-white/10 group-hover:ring-teal-300/60 group-hover:shadow-[0_0_40px_-5px_rgba(95,179,179,0.35)] transition-all duration-500"></div>
 
-          <!-- STACK DE TÍTULOS GRANDES — overlay sobre imagen, abajo-izquierda.
-               Cada uno tiene opacity 0/1 controlada por JS (igual que imágenes). -->
-          {services.map((s, i) => (
-            <div
-              data-stack-title={i}
-              class={`absolute bottom-6 left-6 right-6 transition-opacity duration-500 ${i === 0 ? "opacity-100" : "opacity-0"}`}
-            >
-              {(s as any).featured === true && (
-                <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-teal-300 mb-3 inline-flex items-center gap-2 rounded-full bg-teal-300/15 backdrop-blur px-3 py-1">
-                  ★ Diferenciador Movex
+            <!-- Shimmer diagonal al hover (reusa .mvx-shimmer) -->
+            <div class="mvx-shimmer absolute inset-0 pointer-events-none rounded-2xl sm:rounded-3xl"></div>
+
+            {isHero && (
+              <!--
+                CONTENIDO ESPECIAL en la card grande de Logística Digital:
+                dashboard mock con header status, counter animado, mini
+                gráfica, pills de datos. Refuerza el diferenciador.
+              -->
+              <div class="absolute top-6 right-6 z-10 hidden sm:block">
+                <div class="rounded-2xl bg-navy-900/55 backdrop-blur-md border border-teal-300/25 px-4 py-3 w-[210px] shadow-[0_0_30px_rgba(45,138,138,0.18)]">
+                  <div class="flex items-center gap-2 text-[9px] font-mono uppercase tracking-[0.25em] text-teal-300/85 mb-3">
+                    <span class="size-1.5 rounded-full bg-teal-300 animate-pulse"></span>
+                    Operations live
+                  </div>
+                  <!-- Counter principal -->
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-white text-2xl font-display tabular-nums" data-bento-counter data-from="1240" data-to="1260">1,247</span>
+                    <span class="text-white/40 text-[10px]">en tránsito</span>
+                  </div>
+                  <!-- Mini gráfica SVG (8 barras animadas) -->
+                  <svg viewBox="0 0 80 24" class="mt-2 w-full h-6" aria-hidden="true">
+                    {Array.from({ length: 8 }).map((_, j) => (
+                      <rect
+                        x={j * 10 + 1}
+                        y={24 - (8 + ((j * 13) % 16))}
+                        width="6"
+                        height={8 + ((j * 13) % 16)}
+                        fill="#5fb3b3"
+                        opacity={0.35 + (j % 3) * 0.18}
+                        class="mvx-bar-pulse"
+                        style={`animation-delay: ${j * 130}ms;`}
+                      />
+                    ))}
+                  </svg>
                 </div>
-              )}
-              <h3 class="font-display-xl text-[clamp(2rem,4.5vw,3.5rem)] text-white leading-[0.95] drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
+              </div>
+            )}
+
+            <!-- Contenido principal: título grande + items preview + arrow -->
+            <div class="relative h-full flex flex-col justify-end p-6 sm:p-7 lg:p-8 z-10">
+              <!-- Header chip: número 0X/05 + featured badge -->
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-[9px] font-mono uppercase tracking-[0.25em] text-teal-300/85 rounded-full bg-teal-300/10 backdrop-blur px-2.5 py-1">
+                  0{i + 1} / 0{services.length}
+                </span>
+                {isHero && (
+                  <span class="text-[9px] font-mono uppercase tracking-[0.25em] text-teal-300 rounded-full bg-teal-300/15 backdrop-blur px-2.5 py-1">
+                    ★ Diferenciador
+                  </span>
+                )}
+              </div>
+              <!-- Título -->
+              <h3 class={`font-display-xl text-white leading-[0.95] drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)] mb-3 ${isHero ? "text-[clamp(2rem,4vw,3.5rem)]" : "text-[clamp(1.5rem,2.5vw,2.25rem)]"}`}>
                 {s.title}
               </h3>
+              <!-- Preview de items (primeros 3 si hero, 2 si chica) -->
+              <ul class="space-y-1.5 text-sm text-white/80 leading-snug">
+                {s.items.slice(0, isHero ? 4 : 2).map((item) => (
+                  <li class="flex items-start gap-2">
+                    <span class="mt-1.5 size-1 rounded-full flex-shrink-0 bg-teal-300"></span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+                {s.items.length > (isHero ? 4 : 2) && (
+                  <li class="text-teal-300/85 text-xs mt-2 inline-flex items-center gap-1.5">
+                    +{s.items.length - (isHero ? 4 : 2)} más
+                    <span aria-hidden="true" class="inline-block transition-transform group-hover:translate-x-1">→</span>
+                  </li>
+                )}
+              </ul>
             </div>
-          ))}
-        </div>
+          </article>
+        );
+      })}
+    </div>
+  </div>
 
-        <!-- DERECHA: stack de cards con sólo descripción/items (sin título) -->
-        <div class="relative">
-          {services.map((s, i) => {
-            const isAccent = i % 2 === 1;
-            return (
-              <article
-                data-stack-card={i}
-                style={`--stack-i:${i}; --stack-total:${total}; transform: translate3d(0, ${i === 0 ? "0%" : "100%"}, 0); opacity: ${i === 0 ? 1 : 0}; z-index: ${100 - i};`}
-                class={`absolute inset-0 rounded-3xl p-8 sm:p-10 flex flex-col gap-5 will-change-transform transition-opacity duration-500 ${isAccent ? "bg-navy-700 text-white" : "bg-white text-navy-900"}`}
-              >
-                <!-- Header chiquito: solo número 0X/0total (Jon pidió quitar "Servicios incluidos") -->
-                <div class={`text-[10px] font-mono uppercase tracking-[0.25em] ${isAccent ? "text-teal-300" : "text-teal-500"}`}>
-                  0{i + 1} / 0{total}
-                </div>
+  <!--
+    MODAL fullscreen — se abre al click en cualquier card del bento.
+    Muestra lista completa de items + detalle visual. Cierra con ESC,
+    click fuera, o botón X. Renderiza UN solo modal reusable;
+    animation.ts lo puebla con datos según la card clickeada.
+  -->
+  <div
+    id="srv-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+    aria-labelledby="srv-modal-title"
+    class="fixed inset-0 z-[60] hidden items-center justify-center p-4 sm:p-8 bg-navy-900/85 backdrop-blur-md opacity-0 transition-opacity duration-300"
+  >
+    <button
+      type="button"
+      data-srv-modal-close
+      aria-label="Cerrar"
+      class="absolute top-4 right-4 sm:top-6 sm:right-6 size-11 rounded-full bg-white/10 hover:bg-teal-500 hover:text-navy-900 border border-white/20 flex items-center justify-center transition-colors"
+    >
+      <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M6 6l12 12M6 18L18 6" stroke-linecap="round" />
+      </svg>
+    </button>
 
-                <!-- Lista de items -->
-                <ul class={`grid grid-cols-1 sm:grid-cols-2 gap-y-2.5 gap-x-6 text-sm sm:text-base ${isAccent ? "text-white/90" : "text-navy-700"}`}>
-                  {s.items.slice(0, 10).map((item) => (
-                    <li class="flex items-start gap-2.5">
-                      <span class={`mt-2 size-1 rounded-full flex-shrink-0 ${isAccent ? "bg-teal-300" : "bg-teal-500"}`}></span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            );
-          })}
+    <article class="relative w-full max-w-5xl max-h-[88vh] overflow-hidden rounded-3xl bg-navy-700 text-white grid lg:grid-cols-[1.1fr_1fr] shadow-[0_30px_80px_rgba(0,0,0,0.5)]">
+      <!-- Imagen del servicio -->
+      <div class="relative aspect-[4/3] lg:aspect-auto overflow-hidden">
+        <img id="srv-modal-image" src="" alt="" class="absolute inset-0 size-full object-cover mvx-ken-burns" />
+        <div class="absolute inset-0 bg-gradient-to-tr from-navy-900/70 via-navy-900/20 to-transparent"></div>
+        <div class="absolute top-6 left-6 text-[10px] font-mono uppercase tracking-[0.25em] text-teal-300/85" id="srv-modal-counter">
+          01 / 05
         </div>
       </div>
-
-    </div><!-- /cuadro azul -->
-  </div><!-- /sticky stage -->
+      <!-- Contenido -->
+      <div class="p-8 sm:p-10 lg:p-12 overflow-y-auto">
+        <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-teal-300 mb-4" id="srv-modal-eyebrow">
+          ● Servicio
+        </div>
+        <h3 id="srv-modal-title" class="font-display-xl text-[clamp(2rem,4vw,3rem)] leading-[0.95] mb-6">
+          Título
+        </h3>
+        <ul id="srv-modal-items" class="grid sm:grid-cols-2 gap-y-2.5 gap-x-6 text-sm sm:text-base text-white/85">
+        </ul>
+        <a
+          href="#contacto"
+          data-magnetic
+          data-ripple
+          class="mvx-shimmer mt-8 inline-flex items-center gap-2 rounded-full bg-teal-500 hover:bg-teal-300 text-navy-900 font-semibold px-6 py-3 text-sm transition-colors"
+        >
+          <span>Cotizar este servicio</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </article>
+  </div>
 </section>
+
+<script define:vars={{ services }}>
+  // ───────────────────────────────────────────────────────────────
+  // Modal de servicio: open/close al click en cualquier card del bento
+  // ───────────────────────────────────────────────────────────────
+  (() => {
+    const modal = document.getElementById("srv-modal");
+    if (!modal) return;
+    const titleEl = modal.querySelector("#srv-modal-title");
+    const itemsEl = modal.querySelector("#srv-modal-items");
+    const imageEl = modal.querySelector("#srv-modal-image");
+    const eyebrowEl = modal.querySelector("#srv-modal-eyebrow");
+    const counterEl = modal.querySelector("#srv-modal-counter");
+
+    const open = (srvId) => {
+      const idx = services.findIndex((s) => s.id === srvId);
+      const s = services[idx];
+      if (!s) return;
+      if (titleEl) titleEl.textContent = s.title;
+      if (imageEl) imageEl.setAttribute("src", s.image);
+      if (eyebrowEl) {
+        eyebrowEl.textContent = s.featured
+          ? "● Diferenciador Movex"
+          : "● Servicio";
+      }
+      if (counterEl) {
+        const pad = (n) => String(n).padStart(2, "0");
+        counterEl.textContent = `${pad(idx + 1)} / ${pad(services.length)}`;
+      }
+      if (itemsEl) {
+        itemsEl.innerHTML = s.items
+          .map(
+            (it) => `
+            <li class="flex items-start gap-2.5">
+              <span class="mt-2 size-1 rounded-full flex-shrink-0 bg-teal-300"></span>
+              <span>${it}</span>
+            </li>`,
+          )
+          .join("");
+      }
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      requestAnimationFrame(() => {
+        modal.style.opacity = "1";
+      });
+      modal.setAttribute("aria-hidden", "false");
+      document.documentElement.style.overflow = "hidden";
+    };
+
+    const close = () => {
+      modal.style.opacity = "0";
+      modal.setAttribute("aria-hidden", "true");
+      setTimeout(() => {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }, 300);
+      document.documentElement.style.overflow = "";
+    };
+
+    // Click en cada card del bento
+    document.querySelectorAll("[data-srv-id]").forEach((card) => {
+      card.addEventListener("click", () => {
+        const id = card.getAttribute("data-srv-id");
+        if (id) open(id);
+      });
+    });
+
+    // Close handlers
+    modal.querySelectorAll("[data-srv-modal-close]").forEach((btn) => {
+      btn.addEventListener("click", close);
+    });
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) close();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.getAttribute("aria-hidden") === "false") {
+        close();
+      }
+    });
+  })();
+</script>

@@ -227,6 +227,66 @@ html.intro-locked body {
   will-change: transform;
 }
 
+/* ─────────────────────────────────────────────────────────────────────
+   BENTO GRID (Servicios) — 4 niveles de dinamismo
+   ─────────────────────────────────────────────────────────────────── */
+
+/* Nivel 1: Entrada cinematográfica — stagger reveal. Cards arrancan
+   invisibles + escaladas + abajo. JS aplica .is-revealed cuando la
+   sección entra al viewport, con delay calculado por --bento-i. */
+.mvx-bento-card {
+  opacity: 0;
+  transform: translate3d(0, 32px, 0) scale(0.96);
+  transition:
+    opacity 900ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--bento-i, 0) * 80ms);
+  will-change: opacity, transform;
+}
+.mvx-bento-card.is-revealed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Nivel 2: Hover — sibling fade. Cuando una card está hovered, las
+   hermanas se atenúan para que el foco quede en la activa. Usa
+   :has() del parent grid. Fallback: si no soporta :has(), sin fade. */
+@supports selector(:has(*)) {
+  .grid:has(.mvx-bento-card:hover) .mvx-bento-card:not(:hover) {
+    opacity: 0.55;
+    filter: saturate(0.85);
+  }
+}
+.mvx-bento-card {
+  transition-property: opacity, transform, filter;
+}
+
+/* Nivel 2: Image zoom on hover (la imagen interna escala suave) */
+.mvx-bento-card:hover .mvx-ken-burns {
+  transform: scale(1.08);
+  transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Tilt 3D — el JS aplica --tilt-x / --tilt-y como CSS variables (deg). */
+.mvx-bento-card {
+  perspective: 1200px;
+}
+.mvx-bento-card > * {
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+}
+
+/* Nivel 3: Dashboard mock — barras animadas pulse */
+@keyframes mvx-bar-pulse {
+  0%, 100% { transform: scaleY(1); transform-origin: bottom; }
+  50% { transform: scaleY(1.35); transform-origin: bottom; }
+}
+.mvx-bar-pulse {
+  animation: mvx-bar-pulse 1800ms ease-in-out infinite;
+  transform-origin: bottom;
+}
+
 /* Ken Burns continuo en imágenes — scale + pan suave en loop.
    Aplicado en .mvx-ken-burns. Las imágenes inactivas (opacity 0) siguen
    "animando" pero no se ven, así que cuando vuelven a ser activas ya

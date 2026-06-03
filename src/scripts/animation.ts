@@ -209,11 +209,94 @@ if (!reduce) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// 4.5) CARD STACK — scroll-driven sequencer (estilo MVP services__items).
-//      Cada section[data-card-stack] tiene altura (N+1)*100vh.
-//      Adentro: cards apiladas con [data-stack-card="i"] todas en mismo lugar.
-//      Conforme scrolleas, cada card transiciona translateY(100% → 0% → -100%).
-//      Mientras una card está en su "viewport" (1vh de scroll), está visible.
+// 4.4) BENTO GRID — entrada cinematográfica + tilt 3D + counter live
+//      Reemplaza al card-stack que vivía aquí antes (Servicios cambió
+//      de scroll-driven stack → bento grid asimétrico el 2026-05-27).
+// ─────────────────────────────────────────────────────────────────
+if (!reduce) {
+  // Stagger reveal — IntersectionObserver dispara .is-revealed con delay
+  // calculado por --bento-i (definido inline en cada card)
+  const bentoCards = document.querySelectorAll<HTMLElement>(".mvx-bento-card");
+  if (bentoCards.length) {
+    const bentoObs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("is-revealed");
+            bentoObs.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -5% 0px" },
+    );
+    bentoCards.forEach((c) => bentoObs.observe(c));
+  }
+
+  // Tilt 3D on hover — aplica rotateX/Y según mouse position en la card
+  bentoCards.forEach((card) => {
+    let raf = 0;
+    let targetX = 0, targetY = 0;
+    let currentX = 0, currentY = 0;
+    const max = 6; // grados máximos de tilt
+
+    const tick = () => {
+      currentX += (targetX - currentX) * 0.18;
+      currentY += (targetY - currentY) * 0.18;
+      card.style.setProperty("--tilt-x", `${currentX.toFixed(2)}deg`);
+      card.style.setProperty("--tilt-y", `${currentY.toFixed(2)}deg`);
+      if (
+        Math.abs(targetX - currentX) > 0.02 ||
+        Math.abs(targetY - currentY) > 0.02
+      ) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        raf = 0;
+      }
+    };
+
+    card.addEventListener("pointermove", (e) => {
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5; // -0.5..0.5
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      targetY = px * max * 2;   // rotateY: tilt horizontal hacia donde apunta
+      targetX = -py * max * 2;  // rotateX: tilt vertical (negado para "look at" feel)
+      if (!raf) raf = requestAnimationFrame(tick);
+    });
+
+    card.addEventListener("pointerleave", () => {
+      targetX = 0;
+      targetY = 0;
+      if (!raf) raf = requestAnimationFrame(tick);
+    });
+  });
+
+  // Counter live del dashboard mock — cada 3.5s salta a otro valor
+  // random en el rango [data-from, data-to]
+  const bentoCounters = document.querySelectorAll<HTMLElement>("[data-bento-counter]");
+  if (bentoCounters.length) {
+    const updateCounter = (el: HTMLElement) => {
+      const from = parseFloat(el.dataset.from || "0");
+      const to = parseFloat(el.dataset.to || "0");
+      const target = Math.round(from + Math.random() * (to - from));
+      const start = parseFloat((el.textContent || "0").replace(/[^\d.-]/g, ""));
+      const duration = 900;
+      const t0 = performance.now();
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - t0) / duration);
+        const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        const val = Math.round(start + (target - start) * eased);
+        el.textContent = val.toLocaleString("es-CO");
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    setInterval(() => bentoCounters.forEach(updateCounter), 3500);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// 4.5) CARD STACK — legacy handler (Servicios ya no lo usa pero
+//      lo dejo por si otra section futura aplica data-card-stack)
 // ─────────────────────────────────────────────────────────────────
 if (!reduce) {
   const stacks = document.querySelectorAll<HTMLElement>("[data-card-stack]");
