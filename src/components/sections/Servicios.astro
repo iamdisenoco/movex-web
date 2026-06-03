@@ -38,10 +38,14 @@ const ordered = [
   id="servicios"
   class="relative z-20 text-white -mt-[12vh] bg-navy-900 rounded-t-[40px] sm:rounded-t-[60px] shadow-[0_-20px_60px_rgba(0,0,0,0.4)] pt-24 sm:pt-32 lg:pt-40 pb-32 lg:pb-48 px-4 sm:px-8 lg:px-12 overflow-hidden"
 >
-  <!-- Letras decorativas: SERVICIOS GLOBALES arriba + WORLDWIDE abajo -->
+  <!-- Letras decorativas: SERVICIOS GLOBALES arriba + WORLDWIDE abajo.
+       top-[18vh] pone la letra POR DEBAJO de los 12vh que la section se
+       asoma sobre el hero pinned — así la franja superior queda limpia
+       (solo bg navy con rounded-t) y la letra deco aparece cuando ya
+       hiciste scroll hasta Servicios. -->
   <div
     aria-hidden="true"
-    class="pointer-events-none select-none absolute top-8 left-0 right-0 z-0 overflow-hidden"
+    class="pointer-events-none select-none absolute top-[18vh] left-0 right-0 z-0 overflow-hidden"
   >
     <div
       data-parallax="0.3"
