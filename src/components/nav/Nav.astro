@@ -19,13 +19,14 @@ import { nav } from "../../data/site";
   data-scrolled="false"
 >
   <div class="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-6 md:px-10 py-4">
-    <!-- 1) Logo (izquierda) — isotipo + wordmark. 2 variantes (white/black)
-         togglean según data-nav-theme del header (light=white, dark=black). -->
-    <a href="/" class="mvx-logo-hover flex items-center gap-3 shrink-0" aria-label="Movex inicio">
-      <img id="nav-isotipo" src="/brand/movex-isotipo-3lines-white.svg" alt="" class="h-11 w-auto nav-light-only" />
-      <img src="/brand/movex-isotipo-3lines-black.svg" alt="" class="h-11 w-auto nav-dark-only hidden" />
-      <img id="nav-wordmark" src="/brand/movex-wordmark-white.svg" alt="movex" class="h-7 w-auto nav-light-only" />
-      <img src="/brand/movex-wordmark-black.svg" alt="movex" class="h-7 w-auto nav-dark-only hidden" />
+    <!-- 1) Logo (izquierda) — isotipo + wordmark. SVG oficial blanco, se
+         invierte a negro vía CSS filter:invert(1) cuando theme=dark.
+         Esto preserva la GEOMETRÍA exacta del isotipo y la TIPOGRAFÍA
+         oficial del wordmark (las versiones -black.svg tienen paths
+         diferentes y tipografía distinta, no las usamos). -->
+    <a href="/" class="mvx-logo-hover flex items-center gap-3 shrink-0 nav-logo-link" aria-label="Movex inicio">
+      <img id="nav-isotipo" src="/brand/movex-isotipo-3lines-white.svg" alt="" class="h-11 w-auto" />
+      <img id="nav-wordmark" src="/brand/movex-wordmark-white.svg" alt="movex" class="h-7 w-auto" />
     </a>
 
     <!-- 2) Nav central — pill liquid glass AJUSTADO a los links

@@ -472,10 +472,17 @@ html.intro-locked body {
    logo white/black + colores de los nav links + pill bg.
    ─────────────────────────────────────────────────────────────────── */
 
-/* Logo: white visible cuando theme=light, black cuando theme=dark */
-#site-nav[data-theme="dark"] .nav-light-only { display: none; }
-#site-nav[data-theme="dark"] .nav-dark-only { display: block; }
-/* default (light): white visible, black oculto — ya está con class hidden */
+/* Logo: SVG blanco oficial siempre — cuando theme=dark, lo invertimos
+   a negro vía filter:invert(1). Así preservamos geometría/tipografía
+   exactas del manual de marca (las versiones -black.svg tienen paths
+   distintos y NO son fieles al logo oficial). */
+#site-nav[data-theme="dark"] .nav-logo-link img {
+  filter: invert(1);
+  transition: filter 280ms ease;
+}
+#site-nav .nav-logo-link img {
+  transition: filter 280ms ease;
+}
 
 /* Nav links: texto navy cuando theme dark */
 #site-nav[data-theme="dark"] .nav-link {
