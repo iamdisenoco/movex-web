@@ -2,7 +2,41 @@
 
 > **Cómo se usa este archivo**: cualquiera (Jon, colaborador, Claude) actualiza esto cuando agrega/cambia/completa una tarea. Es la **única fuente de verdad** sobre qué falta. Antes de tomar una tarea, marca `[in progress] — <tu nombre>` para que el otro no la duplique.
 
-**Última actualización**: 2026-05-26 — por Claude (sesión iamdisenoco)
+**Última actualización**: 2026-05-27 — por Claude (sesión iamdisenoco) — feedback Jon
+
+---
+
+## 🎯 Feedback Jon — 2026-05-27 (16 ítems)
+
+Lista entregada por Jon. Agrupada por sección del sitio para trabajarla por bloques.
+
+### Hero
+- [ ] **Escríbenos por WhatsApp en el hero** — agregar CTA secundario "Escríbenos por WhatsApp" junto a los actuales (Sobre Movex / Contáctanos)
+- [ ] **Mostrar en el hero dónde estamos operando en este momento** — strip dinámico tipo "Operando ahora: Apartadó · Santa Marta · Rotterdam · ..." o tag con ubicación activa
+
+### Nav / Logo
+- [ ] **En el menú resaltar en qué sección va el usuario** — scroll spy: cuando se está sobre Quiénes Somos, ese link del nav se ve activo (teal underline o pill)
+- [ ] **Ícono del logo (izquierda) más grande** — actualmente h-7, subir a h-10 o más para mayor presencia
+- [ ] **Renombrar botón "Cotizar carga" — verificar** — el del nav ya dice "Cotizar carga"; Jon menciona "cotizar su servicio → cotizar carga", revisar si hay otro botón con texto distinto
+
+### Servicios
+- [ ] **Poner más clara la sección de servicios** — Jon dice que está confusa. Posible: simplificar copy, jerarquía más obvia, o reducir número de cards. Pedirle ejemplo concreto.
+- [ ] **Quitar "Servicios incluidos"** — el label del header derecho de las cards (post-rediseño del 2026-05-26)
+
+### Movex Company / Quiénes Somos
+- [ ] **Sección Movex Company en el centro** — actualmente alineada a la izquierda en max-w-3xl. Centrar el bloque (label + título + bubble glass)
+- [ ] **Quitar la línea de tiempo** — eliminar el timeline strip al final de QuienesSomos.astro (con los hitos 2012, 2018, etc.)
+
+### Sostenibilidad → Impacto Social
+- [ ] **Cambiar "Fundación Movex" por "Impacto Social"** — rename del label/header de la sección
+- [ ] **Foto de Bienestar Laboral más criollos** — la imagen actual luce muy stock/genérica. Generar/buscar fotos con gente local de Apartadó/Santa Marta
+- [ ] **Agregar "Jornadas de limpieza"** con imágenes que muestren a la población el cuidado de las especies
+- [ ] **Agregar "Aeróbico acuático"** como otra iniciativa
+
+### Footer / Global
+- [ ] **Redirigir al público a WhatsApp** — link/CTA principal a WhatsApp donde corresponda
+- [ ] **Poner redes sociales** — IG, FB, LinkedIn (definir qué redes usa Movex/Cargoban)
+- [ ] **Jugar con el logo en el diseño web** — usar el isotipo como elemento gráfico/decorativo en varias secciones (no sólo en nav). Ejemplos: watermark, divider entre secciones, accent en cards, etc. Idea abierta — explorar.
 
 ---
 
