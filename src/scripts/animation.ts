@@ -386,6 +386,43 @@ if (!reduce) {
 }
 
 // ─────────────────────────────────────────────────────────────────
+// 4.55) NAV THEME SYNC — invierte el header (texto + logo) a oscuro
+//       cuando una section con [data-nav-theme="dark"] (= bg claro)
+//       está en la "banda superior" del viewport (donde vive el nav).
+//       Logo white/black y links text-white/navy switchean via CSS.
+// ─────────────────────────────────────────────────────────────────
+if (!reduce) {
+  const header = document.getElementById("site-nav");
+  const themedSections = document.querySelectorAll<HTMLElement>(
+    "section[data-nav-theme]",
+  );
+  if (header && themedSections.length) {
+    const updateTheme = () => {
+      // El nav vive en top 0..80px. Detectar qué section ocupa esa banda.
+      let activeTheme = "light"; // default: bg oscuro → texto blanco
+      const navBottom = 80;
+      for (const s of Array.from(themedSections)) {
+        const r = s.getBoundingClientRect();
+        if (r.top <= navBottom && r.bottom > navBottom) {
+          activeTheme = s.dataset.navTheme || "light";
+          break;
+        }
+      }
+      if (header.dataset.theme !== activeTheme) {
+        header.dataset.theme = activeTheme;
+      }
+    };
+    window.addEventListener("scroll", updateTheme, { passive: true });
+    document.addEventListener("scroll", updateTheme, {
+      passive: true,
+      capture: true,
+    });
+    setInterval(updateTheme, 80); // fallback robust en headless / Lenis
+    updateTheme();
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
 // 4.6) SCROLL SPY — resalta el link del nav según la sección visible.
 //      IntersectionObserver con rootMargin que solo dispara cuando la
 //      section está en el 20% central del viewport. Aplica data-active

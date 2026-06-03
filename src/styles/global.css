@@ -466,6 +466,41 @@ html.intro-locked body {
   transform: translateX(100%);
 }
 
+/* ─────────────────────────────────────────────────────────────────────
+   NAV THEME SWITCH — header[data-theme="dark"] cuando el bg de la
+   sección visible es claro (ver animation.ts NAV THEME SYNC). Toggle
+   logo white/black + colores de los nav links + pill bg.
+   ─────────────────────────────────────────────────────────────────── */
+
+/* Logo: white visible cuando theme=light, black cuando theme=dark */
+#site-nav[data-theme="dark"] .nav-light-only { display: none; }
+#site-nav[data-theme="dark"] .nav-dark-only { display: block; }
+/* default (light): white visible, black oculto — ya está con class hidden */
+
+/* Nav links: texto navy cuando theme dark */
+#site-nav[data-theme="dark"] .nav-link {
+  color: rgba(26, 41, 64, 0.85); /* navy-900 con alpha */
+}
+#site-nav[data-theme="dark"] .nav-link:hover {
+  color: var(--color-teal-500);
+}
+
+/* Pill glass: invertir a bg oscuro semi-transparente cuando theme dark */
+#site-nav[data-theme="dark"] #nav-pill[data-active="true"] {
+  border-color: rgba(26, 41, 64, 0.15);
+  background-color: rgba(26, 41, 64, 0.05);
+  box-shadow: 0 8px 32px rgba(26, 41, 64, 0.08);
+}
+
+/* Underline animado: cuando theme dark usa teal-500 (más oscuro,
+   mejor contraste sobre bg claro) */
+#site-nav[data-theme="dark"] .mvx-link-underline::after {
+  background: var(--color-teal-500);
+}
+
+/* CTA "Cotizar servicio" sigue siendo teal sólido (contrasta en ambos
+   themes), no necesita switch. */
+
 /* Logo isotipo (3 rayas) — wiggle sutil al hover del logo */
 @keyframes mvx-isotipo-wiggle {
   0% { transform: translateX(0) rotate(0); }

@@ -9,8 +9,10 @@ const advantages = [
 ];
 ---
 
-<!-- MVP "Our Advantages" pattern: giant sticky title left + stacked cards right -->
-<section id="quienes-somos" class="relative bg-white text-navy-900 py-32 sm:py-48">
+<!-- MVP "Our Advantages" pattern: giant sticky title left + stacked cards right.
+     data-nav-theme="dark" hace que el nav se invierta a oscuro sobre este bg
+     blanco (sync via scroll spy en animation.ts). -->
+<section id="quienes-somos" data-nav-theme="dark" class="relative bg-white text-navy-900 py-32 sm:py-48">
 
   <!-- INTRO BLOCK (movido desde Empresa): heritage + counters CON VIDEO DE FONDO -->
   <div class="relative isolate overflow-hidden mb-32 sm:mb-40 -mt-32 sm:-mt-48 pt-32 sm:pt-48 pb-24 sm:pb-32 bg-navy-900 text-white">
