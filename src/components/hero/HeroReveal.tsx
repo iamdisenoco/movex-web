@@ -72,7 +72,7 @@ export default function HeroReveal({ position }: Props) {
           href="#quienes-somos"
           data-magnetic
           data-ripple
-          className="mvx-shimmer inline-flex items-center justify-center min-w-[180px] rounded-full bg-teal-500 hover:bg-teal-300 text-navy-900 font-semibold px-7 py-4 text-base transition-colors"
+          className="mvx-shimmer inline-flex items-center justify-center min-w-[180px] rounded-full bg-teal-500 hover:bg-teal-300 text-white font-semibold px-7 py-4 text-base transition-colors"
         >
           <span>Sobre Movex</span>
         </a>

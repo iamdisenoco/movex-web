@@ -63,7 +63,7 @@ export const services = [
   {
     id: "portuarias",
     title: "Operaciones Portuarias",
-    image: "/assets/images/03-portuario.jpg",
+    image: "/assets/images/01-hero.jpg",
     items: [
       "Trincado y destrincado",
       "Conexión y desconexión a bordo",
@@ -99,7 +99,7 @@ export const services = [
   {
     id: "alquiler",
     title: "Alquiler de Equipos",
-    image: "/assets/images/02-terrestre.jpg",
+    image: "/assets/images/03-portuario.jpg",
     items: [
       "Equipos de manipulación",
       "Equipos de seguridad",
