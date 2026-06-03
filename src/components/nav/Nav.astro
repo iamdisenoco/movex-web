@@ -28,11 +28,13 @@ import { nav } from "../../data/site";
       <img src="/brand/movex-wordmark-black.svg" alt="movex" class="h-7 w-auto nav-dark-only hidden" />
     </a>
 
-    <!-- 2) Nav central — pill compacto (Jon 2026-05-27: menos margen).
-         gap-6 → 4, px-3 → 2, links sin px → más juntos. -->
+    <!-- 2) Nav central — pill liquid glass AJUSTADO a los links
+         (Jon 2026-05-27: quitar margen del glass, separación de links igual).
+         gap-6 entre links (separación visual cómoda), padding mínimo del
+         pill (px-1 py-1) para que el glass quede pegadito a los links. -->
     <nav
       id="nav-pill"
-      class="hidden md:flex items-center gap-1 rounded-full px-2 py-1.5
+      class="hidden md:flex items-center gap-6 rounded-full px-1 py-1
              transition-all duration-300
              border border-transparent bg-transparent backdrop-blur-0
              data-[active=true]:border-white/15
@@ -45,7 +47,7 @@ import { nav } from "../../data/site";
         <a
           href={item.href}
           style={`--nav-i:${i}`}
-          class="nav-link mvx-link-underline rounded-full px-4 py-1.5 text-sm tracking-wide
+          class="nav-link mvx-link-underline rounded-full px-5 py-2 text-base tracking-wide
                  text-white/85 hover:text-teal-300
                  transition-colors duration-200 opacity-0
                  [transition-delay:calc(var(--nav-i)*60ms+250ms)]
