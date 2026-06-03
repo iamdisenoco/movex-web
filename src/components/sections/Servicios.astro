@@ -140,10 +140,9 @@ const total = services.length;
                 style={`--stack-i:${i}; --stack-total:${total}; transform: translate3d(0, ${i === 0 ? "0%" : "100%"}, 0); opacity: ${i === 0 ? 1 : 0}; z-index: ${100 - i};`}
                 class={`absolute inset-0 rounded-3xl p-8 sm:p-10 flex flex-col gap-5 will-change-transform transition-opacity duration-500 ${isAccent ? "bg-navy-700 text-white" : "bg-white text-navy-900"}`}
               >
-                <!-- Header chiquito: número 0X/0total + label "servicios incluidos" -->
-                <div class={`flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.25em] ${isAccent ? "text-teal-300" : "text-teal-500"}`}>
-                  <span>0{i + 1} / 0{total}</span>
-                  <span class={isAccent ? "text-white/55" : "text-navy-500"}>Servicios incluidos</span>
+                <!-- Header chiquito: solo número 0X/0total (Jon pidió quitar "Servicios incluidos") -->
+                <div class={`text-[10px] font-mono uppercase tracking-[0.25em] ${isAccent ? "text-teal-300" : "text-teal-500"}`}>
+                  0{i + 1} / 0{total}
                 </div>
 
                 <!-- Lista de items -->

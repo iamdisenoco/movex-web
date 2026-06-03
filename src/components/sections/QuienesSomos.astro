@@ -1,5 +1,5 @@
 ---
-import { timeline, counters } from "../../data/site";
+import { counters } from "../../data/site";
 
 const advantages = [
   { title: "20+ años", body: "de experiencia operativa heredada del grupo Cargoban." },
@@ -46,17 +46,18 @@ const advantages = [
     </div>
 
     <div class="relative mx-auto max-w-7xl px-6 lg:px-10">
-      <div class="max-w-3xl">
-        <!-- Label y título FUERA de la burbuja -->
-        <div class="text-[11px] font-mono uppercase tracking-[0.25em] text-teal-300 mb-6">
+      <!-- Bloque Movex Company CENTRADO (Jon 2026-05-27) -->
+      <div class="max-w-3xl mx-auto">
+        <!-- Label y título FUERA de la burbuja, centrados -->
+        <div class="text-[11px] font-mono uppercase tracking-[0.25em] text-teal-300 mb-6 text-center">
           ● Movex Company
         </div>
-        <h2 data-split class="font-display-xl text-[clamp(2.5rem,6vw,5rem)] text-white leading-[0.95] mb-10">
+        <h2 data-split class="font-display-xl text-[clamp(2.5rem,6vw,5rem)] text-white leading-[0.95] mb-10 text-center">
           Movex <span class="text-[#cfe091]">Company.</span>
         </h2>
 
-        <!-- BUBBLE GLASS-PILL: SOLO los párrafos van adentro, estilo nav pill -->
-        <div data-reveal="up" style="--reveal-delay:120ms" class="rounded-3xl bg-white/5 border border-white/15 backdrop-blur-sm shadow-[0_8px_32px_rgba(0,0,0,0.18)] p-8 sm:p-10 space-y-6 text-base sm:text-lg leading-relaxed text-white/90">
+        <!-- BUBBLE GLASS-PILL: párrafos centrados (Jon 2026-05-27) -->
+        <div data-reveal="up" style="--reveal-delay:120ms" class="rounded-3xl bg-white/5 border border-white/15 backdrop-blur-sm shadow-[0_8px_32px_rgba(0,0,0,0.18)] p-8 sm:p-10 space-y-6 text-base sm:text-lg leading-relaxed text-white/90 text-center">
           <p>
             Heredamos la experiencia operativa de <strong class="text-white">Cargoban</strong>,
             operador logístico portuario referente en el Caribe colombiano desde 2012.
@@ -132,23 +133,7 @@ const advantages = [
     </div>
   </div>
 
-  <!-- Timeline strip at the bottom -->
-  <div class="mx-auto max-w-7xl px-6 lg:px-10 mt-32 pt-16 border-t border-navy-900/10">
-    <div class="text-[11px] font-mono uppercase tracking-[0.25em] text-teal-500 mb-8">● Nuestra historia</div>
-    <div class="relative">
-      <div class="absolute inset-x-0 top-5 h-px bg-navy-900/10"></div>
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6">
-        {timeline.map((t) => (
-          <div class="relative">
-            <span class="block size-3 rounded-full bg-teal-500 ring-4 ring-white relative z-10"></span>
-            <div class="mt-6 font-display text-2xl text-navy-900">{t.year}</div>
-            <div class="mt-1 text-sm font-semibold text-navy-700">{t.label}</div>
-            <div class="mt-2 text-sm text-navy-500 leading-relaxed">{t.detail}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
+  <!-- (Timeline "Nuestra historia" removido el 2026-05-27 por pedido de Jon) -->
 </section>
 
 <script>

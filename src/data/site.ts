@@ -23,7 +23,7 @@ export const hero = {
   subtitle: brand.tagline,
   description:
     "Operador logístico portuario premium para carga internacional desde Apartadó y Santa Marta hacia el mundo.",
-  cta: { primary: "Cotizar carga", secondary: "Conocer Movex" },
+  cta: { primary: "Cotizar servicio", secondary: "Conocer Movex" },
 } as const;
 
 // Counters provisionales — el cliente ajusta los números reales sin tocar el código.
