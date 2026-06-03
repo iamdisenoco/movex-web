@@ -336,7 +336,9 @@ html.intro-locked body {
   will-change: transform;
 }
 
-/* Animated underline para nav links — línea teal que se dibuja al hover */
+/* Animated underline para nav links — línea teal que se dibuja al hover
+   o cuando la sección correspondiente está activa (scroll spy via
+   data-active="true" en animation.ts). */
 .mvx-link-underline {
   position: relative;
 }
@@ -353,8 +355,13 @@ html.intro-locked body {
   transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .mvx-link-underline:hover::after,
-.mvx-link-underline:focus-visible::after {
+.mvx-link-underline:focus-visible::after,
+.mvx-link-underline[data-active="true"]::after {
   transform: scaleX(1);
+}
+/* Sección activa: color teal en el link */
+.nav-link[data-active="true"] {
+  color: var(--color-teal-300);
 }
 
 /* Glow pulsante para CTA primario */

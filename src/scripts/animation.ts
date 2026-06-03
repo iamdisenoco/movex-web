@@ -303,6 +303,54 @@ if (!reduce) {
 }
 
 // ─────────────────────────────────────────────────────────────────
+// 4.6) SCROLL SPY — resalta el link del nav según la sección visible.
+//      IntersectionObserver con rootMargin que solo dispara cuando la
+//      section está en el 20% central del viewport. Aplica data-active
+//      al link correspondiente; CSS hace el resto.
+// ─────────────────────────────────────────────────────────────────
+if (!reduce) {
+  const navLinks = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>('#site-nav a.nav-link[href^="#"]'),
+  );
+  const sectionMap = new Map<string, HTMLAnchorElement>();
+  navLinks.forEach((a) => {
+    const id = a.getAttribute("href") || "";
+    sectionMap.set(id.slice(1), a);
+  });
+
+  const sections = Array.from(sectionMap.keys())
+    .map((id) => document.getElementById(id))
+    .filter(Boolean) as HTMLElement[];
+
+  if (sections.length) {
+    const setActive = (id: string | null) => {
+      navLinks.forEach((a) => {
+        const myId = a.getAttribute("href")?.slice(1);
+        a.dataset.active = myId === id ? "true" : "false";
+      });
+    };
+
+    const spyObs = new IntersectionObserver(
+      (entries) => {
+        // Tomar la entrada visible con más intersection ratio.
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActive(visible.target.id);
+      },
+      {
+        // Banda central del viewport (~20% alto) — solo activa cuando la
+        // sección está realmente "en foco" del usuario.
+        rootMargin: "-40% 0px -40% 0px",
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+      },
+    );
+
+    sections.forEach((s) => spyObs.observe(s));
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
 // 5) NAV READY (post-intro)
 // ─────────────────────────────────────────────────────────────────
 const markNavReady = () => {
