@@ -122,10 +122,10 @@ const totalServicios = services.length;
     return (
       <dialog
         id={`modal-${s.id}`}
-        class="mvx-service-modal fixed inset-0 z-50 max-w-3xl w-full sm:w-[92vw] max-h-[88vh] m-auto rounded-3xl bg-navy-900 text-white p-0 overflow-hidden backdrop:bg-black/70 backdrop:backdrop-blur-sm"
+        class="mvx-service-modal fixed inset-0 z-50 max-w-3xl w-full sm:w-[92vw] max-h-[88vh] m-auto rounded-3xl bg-navy-900 text-white p-0 overflow-hidden flex-col backdrop:bg-black/70 backdrop:backdrop-blur-sm"
       >
-        <!-- Header con imagen de fondo -->
-        <div class="relative aspect-[16/7] sm:aspect-[16/6] overflow-hidden">
+        <!-- Header con imagen de fondo (shrink-0 = altura fija) -->
+        <div class="relative aspect-[16/7] sm:aspect-[16/6] shrink-0 overflow-hidden">
           <img src={s.image} alt={s.title} class="absolute inset-0 size-full object-cover" />
           <div class="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/40 to-navy-900/20"></div>
           {isFeatured && (
@@ -153,8 +153,8 @@ const totalServicios = services.length;
           </div>
         </div>
 
-        <!-- Body con descripción + lista de items -->
-        <div class="p-6 sm:p-8 overflow-y-auto max-h-[55vh]">
+        <!-- Body scrollable: solo descripción + items. CTA queda FUERA abajo. -->
+        <div class="p-6 sm:p-8 overflow-y-auto min-h-0 flex-1">
           <p class="text-base sm:text-lg text-white/85 leading-relaxed mb-8">
             {desc}
           </p>
@@ -169,19 +169,19 @@ const totalServicios = services.length;
               </li>
             ))}
           </ul>
+        </div>
 
-          <!-- CTA al final -->
-          <div class="mt-8 pt-6 border-t border-white/10 flex flex-wrap gap-3 items-center justify-between">
-            <span class="text-sm text-white/55">¿Necesitas más detalles?</span>
-            <a
-              href="#contacto"
-              data-modal-close={`modal-${s.id}`}
-              class="inline-flex items-center gap-2 rounded-full bg-teal-500 hover:bg-teal-300 text-white font-semibold px-6 py-3 text-sm transition-colors"
-            >
-              Cotizar este servicio
-              <span aria-hidden="true">→</span>
-            </a>
-          </div>
+        <!-- Footer FIJO: CTA siempre visible aunque la lista sea larga -->
+        <div class="shrink-0 px-6 sm:px-8 py-5 border-t border-white/10 bg-navy-900 flex flex-wrap gap-3 items-center justify-between">
+          <span class="text-sm text-white/55">¿Necesitas más detalles?</span>
+          <a
+            href="#contacto"
+            data-modal-close={`modal-${s.id}`}
+            class="inline-flex items-center gap-2 rounded-full bg-teal-500 hover:bg-teal-300 text-white font-semibold px-6 py-3 text-sm transition-colors"
+          >
+            Cotizar este servicio
+            <span aria-hidden="true">→</span>
+          </a>
         </div>
       </dialog>
     );
@@ -189,8 +189,13 @@ const totalServicios = services.length;
 </section>
 
 <style>
-  /* Animación de entrada del dialog */
+  /* Animación de entrada del dialog + flex column layout para que el footer
+     (CTA) quede sticky abajo sin importar el largo de la lista de items.
+     <dialog> tiene display:block por default cuando está abierto — hay que
+     forzar flex para que el body con flex-1 + overflow-y-auto funcione. */
   .mvx-service-modal[open] {
+    display: flex;
+    flex-direction: column;
     animation: modal-in 280ms cubic-bezier(0.16, 1, 0.3, 1);
   }
   .mvx-service-modal[open]::backdrop {
