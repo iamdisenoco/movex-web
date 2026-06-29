@@ -44,6 +44,19 @@ export const timeline = [
 
 export const services = [
   {
+    id: "portuarias",
+    title: "Operaciones Portuarias",
+    featured: true,
+    image: "/assets/images/01-hero.jpg",
+    items: [
+      "Trincado y destrincado",
+      "Conexión y desconexión a bordo",
+      "Estiba y desestiba general",
+      "Estiba y desestiba de contenedores",
+      "Estiba y desestiba refrigerada",
+    ],
+  },
+  {
     id: "terrestres",
     title: "Operaciones Terrestres",
     image: "/assets/images/terrestres-reach-stacker.jpg",
@@ -70,19 +83,6 @@ export const services = [
       "Consultoría de procesos",
       "Tarja y chequeo",
       "Software a medida",
-    ],
-  },
-  {
-    id: "portuarias",
-    title: "Operaciones Portuarias",
-    featured: true,
-    image: "/assets/images/01-hero.jpg",
-    items: [
-      "Trincado y destrincado",
-      "Conexión y desconexión a bordo",
-      "Estiba y desestiba general",
-      "Estiba y desestiba de contenedores",
-      "Estiba y desestiba refrigerada",
     ],
   },
   {
