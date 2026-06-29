@@ -66,8 +66,9 @@ const totalServicios = services.length;
         return (
           <article
             data-reveal="up"
+            data-modal-open={`modal-${s.id}`}
             style={`--reveal-delay:${i * 80}ms`}
-            class={`group relative rounded-3xl overflow-hidden bg-navy-700 transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_30px_80px_rgba(0,0,0,0.5)] ${isFeatured ? "lg:col-span-2 aspect-[2.4/1]" : "aspect-[4/3] sm:aspect-[5/3]"}`}
+            class={`group relative rounded-3xl overflow-hidden bg-navy-700 transition-all duration-500 hover:scale-[1.015] hover:shadow-[0_30px_80px_rgba(0,0,0,0.5)] cursor-pointer ${isFeatured ? "lg:col-span-2 aspect-[2.4/1]" : "aspect-[4/3] sm:aspect-[5/3]"}`}
           >
             <!-- Imagen de fondo -->
             <img
