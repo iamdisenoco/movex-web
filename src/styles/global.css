@@ -336,42 +336,39 @@ html.intro-locked body {
   z-index: 1;
 }
 
-/* Custom cursor — dot + ring siguiendo el mouse con lerp */
-.mvx-cursor-dot,
-.mvx-cursor-ring {
+/* Custom cursor — flecha náutica SVG siguiendo al mouse 1:1.
+   La punta de la flecha (path coord 0,0) cae sobre el pixel del cursor
+   del sistema, así click target y visual coinciden. */
+.mvx-cursor {
   position: fixed;
   top: 0;
   left: 0;
   pointer-events: none;
   z-index: 9999;
-  border-radius: 9999px;
   will-change: transform;
+  fill: var(--color-teal-300);
+  stroke: var(--color-navy-900);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+  /* IMPORTANTE: la transform NO entra en transition — la setea JS en
+     cada pointermove y debe ser instantánea (1:1, sin lag). Solo
+     animamos fill/filter para el state hover. */
+  transition: fill 180ms ease, filter 180ms ease;
 }
-.mvx-cursor-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--color-teal-300);
-  box-shadow: 0 0 12px rgba(95, 179, 179, 0.7);
-  mix-blend-mode: difference;
+.mvx-cursor--active {
+  fill: #fff;
+  filter: drop-shadow(0 0 14px rgba(95, 179, 179, 0.65))
+          drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
 }
-.mvx-cursor-ring {
-  width: 36px;
-  height: 36px;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  transition: width 200ms cubic-bezier(0.16, 1, 0.3, 1),
-    height 200ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 200ms ease, background-color 200ms ease;
-}
-.mvx-cursor-ring--active {
-  width: 56px;
-  height: 56px;
-  border-color: rgba(95, 179, 179, 0.85);
-  background: rgba(95, 179, 179, 0.08);
+/* Esconder el cursor nativo del browser cuando el custom esté activo */
+@media (pointer: fine) {
+  html, body { cursor: none; }
+  a, button, [data-cursor-target], input, textarea, select { cursor: none; }
 }
 /* Hide custom cursor on touch devices */
 @media (pointer: coarse) {
-  .mvx-cursor-dot,
-  .mvx-cursor-ring {
+  .mvx-cursor {
     display: none;
   }
 }

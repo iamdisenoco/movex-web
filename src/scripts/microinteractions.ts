@@ -99,40 +99,37 @@ function initCursor() {
   // Solo desktop con pointer fino — saltamos touch devices
   if (!matchMedia("(pointer: fine)").matches) return;
 
-  const dot = document.createElement("div");
-  dot.className = "mvx-cursor-dot";
-  const ring = document.createElement("div");
-  ring.className = "mvx-cursor-ring";
-  document.body.append(dot, ring);
+  // Flecha náutica SVG — el "tip" de la flecha (0,0) cae justo donde apunta
+  // el mouse. Path inspirada en carta náutica / compass-rose.
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const cursor = document.createElementNS(SVG_NS, "svg");
+  cursor.setAttribute("class", "mvx-cursor");
+  cursor.setAttribute("viewBox", "0 0 40 56");
+  cursor.setAttribute("width", "24");
+  cursor.setAttribute("height", "34");
+  cursor.innerHTML =
+    '<path d="M0 0 L0 50 L14 38 L22 56 L30 52 L22 34 L40 32 Z" />';
+  document.body.appendChild(cursor);
 
   let mouseX = -100,
     mouseY = -100;
-  let ringX = -100,
-    ringY = -100;
 
   document.addEventListener("pointermove", (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
-    dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+    // Sin lerp — 1:1 con el mouse. La flecha apunta con su tip (0,0) al
+    // pixel exacto del cursor del sistema.
+    cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
   });
 
-  // Ring lags with smooth lerp
-  const loop = () => {
-    ringX += (mouseX - ringX) * 0.18;
-    ringY += (mouseY - ringY) * 0.18;
-    ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
-    requestAnimationFrame(loop);
-  };
-  loop();
-
-  // Grow ring on interactive elements
+  // Activate state on interactive elements
   const interactiveSel = "a, button, [data-cursor-target]";
   document.addEventListener(
     "pointerover",
     (e) => {
       const t = e.target as HTMLElement;
       if (t.closest && t.closest(interactiveSel)) {
-        ring.classList.add("mvx-cursor-ring--active");
+        cursor.classList.add("mvx-cursor--active");
       }
     },
     true,
@@ -142,7 +139,7 @@ function initCursor() {
     (e) => {
       const t = e.target as HTMLElement;
       if (t.closest && t.closest(interactiveSel)) {
-        ring.classList.remove("mvx-cursor-ring--active");
+        cursor.classList.remove("mvx-cursor--active");
       }
     },
     true,
@@ -152,8 +149,7 @@ function initCursor() {
   document.addEventListener(
     "touchstart",
     () => {
-      dot.remove();
-      ring.remove();
+      cursor.remove();
     },
     { once: true, passive: true },
   );
