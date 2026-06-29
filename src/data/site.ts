@@ -92,10 +92,15 @@ export const services = [
     title: "Logística Digital",
     image: "/assets/images/04-digital-dashboard.jpg",
     items: [
-      "Trazabilidad integral",
+      "Desarrollo de soluciones tecnológicas",
+      "Software a medida para tu operación",
+      "Reportes en línea y dashboards",
+      "Trazabilidad integral del servicio y la carga",
+      "Mejora de procesos operativos",
+      "Mejora de procesos administrativos",
+      "Exactitud en la información",
       "Auditoría de cadena de frío",
-      "Consultoría de procesos",
-      "Software a medida",
+      "Consultoría y asesoría de procesos",
     ],
   },
   {

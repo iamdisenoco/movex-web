@@ -1,20 +1,25 @@
 ---
 import { services } from "../../data/site";
 
-// Descripción corta por servicio (1 línea, didáctica). NO modifica site.ts —
-// la descripción se asocia por ID. Si el servicio no tiene descripción,
-// fallback a join de los primeros 3 items.
+// Descripción corta por servicio (1 línea, va en la card del grid).
 const descriptions: Record<string, string> = {
   terrestres:
     "Carga, descarga y consolidación de contenedores y mercancía en tierra firme.",
   portuarias:
     "Estiba, desestiba y conexión de contenedores a bordo y en muelle.",
   digital:
-    "Trazabilidad, auditoría y software a medida para tu operación logística.",
+    "Tecnología propia que mejora procesos, reduce tiempos y entrega información en línea con exactitud.",
   global:
     "Coordinación marítima, terrestre y aduanera para carga internacional.",
   alquiler:
     "Equipos especializados de manipulación, seguridad y mantenimiento portuario.",
+};
+
+// Descripción larga (opcional, sale solo en el modal). Si no hay long,
+// el modal cae al `descriptions[id]` corto.
+const longDescriptions: Record<string, string> = {
+  digital:
+    "Nos enfocamos en desarrollar y aplicar soluciones tecnológicas para mejorar procesos y reducir tiempos en labores operativas y administrativas, buscando reportes en línea y exactitud en la información.",
 };
 
 const totalServicios = services.length;
@@ -119,6 +124,7 @@ const totalServicios = services.length;
   {services.map((s, i) => {
     const isFeatured = (s as any).featured === true;
     const desc = descriptions[s.id] || s.items.slice(0, 3).join(" · ");
+    const longDesc = longDescriptions[s.id] || desc;
     return (
       <dialog
         id={`modal-${s.id}`}
@@ -156,7 +162,7 @@ const totalServicios = services.length;
         <!-- Body scrollable: solo descripción + items. CTA queda FUERA abajo. -->
         <div class="p-6 sm:p-8 overflow-y-auto min-h-0 flex-1">
           <p class="text-base sm:text-lg text-white/85 leading-relaxed mb-8">
-            {desc}
+            {longDesc}
           </p>
           <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-teal-300 mb-4">
             Servicios incluidos
