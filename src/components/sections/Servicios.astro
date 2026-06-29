@@ -210,41 +210,38 @@ const totalServicios = services.length;
 </style>
 
 <script>
-  // Modal handler — open/close para todos los modales de servicios.
+  // Modal handler con EVENT DELEGATION — funciona aunque el DOM cambie
+  // o el script se ejecute antes/después de que los elementos existan.
   // Usa <dialog> nativo HTML5 (accesible, ESC + focus trap built-in).
-  document.addEventListener("DOMContentLoaded", () => {
-    // OPEN: cualquier botón con data-modal-open="modal-X" abre ese dialog
-    document.querySelectorAll<HTMLElement>("[data-modal-open]").forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        const id = btn.dataset.modalOpen;
-        if (!id) return;
-        const dialog = document.getElementById(id) as HTMLDialogElement | null;
-        if (dialog && typeof dialog.showModal === "function") {
-          dialog.showModal();
-        }
-      });
-    });
 
-    // CLOSE: botones con data-modal-close
-    document.querySelectorAll<HTMLElement>("[data-modal-close]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const id = btn.dataset.modalClose;
-        if (!id) return;
-        const dialog = document.getElementById(id) as HTMLDialogElement | null;
-        dialog?.close();
-      });
-    });
+  // OPEN: cualquier click en un elemento con data-modal-open
+  document.addEventListener("click", (e) => {
+    const target = e.target as HTMLElement;
+    const openBtn = target.closest<HTMLElement>("[data-modal-open]");
+    if (openBtn) {
+      e.preventDefault();
+      const id = openBtn.dataset.modalOpen;
+      if (!id) return;
+      const dialog = document.getElementById(id) as HTMLDialogElement | null;
+      if (dialog && typeof dialog.showModal === "function") {
+        dialog.showModal();
+      }
+      return;
+    }
 
-    // CLOSE: click en backdrop (fuera del modal) cierra
-    document.querySelectorAll<HTMLDialogElement>("dialog.mvx-service-modal").forEach((dialog) => {
-      dialog.addEventListener("click", (e) => {
-        // Si el click fue directamente sobre el <dialog> (backdrop area),
-        // no sobre algún hijo, cerrar.
-        if (e.target === dialog) {
-          dialog.close();
-        }
-      });
-    });
+    // CLOSE: click en elemento con data-modal-close
+    const closeBtn = target.closest<HTMLElement>("[data-modal-close]");
+    if (closeBtn) {
+      const id = closeBtn.dataset.modalClose;
+      if (!id) return;
+      const dialog = document.getElementById(id) as HTMLDialogElement | null;
+      dialog?.close();
+      return;
+    }
+
+    // CLOSE: click directo sobre el <dialog> (backdrop)
+    if (target.tagName === "DIALOG" && target.classList.contains("mvx-service-modal")) {
+      (target as HTMLDialogElement).close();
+    }
   });
 </script>
