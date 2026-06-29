@@ -1,10 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import * as THREE from "three";
-import ThreeGlobe from "three-globe";
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
-import { introDestinations, brand } from "../../data/site";
+import { useEffect, useRef, useState } from "react";
+// three.js / ThreeGlobe imports removidos — el globo se quitó del intro.
+// Si en el futuro se quiere reactivar, ver git history del commit "Quitar globo del intro".
 
 type Phase =
   | "boot"
@@ -28,34 +24,8 @@ const COLORS = {
   arcBlue: "#2c5fc4", // Azul navy futurista para las arcs (antes teal300)
 };
 
-// CDN endpoint with CORS open for world topology.
-// 110m is light enough that three-globe processes it fast (50m made the GPU stall).
-const COUNTRIES_URL =
-  "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
-const TOPOJSON_URL =
-  "https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js";
-
-declare global {
-  interface Window {
-    topojson: any;
-  }
-}
-
-async function loadTopojson(): Promise<any> {
-  if (typeof window === "undefined") return null;
-  if (window.topojson) return window.topojson;
-  await new Promise<void>((res, rej) => {
-    const s = document.createElement("script");
-    s.src = TOPOJSON_URL;
-    s.onload = () => res();
-    s.onerror = () => rej(new Error("topojson-client failed"));
-    document.head.appendChild(s);
-  });
-  return window.topojson;
-}
 
 export default function Intro3D() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const lockupRef = useRef<HTMLDivElement>(null);
   const [phase, setPhase] = useState<Phase>("boot");
   // Color de las 3 rayas del isotipo — empieza teal (como las arcs) y
@@ -71,7 +41,6 @@ export default function Intro3D() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     return !seen && !reduced;
   });
-  const [status, setStatus] = useState<string>("Initializing");
 
   // Si arrancó deshabilitado, despachar el evento done de una y desbloquear scroll.
   useEffect(() => {
@@ -128,279 +97,26 @@ export default function Intro3D() {
     };
   }, [enabled]);
 
-  // Three.js scene setup
+  // Timeline simple — SIN globo. Cliente pidió quitar la animación del mundo,
+  // arrancar directo con el lockup del logo (M grande → M+wordmark → match-move).
+  // Sin three.js, sin canvas, sin arcs: solo el lockup HTML/SVG anima.
   useEffect(() => {
     if (!enabled) return;
-    const container = containerRef.current;
-    if (!container) return;
-
-    let raf = 0;
     let disposed = false;
-    let arcInterval: ReturnType<typeof setInterval> | null = null;
-    let renderer: THREE.WebGLRenderer;
-    let scene: THREE.Scene;
-    let camera: THREE.PerspectiveCamera;
-    let globe: ThreeGlobe;
+    const timers: ReturnType<typeof setTimeout>[] = [];
 
-    const w = container.clientWidth;
-    const h = container.clientHeight;
-
-    renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true,
-      powerPreference: "high-performance",
-    });
-    // Cap pixel ratio at 1.5 — HiDPI 2x doubles pixel count for negligible gain at this scale.
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-    renderer.setSize(w, h);
-    renderer.setClearColor(0x000000, 0);
-    container.appendChild(renderer.domElement);
-
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 1000);
-    camera.position.z = 260;
-
-    // ─────────────────────────────────────────────────────────────
-    // POST-PROCESSING: UnrealBloomPass para que las arcs brillen REAL.
-    // Sin esto, "ancho" no es "luminoso". Bloom hace glow real en
-    // píxeles brillantes (las arcs color teal-300 > threshold).
-    // ─────────────────────────────────────────────────────────────
-    const composer = new EffectComposer(renderer);
-    composer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-    composer.setSize(w, h);
-    composer.addPass(new RenderPass(scene, camera));
-    const bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(w, h),
-      0.85, // strength — intensidad del glow
-      0.55, // radius — qué tan lejos se difumina
-      0.18, // threshold — qué tan brillante debe ser un píxel para "glowear"
-    );
-    composer.addPass(bloomPass);
-
-    // Lighting
-    const ambient = new THREE.AmbientLight(0xffffff, 0.55);
-    scene.add(ambient);
-    const dir = new THREE.DirectionalLight(0xffffff, 0.45);
-    dir.position.set(120, 80, 200);
-    scene.add(dir);
-
-    // Globe shell — FULLY opaque so arcs going around the back of the globe
-    // are properly hidden by depth testing (this was causing 'lines on the sea'
-    // — they were actually arcs visible through the semi-transparent sphere).
-    globe = new ThreeGlobe()
-      .showAtmosphere(true)
-      // Atmósfera teal más intensa y alta — sirve como "glow" ambiental para
-      // que las arcs parezcan luminosas reflejándose en la atmósfera.
-      .atmosphereColor(COLORS.teal300)
-      .atmosphereAltitude(0.28)
-      .showGlobe(true)
-      .globeMaterial(
-        new THREE.MeshPhongMaterial({
-          color: new THREE.Color("#0d1626"),
-          emissive: new THREE.Color("#0a1422"),
-          emissiveIntensity: 0.4,
-          shininess: 6,
-        }),
-      );
-
-    // Punto luz teal extra cerca de Colombia para reforzar el glow de las arcs
-    const tealGlow = new THREE.PointLight(0x5fb3b3, 1.8, 600, 1.8);
-    tealGlow.position.set(0, 0, 200);
-    scene.add(tealGlow);
-
-    scene.add(globe);
-
-    // Load countries
-    let countryFeatures: any[] = [];
-    let colombiaFeature: any = null;
-
-    const setupCountries = async () => {
-      try {
-        setStatus("Loading topojson");
-        const topojson = await loadTopojson();
-        setStatus("Loading world map");
-        const res = await fetch(COUNTRIES_URL);
-        if (!res.ok) throw new Error("countries fetch failed " + res.status);
-        const world = await res.json();
-        const fc = topojson.feature(world, world.objects.countries);
-        countryFeatures = fc.features;
-        // Colombia ISO numeric 170
-        colombiaFeature = countryFeatures.find((f: any) => f.id === "170");
-        setStatus(`Loaded ${countryFeatures.length} countries · Colombia ${colombiaFeature ? "✓" : "✗"}`);
-        if (disposed) return;
-        // Render polygons — estado INICIAL neutral: Colombia se ve igual al
-        // resto del mundo. Esto deja una "pausa visual" donde se ve el
-        // planeta entero antes de que se resalte Colombia.
-        globe
-          .polygonsData(countryFeatures)
-          .polygonAltitude(() => 0.008)
-          .polygonCapColor(() => "rgba(143,160,196,0.32)")
-          .polygonSideColor(() => "rgba(45,138,138,0)")
-          .polygonStrokeColor(() => "rgba(255,255,255,0.55)");
-        setPhase("globe");
-
-        // ─────────────────────────────────────────────────────────────────
-        // Timeline OPTIMIZADO (M aparece RÁPIDO tras las arcs):
-        //   0.00s  globe aparece (mundo neutral, sin destacar Colombia)
-        //   0.90s  highlight: Colombia se ilumina (cap teal + stroke + altitud)
-        //   1.80s  routes: empiezan a salir las líneas neon
-        //   3.30s  arcs done (último 450+27*40=1530ms, ~80% completas)
-        //   3.30s  lockup-big: M gigante aparece JUSTO cuando las arcs terminan
-        //                     (era 3.80s — quitado el gap muerto de 500ms)
-        //   4.40s  lockup-pair: M se reduce + wordmark entra
-        //   5.50s  matchmove: el lockup vuela a la esquina del nav
-        //   6.50s  finish: removemos la intro y desbloqueamos scroll
-        // ─────────────────────────────────────────────────────────────────
-
-        // Función que aplica el "highlight" a Colombia — cambio visible que
-        // el usuario percibe como "ahora me están mostrando MI país".
-        const applyColombiaHighlight = () => {
-          if (disposed) return;
-          globe
-            .polygonAltitude((f: any) => (f === colombiaFeature ? 0.022 : 0.008))
-            .polygonCapColor((f: any) =>
-              f === colombiaFeature
-                ? "rgba(44,95,196,0.95)"
-                : "rgba(143,160,196,0.32)",
-            )
-            .polygonStrokeColor((f: any) =>
-              f === colombiaFeature ? "#2c5fc4" : "rgba(255,255,255,0.55)",
-            );
-        };
-
-        setTimeout(() => {
-          setPhase("highlight");
-          applyColombiaHighlight();
-        }, 900);
-        setTimeout(() => {
-          setPhase("routes");
-          startArcAccumulation();
-        }, 1800);
-        setTimeout(() => setPhase("lockup-big"), 3300);  // M aparece RÁPIDO tras arcs
-        setTimeout(() => setPhase("lockup-pair"), 4400);
-        setTimeout(() => setPhase("matchmove"), 5500);
-        setTimeout(finish, 6500);
-      } catch (err) {
-        console.warn("[intro] countries failed, falling back", err);
-        // Fallback: skip straight to lockup sin status text
-        setTimeout(() => {
-          setPhase("lockup-pair");
-          setTimeout(finish, 600);
-        }, 800);
-      }
-    };
-
-    // Pre-build all arcs with per-arc altitude (random per destination so they
-    // don't all overlap) and a STAGGERED draw-in duration. All arcs start
-    // animating at the same time, but the first ones complete fast (~700ms) and
-    // the later ones take longer (~2.2s) → continuous, accumulating feel without
-    // ever destroying & recreating meshes.
-    const allArcs = introDestinations.map((dst, i) => {
-      const from =
-        dst.from === "apartado"
-          ? brand.origin
-          : dst.from === "santamarta"
-            ? brand.secondaryOrigin
-            : { lat: 4.5, lng: -74 };
-      // Great-circle-ish distance (just angular degrees, good enough to scale altitude).
-      const dLat = dst.lat - from.lat;
-      const dLng = dst.lng - from.lng;
-      const angDist = Math.sqrt(dLat * dLat + dLng * dLng);
-      const altitude = Math.min(0.06 + angDist / 380, 0.22);
-      return {
-        startLat: from.lat,
-        startLng: from.lng,
-        endLat: dst.lat,
-        endLng: dst.lng,
-        color: COLORS.arcBlue,
-        altitude,
-        // Stagger más rápido (450..1490ms vs 700..2860ms anterior) — sin tiempo muerto
-        animTime: 450 + i * 40,
-      };
-    });
-
-    const startArcAccumulation = () => {
-      if (disposed) return;
-      // Líneas LUMINOSAS reales — stroke ULTRA DELGADO (0.35) +
-      // UnrealBloomPass en post-processing. Color #2c5fc4 (azul navy
-      // futurista) emite glow visible gracias al bloom.
-      globe
-        .arcColor("color")
-        .arcStroke(0.32) // más delgado — líneas finas con bloom glow
-        .arcAltitude("altitude")
-        .arcDashLength(1)
-        .arcDashGap(0)
-        .arcDashInitialGap(1)
-        .arcDashAnimateTime("animTime")
-        .arcsTransitionDuration(0)
-        .arcsData(allArcs);
-
-      // Destination dots in one shot too — same staggered fade idea via opacity tween
-      // would require a custom shader; for now we just show them all with a small radius.
-      const points = allArcs.map((a) => ({
-        lat: a.endLat,
-        lng: a.endLng,
-        color: COLORS.teal,
-      }));
-      globe
-        .pointsData(points)
-        .pointColor("color")
-        .pointAltitude(0.03) // hover above surface, but small enough to not be a 'sun' over the country
-        .pointRadius(0.55)
-        .pointResolution(6) // 6 instead of 10 — same visual at this scale, far less geometry
-        .pointsMerge(true); // merge all into one mesh — single draw call, big perf win
-
-      // (Debug labels removed — root cause was sphere transparency, not coords)
-    };
-
-    setupCountries();
-
-    // Colombia centered from the start (lng -74). Drift super slow — Colombia barely moves.
-    const colombiaLng = -74;
-    const baseRotY = THREE.MathUtils.degToRad(-colombiaLng); // +74°
-    globe.rotation.y = baseRotY;
-    globe.rotation.x = THREE.MathUtils.degToRad(-8);
-
-    // three-globe handles its own internal animations via d3-timer; we just keep
-    // rendering each frame and update the globe rotation.
-    const startTime = performance.now();
-    const animate = (now: number) => {
-      if (disposed) return;
-      const elapsed = now - startTime;
-      // Very slow westward drift — at this rate Colombia stays in frame for 30+ seconds.
-      const driftDelta = elapsed * 0.00003; // ~1.7°/s
-      globe.rotation.y = baseRotY + driftDelta;
-      // Subtle breathing tilt
-      const breath = Math.sin(elapsed * 0.0005) * 0.012;
-      globe.rotation.x = THREE.MathUtils.degToRad(-8) + breath;
-      // Usar composer en vez de renderer directo → aplica el UnrealBloomPass.
-      composer.render();
-      raf = requestAnimationFrame(animate);
-    };
-    raf = requestAnimationFrame(animate);
-
-    // Resize
-    const onResize = () => {
-      if (!container) return;
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      renderer.setSize(w, h);
-      composer.setSize(w, h);
-      bloomPass.setSize(w, h);
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-    };
-    window.addEventListener("resize", onResize);
+    // Arranca inmediato en lockup-big — sin pasar por globe/highlight/routes
+    timers.push(setTimeout(() => { if (!disposed) setPhase("lockup-big"); }, 100));
+    timers.push(setTimeout(() => { if (!disposed) setPhase("lockup-pair"); }, 1600));
+    timers.push(setTimeout(() => { if (!disposed) setPhase("matchmove"); }, 2900));
+    timers.push(setTimeout(() => { if (!disposed) finish(); }, 3900));
 
     return () => {
       disposed = true;
-      cancelAnimationFrame(raf);
-      if (arcInterval) clearInterval(arcInterval);
-      window.removeEventListener("resize", onResize);
-      renderer.dispose();
-      renderer.domElement.remove();
+      timers.forEach(clearTimeout);
     };
   }, [enabled]);
+
 
   function finish() {
     sessionStorage.setItem(STORAGE_KEY, "1");
@@ -440,33 +156,8 @@ export default function Intro3D() {
         pointerEvents: phase === "matchmove" ? "none" : "auto",
       }}
     >
-      {/* Globe canvas container — el canvas WebGL es rectangular y al hacer
-          scale-down se ve EL RECTÁNGULO como un cuadro distinto del bg navy.
-          Fix: aplicar mask-image radial → el canvas SIEMPRE se ve circular,
-          sus bordes rectangulares quedan enmascarados (invisibles).
-          Estado base: mask muy amplio (90%→100%) → solo enmascara las esquinas
-          del rectángulo, no afecta visualmente al globo + atmosfera.
-          Estado lockup: mask se contrae (40%→70%) acompañando el scale-down,
-          el globo encoge dentro de un círculo que también encoge.
-          Sin transform scale: el scale lo hace el propio mask radial. */}
-      <div
-        ref={containerRef}
-        className="absolute inset-0 transition-[opacity,mask-image,-webkit-mask-image] duration-[1400ms] ease-[cubic-bezier(0.32,0.72,0,1)]"
-        style={{
-          opacity:
-            phase === "lockup-big" || phase === "lockup-pair" || phase === "matchmove"
-              ? 0
-              : 1,
-          maskImage:
-            phase === "lockup-big" || phase === "lockup-pair" || phase === "matchmove"
-              ? "radial-gradient(circle at center, black 25%, transparent 55%)"
-              : "radial-gradient(circle at center, black 80%, transparent 100%)",
-          WebkitMaskImage:
-            phase === "lockup-big" || phase === "lockup-pair" || phase === "matchmove"
-              ? "radial-gradient(circle at center, black 25%, transparent 55%)"
-              : "radial-gradient(circle at center, black 80%, transparent 100%)",
-        }}
-      />
+      {/* (Globe canvas container removido — el cliente quitó la animación del mundo.
+           Ahora la intro arranca directo con el lockup del logo.) */}
 
       {/* Lockup: 3 stages.
           1. lockup-big   — GIANT isotipo M, ~60vh tall, centered, no wordmark yet.
@@ -535,7 +226,7 @@ export default function Intro3D() {
               willChange: "height, opacity, color",
               transform: "translateZ(0)",
               backfaceVisibility: "hidden",
-
+            }}
           >
             {/* 3 rayas separadas. Cuando phase >= lockup-big, cada una
                 desliza desde un lado distinto con stagger 120ms.
