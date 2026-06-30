@@ -10,9 +10,10 @@ const advantages = [
 ---
 
 <!-- MVP "Our Advantages" pattern: giant sticky title left + stacked cards right.
-     data-nav-theme="dark" hace que el nav se invierta a oscuro sobre este bg
-     blanco (sync via scroll spy en animation.ts). -->
-<section id="quienes-somos" data-nav-theme="dark" class="relative bg-white text-navy-900 py-32 sm:py-48">
+     NOTA: data-nav-theme se movió al wrapper interno de las advantages (fondo
+     blanco). El bloque Movex de arriba tiene video bg navy y debe mantener
+     el nav en modo light (logo blanco). -->
+<section id="quienes-somos" class="relative bg-white text-navy-900 py-32 sm:py-48">
 
   <!-- INTRO BLOCK (movido desde Empresa): heritage + counters CON VIDEO DE FONDO -->
   <div class="relative isolate overflow-hidden mb-32 sm:mb-40 -mt-32 sm:-mt-48 pt-32 sm:pt-48 pb-24 sm:pb-32 bg-navy-900 text-white">
@@ -107,7 +108,7 @@ const advantages = [
     POR QUÉ
   </div>
 
-  <div class="relative mx-auto max-w-7xl px-6 lg:px-10 grid lg:grid-cols-[1fr_1.4fr] gap-12 lg:gap-20">
+  <div data-nav-theme="dark" class="relative mx-auto max-w-7xl px-6 lg:px-10 grid lg:grid-cols-[1fr_1.4fr] gap-12 lg:gap-20">
     <!-- Left: sticky giant title + imagen de operación portuaria -->
     <div data-reveal="left" class="lg:sticky lg:top-32 lg:self-start">
       <div class="text-[11px] font-mono uppercase tracking-[0.25em] text-teal-500 mb-6">

@@ -394,7 +394,7 @@ if (!reduce) {
 if (!reduce) {
   const header = document.getElementById("site-nav");
   const themedSections = document.querySelectorAll<HTMLElement>(
-    "section[data-nav-theme]",
+    "[data-nav-theme]",
   );
   if (header && themedSections.length) {
     const updateTheme = () => {
