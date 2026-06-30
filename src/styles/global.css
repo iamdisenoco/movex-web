@@ -361,10 +361,14 @@ html.intro-locked body {
   filter: drop-shadow(0 0 14px rgba(95, 179, 179, 0.65))
           drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
 }
-/* Esconder el cursor nativo del browser cuando el custom esté activo */
+/* Esconder el cursor nativo en TODOS los elementos. Tailwind aplica
+   cursor-pointer / cursor-text en muchas clases utility — sin !important
+   y selector universal, esas clases ganan en specificity y el cursor del
+   sistema reaparece en links/botones/inputs. */
 @media (pointer: fine) {
-  html, body { cursor: none; }
-  a, button, [data-cursor-target], input, textarea, select { cursor: none; }
+  *, *::before, *::after {
+    cursor: none !important;
+  }
 }
 /* Hide custom cursor on touch devices */
 @media (pointer: coarse) {
