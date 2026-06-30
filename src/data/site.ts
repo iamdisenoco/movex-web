@@ -4,7 +4,7 @@
 export const brand = {
   name: "Movex",
   tagline: "Avance & Movilidad",
-  parent: "Cargoban Group",
+  parent: "Movex",
   established: 2012,
   origin: { lat: 7.88, lng: -76.62, city: "Apartadó" },
   secondaryOrigin: { lat: 11.24, lng: -74.2, city: "Santa Marta" },
@@ -36,7 +36,7 @@ export const counters = [
 ] as const;
 
 export const timeline = [
-  { year: 2012, label: "Fundación Cargoban", detail: "Inicio de operaciones en Apartadó." },
+  { year: 2012, label: "Inicio de operaciones", detail: "Comienzan las actividades portuarias en Apartadó." },
   { year: 2018, label: "Expansión Santa Marta", detail: "Apertura de operaciones portuarias en el Caribe." },
   { year: 2024, label: "Logística Digital", detail: "Plataforma de trazabilidad y cadena de frío." },
   { year: 2026, label: "Movex Internacional", detail: "Lanzamiento de la marca premium global." },
