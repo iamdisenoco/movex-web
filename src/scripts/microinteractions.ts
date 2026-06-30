@@ -105,8 +105,8 @@ function initCursor() {
   const cursor = document.createElementNS(SVG_NS, "svg");
   cursor.setAttribute("class", "mvx-cursor");
   cursor.setAttribute("viewBox", "0 0 40 56");
-  cursor.setAttribute("width", "24");
-  cursor.setAttribute("height", "34");
+  cursor.setAttribute("width", "16");
+  cursor.setAttribute("height", "22");
   cursor.innerHTML =
     '<path d="M0 0 L0 50 L14 38 L22 56 L30 52 L22 34 L40 32 Z" />';
   document.body.appendChild(cursor);
