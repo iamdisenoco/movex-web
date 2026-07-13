@@ -1,24 +1,14 @@
 ---
 import { counters } from "../../data/site";
-
-const advantages = [
-  { title: "Conocimiento y tradición", body: "de operaciones logísticas y portuarias construida sobre décadas de experiencia." },
-  { title: "Apoyo tecnológico", body: "y diseño de software a medida integrado a cada eslabón de la operación." },
-  { title: "Seguridad operativa", body: "criterios rigurosos aplicados en toda la cadena logística." },
-  { title: "SST estructurada", body: "operaciones diseñadas bajo estándares de seguridad y salud en el trabajo." },
-  { title: "Asesoría experta", body: "en procesos logísticos para optimizar tu operación integral." },
-  { title: "Personal calificado", body: "y capacitado con experiencia comprobada en operaciones." },
-];
 ---
 
-<!-- MVP "Our Advantages" pattern: giant sticky title left + stacked cards right.
-     NOTA: data-nav-theme se movió al wrapper interno de las advantages (fondo
-     blanco). El bloque Movex de arriba tiene video bg navy y debe mantener
-     el nav en modo light (logo blanco). -->
-<section id="quienes-somos" class="relative z-20 -mt-[12vh] bg-white text-navy-900 py-32 sm:py-48">
+<!-- Quiénes Somos = bloque Movex (video + counters). Sube sobre el hero
+     pinned con -mt-[12vh] + rounded-t. El bloque "Por qué Movex" vive en
+     PorQueMovex.astro y se ordena después de Servicios. -->
+<section id="quienes-somos" class="relative z-20 -mt-[12vh]">
 
   <!-- INTRO BLOCK (movido desde Empresa): heritage + counters CON VIDEO DE FONDO -->
-  <div class="relative isolate overflow-hidden -mt-32 sm:-mt-48 pt-32 sm:pt-48 pb-24 sm:pb-32 bg-navy-900 text-white rounded-t-[40px] sm:rounded-t-[60px] shadow-[0_-20px_60px_rgba(0,0,0,0.4)]">
+  <div class="relative isolate overflow-hidden pt-32 sm:pt-48 pb-24 sm:pb-32 bg-navy-900 text-white rounded-t-[40px] sm:rounded-t-[60px] shadow-[0_-20px_60px_rgba(0,0,0,0.4)]">
     <!-- Video de fondo. El #t=1.5 hace que empiece en segundo 1.5 (corta el principio).
          Sin loop nativo: el script más abajo loopea de 1.5s a final. -->
     <video
@@ -101,70 +91,8 @@ const advantages = [
     </div>
   </div>
 
-  <!-- BLOQUE POR QUÉ MOVEX — foto del operario Movex de fondo + overlay navy
-       (mismo patrón del hero). Full-bleed hasta el fondo del section
-       (-mb se come el padding bottom del section padre bg-white). -->
-  <div class="relative isolate overflow-hidden -mb-32 sm:-mb-48 pt-24 sm:pt-32 pb-32 sm:pb-40 bg-navy-900 text-white">
-    <!-- Foto de fondo -->
-    <img
-      src="/assets/images/porque-movex-operario.jpg"
-      alt=""
-      aria-hidden="true"
-      class="absolute inset-0 size-full object-cover -z-20"
-      loading="lazy"
-    />
-    <!-- Overlay degradado: izquierda más oscura (título), derecha algo más limpia -->
-    <div
-      class="absolute inset-0 -z-10 [background:linear-gradient(95deg,rgba(26,41,64,0.92)_0%,rgba(26,41,64,0.78)_35%,rgba(26,41,64,0.60)_65%,rgba(26,41,64,0.70)_100%)]"
-      aria-hidden="true"
-    ></div>
-    <!-- Capa global para bajar contraste de la foto -->
-    <div class="absolute inset-0 -z-10 bg-navy-900/30" aria-hidden="true"></div>
-
-    <!-- Letra decorativa "POR QUÉ" sobre la foto -->
-    <div
-      aria-hidden="true"
-      data-parallax="0.3"
-      class="absolute top-10 -left-4 pointer-events-none select-none font-display-xl text-[clamp(8rem,22vw,22rem)] leading-[0.8] text-white/[0.05] whitespace-nowrap"
-    >
-      POR QUÉ
-    </div>
-
-    <div class="relative mx-auto max-w-7xl px-6 lg:px-10 grid lg:grid-cols-[1fr_1.4fr] gap-12 lg:gap-20">
-      <!-- Left: sticky giant title -->
-      <div data-reveal="left" class="lg:sticky lg:top-32 lg:self-start">
-        <div class="text-[11px] font-mono uppercase tracking-[0.25em] text-teal-300 mb-6">
-          ● Por qué Movex
-        </div>
-        <h2 data-split class="font-display-xl text-[clamp(3rem,7vw,7rem)] text-white leading-[0.7] mb-8">
-          Por qué <span class="text-teal-300">Movex.</span>
-        </h2>
-        <p class="text-base text-white/85 leading-relaxed max-w-md">
-          Lo que define cómo operamos y por qué los importadores y exportadores nos eligen para
-          mover sus cargas estratégicas.
-        </p>
-      </div>
-
-      <!-- Right: stacked cards glass sobre la foto -->
-      <div class="space-y-4">
-        {advantages.map((adv, i) => (
-          <article data-reveal="right" style={`--reveal-delay:${i * 60}ms`} class="rounded-3xl bg-white/5 border border-white/15 backdrop-blur-sm p-8 sm:p-10 grid grid-cols-[auto_1fr_2fr] gap-6 items-start hover:bg-white/10 transition-colors">
-            <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-teal-300 pt-2">
-              0{i + 1}/0{advantages.length}
-            </div>
-            <h3 class="font-display text-2xl sm:text-3xl text-white leading-tight">
-              {adv.title}
-            </h3>
-            <p class="text-sm sm:text-base text-white/85 leading-relaxed pt-1">
-              {adv.body}
-            </p>
-          </article>
-        ))}
-      </div>
-    </div>
-  </div>
-
-  <!-- (Timeline "Nuestra historia" removido el 2026-05-27 por pedido de Jon) -->
+  <!-- (Bloque "Por qué Movex" separado a PorQueMovex.astro el 2026-07-13
+       para ordenarlo después de Servicios) -->
 </section>
 
 <script>
