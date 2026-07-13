@@ -21,15 +21,6 @@ const longDescriptions: Record<string, string> = {
     "Nos enfocamos en desarrollar y aplicar soluciones tecnológicas para mejorar procesos y reducir tiempos en labores operativas y administrativas, buscando reportes en línea y exactitud en la información.",
 };
 
-// Label corto para el tab (el título completo va dentro del panel).
-const tabLabels: Record<string, string> = {
-  portuarias: "Portuarias",
-  terrestres: "Terrestres",
-  digital: "Digital",
-  global: "Global",
-  alquiler: "Alquiler",
-};
-
 const totalServicios = services.length;
 ---
 
@@ -48,8 +39,8 @@ const totalServicios = services.length;
   class="relative z-20 text-white -mt-[12vh] bg-navy-900 rounded-t-[40px] sm:rounded-t-[60px] shadow-[0_-20px_60px_rgba(0,0,0,0.4)] pt-24 sm:pt-32 lg:pt-40 pb-32 lg:pb-48 px-4 sm:px-8 lg:px-12 overflow-hidden"
 >
   <div class="relative mx-auto max-w-6xl">
-    <!-- Header -->
-    <div class="flex flex-col items-center text-center mb-12 sm:mb-16">
+    <!-- Header — se colapsa al hacer click en un tab para descargar la vista -->
+    <div id="servicios-header" class="flex flex-col items-center text-center mb-12 sm:mb-16">
       <div class="text-[11px] font-mono uppercase tracking-[0.3em] text-teal-300 mb-4 inline-flex items-center gap-2">
         <span class="size-1.5 rounded-full bg-teal-300 animate-pulse"></span>
         Servicios
@@ -83,7 +74,7 @@ const totalServicios = services.length;
               : "bg-transparent border border-white/25 text-white/75 hover:border-teal-300 hover:text-white"
           }`}
         >
-          {tabLabels[s.id] || s.title}
+          {s.title}
         </button>
       ))}
     </div>
@@ -157,6 +148,23 @@ const totalServicios = services.length;
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
   }
+
+  /* Header colapsable: al hacer click en un tab se pliega suavemente
+     para descargar la vista. max-height alto para no cortar el contenido
+     antes del colapso. */
+  #servicios-header {
+    max-height: 500px;
+    overflow: hidden;
+    transition:
+      max-height 600ms cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 450ms ease,
+      margin-bottom 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #servicios-header.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-bottom: 0;
+  }
 </style>
 
 <script>
@@ -168,6 +176,9 @@ const totalServicios = services.length;
     if (!tab) return;
     const id = tab.dataset.serviceTab;
     if (!id) return;
+
+    // Colapsar el header "Nuestros servicios." al primer click en un tab
+    document.getElementById("servicios-header")?.classList.add("collapsed");
 
     // Tabs: estilos activo/inactivo
     document.querySelectorAll<HTMLElement>("[data-service-tab]").forEach((t) => {
