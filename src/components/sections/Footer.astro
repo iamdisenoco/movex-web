@@ -55,8 +55,8 @@ import { brand, contact } from "../../data/site";
       <div>
         <h4 class="text-[10px] font-mono uppercase tracking-[0.25em] text-white/40 mb-4">Contacto</h4>
         <ul class="space-y-2.5 text-sm">
-          <li><a href="mailto:accounts@movex.com.co" class="text-white hover:text-teal-300 transition-colors">accounts@movex.com.co</a></li>
-          <li><a href="mailto:operations@movex.com.co" class="text-white hover:text-teal-300 transition-colors">operations@movex.com.co</a></li>
+          <li><a href={`mailto:${contact.primary.email}`} class="text-white hover:text-teal-300 transition-colors">{contact.primary.email}</a></li>
+          <li><a href={`https://wa.me/${contact.whatsappRaw}`} target="_blank" rel="noopener" class="text-white hover:text-teal-300 transition-colors">WhatsApp {contact.whatsapp}</a></li>
           <li><a href="#contacto" class="text-white hover:text-teal-300 transition-colors">Cotizar servicio</a></li>
         </ul>
       </div>

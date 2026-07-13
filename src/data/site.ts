@@ -133,9 +133,22 @@ export const sustainability = [
 ] as const;
 
 export const contact = {
-  whatsapp: "{{WHATSAPP}}",
-  primary: { city: "Apartadó", address: "{{DIR_APARTADO}}", tel: "{{TEL_APARTADO}}", email: "info@movex.com.co" },
-  secondary: { city: "Santa Marta", address: "{{DIR_SM}}", tel: "{{TEL_SM}}", email: "santamarta@movex.com.co" },
+  // WhatsApp: número raw sin espacios/símbolos + versión formateada para display + URL wa.me
+  whatsapp: "+57 324 579 4431",
+  whatsappRaw: "573245794431",
+  email: "costos@movexlogistics.com.co",
+  primary: {
+    city: "Apartadó",
+    address: "",
+    tel: "+57 324 579 4431",
+    email: "costos@movexlogistics.com.co",
+  },
+  secondary: {
+    city: "Santa Marta",
+    address: "",
+    tel: "+57 324 579 4431",
+    email: "costos@movexlogistics.com.co",
+  },
 } as const;
 
 /**
