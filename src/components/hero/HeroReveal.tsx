@@ -31,21 +31,21 @@ export default function HeroReveal({ position }: Props) {
             className="block text-white"
             style={{ "--hero-reveal-delay": "150ms" } as React.CSSProperties}
           >
-            Conectamos
+            Tu carga,
           </span>
           <span
             data-hero-reveal
             className="block text-white"
             style={{ "--hero-reveal-delay": "320ms" } as React.CSSProperties}
           >
-            tu carga
+            en las mejores
           </span>
           <span
             data-hero-reveal
             className="block text-teal-300"
             style={{ "--hero-reveal-delay": "490ms" } as React.CSSProperties}
           >
-            con el mundo.
+            manos.
           </span>
         </h1>
       </div>
