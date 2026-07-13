@@ -1,0 +1,43 @@
+---
+import { contact } from "../data/site";
+
+// Mensaje prellenado que le llega a Movex cuando el visitante abre el chat
+const mensaje = encodeURIComponent(
+  "Hola Movex 👋 Estoy interesado en cotizar un servicio logístico.",
+);
+const waUrl = `https://wa.me/${contact.whatsappRaw}?text=${mensaje}`;
+---
+
+<!--
+  Burbuja flotante de WhatsApp — siempre visible, esquina inferior derecha.
+  Abre el chat de wa.me con mensaje prellenado en pestaña nueva.
+  El back-to-top (Footer.astro) vive arriba de esta burbuja (bottom-24).
+-->
+<a
+  id="whatsapp-bubble"
+  href={waUrl}
+  target="_blank"
+  rel="noopener"
+  aria-label="Escríbenos por WhatsApp"
+  data-magnetic
+  data-magnetic-strength="0.3"
+  class="group fixed bottom-6 right-6 z-40 flex items-center justify-center size-14 rounded-full bg-[#25D366] shadow-[0_8px_24px_rgba(37,211,102,0.45)] transition-transform duration-300 hover:scale-110"
+>
+  <!-- Ping suave detrás de la burbuja para llamar la atención -->
+  <span
+    aria-hidden="true"
+    class="absolute inset-0 rounded-full bg-[#25D366] opacity-40 animate-ping [animation-duration:2.5s] pointer-events-none"
+  ></span>
+
+  <!-- Ícono oficial de WhatsApp (glifo blanco) -->
+  <svg viewBox="0 0 32 32" class="relative size-7 fill-white" aria-hidden="true">
+    <path d="M16.004 4.667c-6.253 0-11.337 5.084-11.337 11.337 0 2.001.525 3.954 1.52 5.677L4.667 27.333l5.789-1.489a11.28 11.28 0 0 0 5.544 1.45h.005c6.252 0 11.336-5.084 11.336-11.337 0-3.028-1.179-5.875-3.32-8.016a11.263 11.263 0 0 0-8.017-3.274zm0 20.72h-.004a9.4 9.4 0 0 1-4.797-1.313l-.344-.204-3.567.918.952-3.477-.224-.357a9.38 9.38 0 0 1-1.44-5.01c0-5.198 4.23-9.428 9.432-9.428a9.37 9.37 0 0 1 6.665 2.764 9.37 9.37 0 0 1 2.759 6.668c-.003 5.198-4.233 9.439-9.432 9.439zm5.172-7.066c-.283-.142-1.676-.827-1.936-.921-.26-.095-.449-.142-.638.141-.188.284-.732.922-.897 1.111-.165.19-.331.213-.614.071-.284-.142-1.196-.44-2.278-1.405-.842-.751-1.41-1.678-1.576-1.962-.165-.283-.017-.437.125-.578.127-.127.283-.331.425-.497.142-.165.189-.283.284-.472.094-.19.047-.355-.024-.497-.071-.142-.638-1.537-.874-2.105-.23-.553-.464-.478-.638-.487-.165-.008-.354-.01-.543-.01-.19 0-.497.071-.757.355-.26.283-.992.969-.992 2.364s1.016 2.743 1.157 2.932c.142.19 2 3.054 4.845 4.283.677.292 1.205.466 1.617.597.679.216 1.297.185 1.786.112.545-.081 1.676-.685 1.912-1.347.236-.661.236-1.228.165-1.347-.07-.118-.26-.189-.543-.331z" />
+  </svg>
+
+  <!-- Tooltip al hover (desktop) -->
+  <span
+    class="absolute right-full mr-3 whitespace-nowrap rounded-full bg-navy-900 border border-white/15 text-white text-xs font-medium px-4 py-2 opacity-0 translate-x-2 pointer-events-none transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 hidden sm:block"
+  >
+    ¿Hablamos por WhatsApp?
+  </span>
+</a>
