@@ -38,14 +38,14 @@ export default function HeroReveal({ position }: Props) {
             className="block text-white"
             style={{ "--hero-reveal-delay": "320ms" } as React.CSSProperties}
           >
-            en las mejores
+            en las
           </span>
           <span
             data-hero-reveal
             className="block text-teal-300"
             style={{ "--hero-reveal-delay": "490ms" } as React.CSSProperties}
           >
-            manos.
+            mejores manos.
           </span>
         </h1>
       </div>
