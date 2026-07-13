@@ -39,12 +39,17 @@ const totalServicios = services.length;
   class="relative z-20 text-white -mt-[12vh] bg-navy-900 rounded-t-[40px] sm:rounded-t-[60px] shadow-[0_-20px_60px_rgba(0,0,0,0.4)] pt-24 sm:pt-32 lg:pt-40 pb-32 lg:pb-48 px-4 sm:px-8 lg:px-12 overflow-hidden"
 >
   <div class="relative mx-auto max-w-6xl">
-    <!-- Header — se colapsa al hacer click en un tab para descargar la vista -->
-    <div id="servicios-header" class="flex flex-col items-center text-center mb-12 sm:mb-16">
-      <div class="text-[11px] font-mono uppercase tracking-[0.3em] text-teal-300 mb-4 inline-flex items-center gap-2">
+    <!-- Pill "● Servicios" — SIEMPRE visible, no se colapsa -->
+    <div class="flex justify-center mb-4">
+      <div class="text-[11px] font-mono uppercase tracking-[0.3em] text-teal-300 inline-flex items-center gap-2">
         <span class="size-1.5 rounded-full bg-teal-300 animate-pulse"></span>
         Servicios
       </div>
+    </div>
+
+    <!-- Header colapsable — se pliega al click en un tab, reaparece al
+         hacer click fuera de los tabs / panel -->
+    <div id="servicios-header" class="flex flex-col items-center text-center mb-12 sm:mb-16">
       <h2 class="font-display-xl text-[clamp(2.5rem,5vw,5rem)] leading-[0.95] max-w-4xl">
         <span data-split>Nuestros </span><span data-split="slow" class="text-teal-300">servicios.</span>
       </h2>
@@ -173,11 +178,21 @@ const totalServicios = services.length;
   document.addEventListener("click", (e) => {
     const target = e.target as HTMLElement;
     const tab = target.closest<HTMLElement>("[data-service-tab]");
-    if (!tab) return;
+
+    if (!tab) {
+      // Click FUERA de los tabs: si tampoco fue dentro del panel activo,
+      // volver a mostrar el header "Nuestros servicios."
+      const insideServicios =
+        target.closest("[data-service-panel]") || target.closest("[role='tablist']");
+      if (!insideServicios) {
+        document.getElementById("servicios-header")?.classList.remove("collapsed");
+      }
+      return;
+    }
     const id = tab.dataset.serviceTab;
     if (!id) return;
 
-    // Colapsar el header "Nuestros servicios." al primer click en un tab
+    // Colapsar el header "Nuestros servicios." al click en un tab
     document.getElementById("servicios-header")?.classList.add("collapsed");
 
     // Tabs: estilos activo/inactivo
