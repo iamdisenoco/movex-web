@@ -368,35 +368,9 @@ html.intro-locked body {
   filter: drop-shadow(0 0 14px rgba(95, 179, 179, 0.65))
           drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
 }
-/* Esconder el cursor nativo en TODOS los elementos. Tailwind aplica
-   cursor-pointer / cursor-text en muchas clases utility — sin !important
-   y selector universal, esas clases ganan en specificity y el cursor del
-   sistema reaparece en links/botones/inputs. */
-@media (pointer: fine) {
-  *, *::before, *::after {
-    cursor: none !important;
-  }
-  /* Campos de formulario: restaurar cursor nativo para poder escribir.
-     Los selectores de tipo (input/textarea/select) ganan specificity al
-     selector universal `*`, así el cursor del sistema reaparece aquí. */
-  input, textarea, [contenteditable="true"] {
-    cursor: text !important;
-  }
-  select, option {
-    cursor: pointer !important;
-  }
-}
-/* Ocultar la flecha custom cuando el mouse está sobre un campo de texto
-   (la togglea el JS en pointerover/out). Sin esto la flecha tapa el caret. */
-.mvx-cursor--hidden {
-  opacity: 0;
-}
-/* Hide custom cursor on touch devices */
-@media (pointer: coarse) {
-  .mvx-cursor {
-    display: none;
-  }
-}
+/* Cursor custom desactivado (2026-07-13) — usamos el cursor nativo del
+   sistema en toda la página. Se removió el `cursor: none` universal para
+   que el caret aparezca en inputs y no se vea la flecha "rara" en el fondo. */
 
 /* Scroll progress bar (top of page) */
 .mvx-scroll-progress {

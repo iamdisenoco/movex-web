@@ -199,7 +199,9 @@ function initScrollProgress() {
 function init() {
   initMagnetic();
   initRipple();
-  initCursor();
+  // initCursor() desactivado 2026-07-13 — el cursor custom (flecha náutica)
+  // tapaba el caret en inputs y se veía "raro" al hacer clic en el fondo.
+  // Los sitios premium de referencia usan el cursor nativo del sistema.
   initScrollProgress();
 }
 

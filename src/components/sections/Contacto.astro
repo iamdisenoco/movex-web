@@ -75,15 +75,20 @@ import { contact } from "../../data/site";
 
         <!-- Contact info -->
         <div class="space-y-6">
-          <!-- Teléfono -->
-          <div class="rounded-2xl bg-navy-900/30 p-7">
+          <!-- Teléfono · WhatsApp (unificado — es el mismo número) -->
+          <a
+            href={`https://wa.me/${contact.whatsappRaw}`}
+            target="_blank"
+            rel="noopener"
+            class="block rounded-2xl bg-teal-500/15 border border-teal-500/30 p-7 hover:bg-teal-500/20 transition-colors"
+          >
             <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-teal-300 mb-3">
-              Teléfono
+              Teléfono · WhatsApp
             </div>
-            <a href={`tel:${contact.tel}`} class="font-display text-2xl text-white hover:text-teal-300 transition-colors">
-              {contact.tel}
-            </a>
-          </div>
+            <span class="font-display text-2xl text-white">
+              {contact.whatsapp}
+            </span>
+          </a>
 
           <!-- Email -->
           <div class="rounded-2xl bg-navy-900/30 p-7">
@@ -94,19 +99,6 @@ import { contact } from "../../data/site";
               {contact.email}
             </a>
           </div>
-
-          <!-- WhatsApp directo -->
-          <a
-            href={`https://wa.me/${contact.whatsappRaw}`}
-            target="_blank"
-            rel="noopener"
-            class="block rounded-2xl bg-teal-500/15 border border-teal-500/30 p-7 hover:bg-teal-500/20 transition-colors"
-          >
-            <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-teal-300 mb-2">WhatsApp directo</div>
-            <span class="font-display text-2xl text-white">
-              {contact.whatsapp}
-            </span>
-          </a>
         </div>
       </div>
     </div>
