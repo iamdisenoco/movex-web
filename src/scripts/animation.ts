@@ -45,23 +45,35 @@ if (!reduce) {
   const scrollToHash = (id: string) => {
     const target = document.querySelector(id) as HTMLElement | null;
     if (!target) return;
+    // wantY() = posición ABSOLUTA del target en el documento (top relativo al
+    // viewport + scroll actual). Solo cambia si el LAYOUT se mueve (imágenes
+    // lazy que cargan), NO por estar a mitad de animación de scroll.
     const wantY = () =>
       target.getBoundingClientRect().top + window.scrollY - getNavOffset();
 
-    window.scrollTo({ top: wantY(), behavior: "smooth" });
+    let lastWant = wantY();
+    window.scrollTo({ top: lastWant, behavior: "smooth" });
 
-    // Hasta 4 correcciones (cada 220ms) mientras la posición destino cambie
-    // por imágenes que terminan de cargar. Se auto-detiene al estabilizarse.
-    let tries = 0;
-    const correct = () => {
+    // Correcciones a timestamps fijos sobre una ventana de ~2s. Comparamos el
+    // target contra lastWant (no contra scrollY) → solo re-scrolleamos cuando
+    // el destino REALMENTE se movió por lazy-load, sin stutter mid-animación.
+    [500, 900, 1300, 1700].forEach((ms) => {
+      setTimeout(() => {
+        const want = wantY();
+        if (Math.abs(want - lastWant) > 4) {
+          lastWant = want;
+          window.scrollTo({ top: want, behavior: "smooth" });
+        }
+      }, ms);
+    });
+    // Snap final instantáneo: garantiza aterrizaje exacto aunque la última
+    // corrección suave no haya terminado o quede un residuo de sub-píxeles.
+    setTimeout(() => {
       const want = wantY();
-      if (Math.abs(window.scrollY - want) > 8 && tries < 4) {
-        tries++;
-        window.scrollTo({ top: want, behavior: "smooth" });
-        setTimeout(correct, 220);
+      if (Math.abs(window.scrollY - want) > 2) {
+        window.scrollTo({ top: want, behavior: "auto" });
       }
-    };
-    setTimeout(correct, 380);
+    }, 2100);
   };
 
   document.addEventListener("click", (e) => {
