@@ -108,8 +108,10 @@ export default function Intro3D() {
     // Arranca inmediato en lockup-big — sin pasar por globe/highlight/routes
     timers.push(setTimeout(() => { if (!disposed) setPhase("lockup-big"); }, 100));
     timers.push(setTimeout(() => { if (!disposed) setPhase("lockup-pair"); }, 1600));
+    // matchmove = fase de SALIDA (cross-fade suave). finish espera a que
+    // termine el fundido de 1100ms (+ buffer) para no cortar la transición.
     timers.push(setTimeout(() => { if (!disposed) setPhase("matchmove"); }, 2900));
-    timers.push(setTimeout(() => { if (!disposed) finish(); }, 3900));
+    timers.push(setTimeout(() => { if (!disposed) finish(); }, 4200));
 
     return () => {
       disposed = true;
@@ -150,8 +152,9 @@ export default function Intro3D() {
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 z-50 bg-navy-900 transition-opacity duration-[800ms] ease-out"
+      className="fixed inset-0 z-50 bg-navy-900"
       style={{
+        transition: "opacity 1100ms cubic-bezier(0.4, 0, 0.2, 1)",
         opacity: phase === "matchmove" ? 0 : 1,
         pointerEvents: phase === "matchmove" ? "none" : "auto",
       }}
@@ -173,12 +176,11 @@ export default function Intro3D() {
         ref={lockupRef}
         className="absolute inset-0 flex items-center justify-center pointer-events-none"
         style={{
-          transition: "transform 1300ms cubic-bezier(0.16, 1, 0.3, 1)",
-          transformOrigin: phase === "matchmove" ? "0% 50%" : "center",
-          transform:
-            phase === "matchmove"
-              ? "translate(calc(-50vw + 1.5rem), calc(-50vh + 2.4rem)) scale(0.32)"
-              : "translate(0, 0) scale(1)",
+          transition: "transform 1100ms cubic-bezier(0.4, 0, 0.2, 1)",
+          transformOrigin: "center",
+          // Salida: sutil scale-up (el logo "respira" hacia adelante) mientras
+          // el fondo se funde revelando el hero. Cross-fade limpio, sin vuelo.
+          transform: phase === "matchmove" ? "scale(1.08)" : "scale(1)",
           willChange: "transform",
         }}
       >
