@@ -376,6 +376,20 @@ html.intro-locked body {
   *, *::before, *::after {
     cursor: none !important;
   }
+  /* Campos de formulario: restaurar cursor nativo para poder escribir.
+     Los selectores de tipo (input/textarea/select) ganan specificity al
+     selector universal `*`, así el cursor del sistema reaparece aquí. */
+  input, textarea, [contenteditable="true"] {
+    cursor: text !important;
+  }
+  select, option {
+    cursor: pointer !important;
+  }
+}
+/* Ocultar la flecha custom cuando el mouse está sobre un campo de texto
+   (la togglea el JS en pointerover/out). Sin esto la flecha tapa el caret. */
+.mvx-cursor--hidden {
+  opacity: 0;
 }
 /* Hide custom cursor on touch devices */
 @media (pointer: coarse) {

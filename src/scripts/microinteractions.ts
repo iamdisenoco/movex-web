@@ -124,12 +124,18 @@ function initCursor() {
 
   // Activate state on interactive elements
   const interactiveSel = "a, button, [data-cursor-target]";
+  // Campos de texto donde ocultamos la flecha custom para no tapar el caret.
+  const fieldSel = "input, textarea, select, [contenteditable='true']";
   document.addEventListener(
     "pointerover",
     (e) => {
       const t = e.target as HTMLElement;
-      if (t.closest && t.closest(interactiveSel)) {
+      if (!t.closest) return;
+      if (t.closest(interactiveSel)) {
         cursor.classList.add("mvx-cursor--active");
+      }
+      if (t.closest(fieldSel)) {
+        cursor.classList.add("mvx-cursor--hidden");
       }
     },
     true,
@@ -138,8 +144,12 @@ function initCursor() {
     "pointerout",
     (e) => {
       const t = e.target as HTMLElement;
-      if (t.closest && t.closest(interactiveSel)) {
+      if (!t.closest) return;
+      if (t.closest(interactiveSel)) {
         cursor.classList.remove("mvx-cursor--active");
+      }
+      if (t.closest(fieldSel)) {
+        cursor.classList.remove("mvx-cursor--hidden");
       }
     },
     true,
