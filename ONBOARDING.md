@@ -6,7 +6,7 @@
 
 ## 🎯 Resumen del proyecto en 3 líneas
 
-**Movex** es un sitio web premium para una empresa colombiana de logística portuaria internacional (subsidiaria del grupo Cargoban). Hecho en **Astro 6 + React 19 + Tailwind 4 + three.js**, desplegado en **Vercel** con auto-deploy desde GitHub. La parte interesante: animaciones tipo "Awwwards" — intro 3D con globo terráqueo, scroll-stacking de secciones, card-stack pinned scroll-driven, SplitText reveal, Lenis smooth scroll.
+**Movex Logistics** es un sitio web premium para una empresa colombiana de logística portuaria internacional con sede en Apartadó y Santa Marta. Hecho en **Astro 6 + React 19 + Tailwind 4 + three.js**, desplegado en **Vercel** con auto-deploy desde GitHub. La parte interesante: animaciones tipo "Awwwards" — intro 3D con globo terráqueo, scroll-stacking de secciones, card-stack pinned scroll-driven, SplitText reveal, Lenis smooth scroll.
 
 | Recurso | URL |
 |---|---|

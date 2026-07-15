@@ -3,8 +3,8 @@
 
 export const brand = {
   name: "Movex",
+  legalName: "Movex Logistics",
   tagline: "Avance & Movilidad",
-  parent: "Movex",
   established: 2012,
   origin: { lat: 7.88, lng: -76.62, city: "Apartadó" },
   secondaryOrigin: { lat: 11.24, lng: -74.2, city: "Santa Marta" },
@@ -133,22 +133,14 @@ export const sustainability = [
 ] as const;
 
 export const contact = {
-  // WhatsApp: número raw sin espacios/símbolos + versión formateada para display + URL wa.me
+  // Teléfono + email únicos: los mismos para ambas ciudades (Jon 2026-05-27).
+  // whatsapp: para display; whatsappRaw: sin espacios/símbolos para URL wa.me.
+  tel: "+57 324 579 4431",
   whatsapp: "+57 324 579 4431",
   whatsappRaw: "573245794431",
   email: "costos@movexlogistics.com.co",
-  primary: {
-    city: "Apartadó",
-    address: "",
-    tel: "+57 324 579 4431",
-    email: "costos@movexlogistics.com.co",
-  },
-  secondary: {
-    city: "Santa Marta",
-    address: "",
-    tel: "+57 324 579 4431",
-    email: "costos@movexlogistics.com.co",
-  },
+  primary: { city: "Apartadó", address: "" },
+  secondary: { city: "Santa Marta", address: "" },
 } as const;
 
 /**

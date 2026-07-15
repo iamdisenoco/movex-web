@@ -35,7 +35,7 @@ Lista entregada por Jon. Agrupada por sección del sitio para trabajarla por blo
 
 ### Footer / Global
 - [ ] **Redirigir al público a WhatsApp** — link/CTA principal a WhatsApp donde corresponda
-- [ ] **Poner redes sociales** — IG, FB, LinkedIn (definir qué redes usa Movex/Cargoban)
+- [ ] **Poner redes sociales** — IG, FB, LinkedIn (definir qué redes usa Movex)
 - [ ] **Jugar con el logo en el diseño web** — usar el isotipo como elemento gráfico/decorativo en varias secciones (no sólo en nav). Ejemplos: watermark, divider entre secciones, accent en cards, etc. Idea abierta — explorar.
 
 ---
@@ -114,7 +114,7 @@ Reemplazar la animación actual del isotipo en el intro (las 3 rayas que aparece
 - [ ] **Regenerar videos en Higgsfield HD** (los actuales son los compressed a 17MB; se quieren versiones 4K originales para refactor en H.265 con mejor calidad)
 - [ ] **Conectar dominio movex.com.co** (Vercel → Domains → Add). Necesita acceso al panel DNS del cliente.
 - [ ] **Implementar form de contacto real** en `src/components/sections/Contacto.astro` (actualmente es `<form>` sin action). Opciones: Formspree, Resend, o endpoint Vercel Function.
-- [ ] **Sección "Quiénes Somos" / timeline**: revisar contenido y verificar que tiene la historia real de Cargoban (no placeholder).
+- [ ] **Sección "Quiénes Somos" / timeline**: revisar contenido y verificar que tiene la historia real de la empresa (no placeholder).
 - [ ] **Tema mobile responsive**: probar en 375px, 768px. La sección Servicios card-stack en mobile probablemente requiere otro pattern (las cards se ven muy chicas).
 - [ ] **SEO**: agregar `<meta>` específicos por sección, sitemap.xml, robots.txt
 - [ ] **Performance**: lazy-load del componente Intro3D (only on first load), code-split del three.js bundle (~700KB)

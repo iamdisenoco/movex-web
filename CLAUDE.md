@@ -76,7 +76,7 @@ Combinamos dos referencias:
 - **MVP Logistics** (mvplogistics.eu) → cómo funciona la página: cards redondeadas grandes, scroll parallax, letras decorativas gigantes en background, numeración fraccionaria, cards superpuestas entre secciones
 - **Viamaster International** (viamaster-intl.com) → tipografía y jerarquía de copy: Archivo Expanded, títulos split en 2 colores (teal + white), body en bloques de 2-3 párrafos con respiración, CTAs como pills (primary teal + secondary outline)
 - **Sede:** Apartadó (Urabá, Colombia) y Santa Marta
-- **Posicionamiento:** operador logístico portuario premium internacional, subsidiaria del grupo Cargoban
+- **Posicionamiento:** operador logístico portuario premium internacional (Movex Logistics)
 
 ## Vault del proyecto (AHORA EN EL REPO)
 

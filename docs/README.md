@@ -10,7 +10,7 @@ docs/
 ├── PENDIENTES.md          ← single source of truth de qué falta hacer
 ├── DECISIONES.md          ← changelog de decisiones técnicas (append-only)
 └── vault/                 ← contexto histórico del proyecto (copia del vault Obsidian de Jon)
-    ├── contexto.md        ← brief inicial del cliente Cargoban/Movex
+    ├── contexto.md        ← brief inicial del cliente (histórico)
     ├── plan-frame.md      ← metodología FRAME usada para construir el sitio
     ├── output-fase-f.md   ← outputs de research fase Foundation
     ├── skill-frame-movex.md  ← skill custom usada para generar la landing

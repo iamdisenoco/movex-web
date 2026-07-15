@@ -1,6 +1,6 @@
 # Movex Web
 
-Sitio web premium para **Movex** — operador logístico portuario internacional, subsidiaria del grupo Cargoban (Apartadó / Santa Marta, Colombia).
+Sitio web premium para **Movex Logistics** — operador logístico portuario internacional con sede en Apartadó y Santa Marta, Colombia.
 
 ## 🌐 Producción
 
