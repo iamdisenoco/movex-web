@@ -75,7 +75,7 @@ import { contact } from "../../data/site";
 
         <!-- Contact info -->
         <div class="space-y-6">
-          <!-- Teléfono único (mismo para ambas ciudades) -->
+          <!-- Teléfono -->
           <div class="rounded-2xl bg-navy-900/30 p-7">
             <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-teal-300 mb-3">
               Teléfono
@@ -85,16 +85,17 @@ import { contact } from "../../data/site";
             </a>
           </div>
 
-          {[contact.primary, contact.secondary].map((c, i) => (
-            <div class="rounded-2xl bg-navy-900/30 p-7">
-              <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-teal-300 mb-3">
-                0{i + 1}/02 · {c.city}
-              </div>
-              {c.address && (
-                <div class="font-display text-2xl text-white">{c.address}</div>
-              )}
+          <!-- Email -->
+          <div class="rounded-2xl bg-navy-900/30 p-7">
+            <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-teal-300 mb-3">
+              Email
             </div>
-          ))}
+            <a href={`mailto:${contact.email}`} class="font-display text-xl sm:text-2xl text-white hover:text-teal-300 transition-colors break-all">
+              {contact.email}
+            </a>
+          </div>
+
+          <!-- WhatsApp directo -->
           <a
             href={`https://wa.me/${contact.whatsappRaw}`}
             target="_blank"
