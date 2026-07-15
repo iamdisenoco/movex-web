@@ -330,8 +330,11 @@ html.intro-locked body {
   animation: mvx-ripple-grow 650ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   z-index: 0;
 }
-/* Asegurar que el contenido del botón quede por encima del ripple */
-[data-ripple] > * {
+/* Asegurar que el contenido del botón quede por encima del ripple.
+   :not(.mvx-ripple) — CRÍTICO: sin esto, el span del ripple (hijo directo
+   de [data-ripple]) recibía position:relative y, al medir 2× el ancho del
+   botón, EMPUJABA el layout → el botón "se ponía gigante" al hacer click. */
+[data-ripple] > *:not(.mvx-ripple) {
   position: relative;
   z-index: 1;
 }
