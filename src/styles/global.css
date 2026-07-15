@@ -63,9 +63,13 @@ html {
   /* Lenis maneja el smooth scroll, no usamos scroll-behavior nativo */
 }
 
-/* Scroll nativo del browser, smooth via CSS para anchor links */
+/* Scroll nativo del browser, smooth via CSS para anchor links.
+   scroll-padding-top compensa el nav fijo cuando se llega a una sección
+   directo por URL (#contacto) o por accesibilidad (tab/enter en un ancla).
+   Los clicks los maneja el JS de animation.ts con corrección de lazy-load. */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
 }
 
 body {

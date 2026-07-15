@@ -25,18 +25,55 @@ const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 // elementos (cards entrando, parallax tied, fade-ins).
 // ─────────────────────────────────────────────────────────────────
 
-// Anchor links → scroll smooth nativo del browser
+// Anchor links → scroll smooth con offset del nav + corrección por lazy-load.
+//
+// DELEGACIÓN en document: los CTAs del hero son un React island que se
+// hidrata DESPUÉS de que corre este script; un querySelectorAll al cargar
+// no los alcanzaría. La delegación captura clicks de cualquier <a href="#">
+// sin importar cuándo se monte.
+//
+// CORRECCIÓN: durante el scroll suave, las imágenes lazy en el camino cargan
+// y empujan la sección destino hacia abajo. El browser ya se comprometió con
+// la Y vieja → aterriza "un poco arriba". Recalculamos la posición del target
+// unas cuantas veces tras el click y reajustamos si se movió (>8px).
 if (!reduce) {
-  document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
-    a.addEventListener("click", (e) => {
-      const id = a.getAttribute("href");
-      if (!id || id.length < 2) return;
-      const target = document.querySelector(id) as HTMLElement | null;
-      if (!target) return;
-      e.preventDefault();
-      const y = target.getBoundingClientRect().top + window.scrollY - 64;
-      window.scrollTo({ top: y, behavior: "smooth" });
-    });
+  const getNavOffset = () => {
+    const nav = document.getElementById("site-nav");
+    return (nav?.offsetHeight ?? 72) + 12;
+  };
+
+  const scrollToHash = (id: string) => {
+    const target = document.querySelector(id) as HTMLElement | null;
+    if (!target) return;
+    const wantY = () =>
+      target.getBoundingClientRect().top + window.scrollY - getNavOffset();
+
+    window.scrollTo({ top: wantY(), behavior: "smooth" });
+
+    // Hasta 4 correcciones (cada 220ms) mientras la posición destino cambie
+    // por imágenes que terminan de cargar. Se auto-detiene al estabilizarse.
+    let tries = 0;
+    const correct = () => {
+      const want = wantY();
+      if (Math.abs(window.scrollY - want) > 8 && tries < 4) {
+        tries++;
+        window.scrollTo({ top: want, behavior: "smooth" });
+        setTimeout(correct, 220);
+      }
+    };
+    setTimeout(correct, 380);
+  };
+
+  document.addEventListener("click", (e) => {
+    const a = (e.target as HTMLElement)?.closest<HTMLAnchorElement>(
+      'a[href^="#"]',
+    );
+    if (!a) return;
+    const id = a.getAttribute("href");
+    if (!id || id.length < 2) return;
+    if (!document.querySelector(id)) return;
+    e.preventDefault();
+    scrollToHash(id);
   });
 }
 
