@@ -67,7 +67,7 @@ import { contact } from "../../data/site";
             type="submit"
             data-magnetic
             data-ripple
-            class="mvx-shimmer justify-self-start rounded-full bg-teal-500 hover:bg-teal-300 text-white font-semibold px-8 py-4 transition-colors mt-2"
+            class="mvx-shimmer justify-self-stretch sm:justify-self-start rounded-full bg-teal-500 hover:bg-teal-300 text-white font-semibold px-8 py-4 transition-colors mt-2"
           >
             <span class="font-display tracking-[0.04em] uppercase text-sm">Enviar solicitud</span>
           </button>
@@ -80,12 +80,12 @@ import { contact } from "../../data/site";
             href={`https://wa.me/${contact.whatsappRaw}`}
             target="_blank"
             rel="noopener"
-            class="block rounded-2xl bg-teal-500/15 border border-teal-500/30 p-7 hover:bg-teal-500/20 transition-colors"
+            class="block rounded-2xl bg-teal-500/15 border border-teal-500/30 p-6 sm:p-7 hover:bg-teal-500/20 transition-colors"
           >
             <div class="text-[10px] font-mono uppercase tracking-[0.25em] text-teal-300 mb-3">
               Teléfono · WhatsApp
             </div>
-            <span class="font-display text-2xl text-white">
+            <span class="font-display text-xl sm:text-2xl text-white whitespace-nowrap">
               {contact.whatsapp}
             </span>
           </a>
