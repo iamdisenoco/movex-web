@@ -76,13 +76,159 @@ import { nav } from "../../data/site";
     </a>
 
     <!-- Burger mobile -->
-    <button id="nav-burger" class="md:hidden text-white/85" aria-label="Abrir menú">
+    <button
+      id="nav-burger"
+      class="md:hidden text-white/85 hover:text-white transition-colors"
+      aria-label="Abrir menú"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
       <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="1.6">
         <path d="M3 7h18M3 12h18M3 17h18" stroke-linecap="round" />
       </svg>
     </button>
   </div>
 </header>
+
+<!-- MENÚ MÓVIL — overlay full-screen. Oculto por default y en desktop (md:hidden).
+     Se abre con #nav-burger; cierra con la X, click en un link, backdrop o ESC. -->
+<div
+  id="mobile-menu"
+  class="md:hidden fixed inset-0 z-50 opacity-0 pointer-events-none transition-opacity duration-300"
+  aria-hidden="true"
+>
+  <!-- Backdrop -->
+  <div id="mobile-menu-backdrop" class="absolute inset-0 bg-navy-900/95 backdrop-blur-md"></div>
+
+  <div class="relative flex h-full flex-col">
+    <!-- Header del menú: logo + cerrar -->
+    <div class="flex items-center justify-between px-6 py-4">
+      <img src="/brand/movex-isotipo-3lines-white.svg" alt="Movex" class="h-11 w-auto" />
+      <button
+        id="mobile-menu-close"
+        class="text-white/85 hover:text-white transition-colors"
+        aria-label="Cerrar menú"
+      >
+        <svg viewBox="0 0 24 24" class="size-7" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Links -->
+    <nav class="flex flex-1 flex-col justify-center gap-2 px-6 pb-24">
+      {nav.map((item, i) => (
+        <a
+          href={item.href}
+          data-mobile-link
+          style={`--mm-i:${i}`}
+          class="mobile-menu-link font-display-xl text-[clamp(2rem,9vw,3rem)] leading-tight text-white hover:text-teal-300 transition-colors py-3"
+        >
+          {item.label}
+        </a>
+      ))}
+
+      <a
+        href="#contacto"
+        data-mobile-link
+        style={`--mm-i:${nav.length}`}
+        class="mobile-menu-link mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-teal-500 hover:bg-teal-300 text-white font-semibold px-7 py-4 text-base transition-colors"
+      >
+        <span>Cotizar servicio</span>
+        <span aria-hidden="true">→</span>
+      </a>
+    </nav>
+  </div>
+</div>
+
+<style>
+  /* Entrada escalonada de los links al abrir el menú */
+  #mobile-menu .mobile-menu-link {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 420ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+      color 200ms ease;
+    transition-delay: calc(var(--mm-i, 0) * 60ms + 120ms);
+  }
+  #mobile-menu.is-open .mobile-menu-link {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* Bloquear scroll del body con el menú abierto */
+  body:has(#mobile-menu.is-open) {
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  // ── MENÚ MÓVIL ────────────────────────────────────────────────────────────
+  // Event delegation para que funcione sin importar cuándo corra el script.
+  (() => {
+    const menu = document.getElementById("mobile-menu");
+    const burger = document.getElementById("nav-burger");
+    if (!menu || !burger) return;
+
+    const openMenu = () => {
+      menu.classList.add("is-open");
+      menu.classList.remove("opacity-0", "pointer-events-none");
+      menu.setAttribute("aria-hidden", "false");
+      burger.setAttribute("aria-expanded", "true");
+    };
+
+    const closeMenu = () => {
+      menu.classList.remove("is-open");
+      menu.classList.add("opacity-0", "pointer-events-none");
+      menu.setAttribute("aria-hidden", "true");
+      burger.setAttribute("aria-expanded", "false");
+      // Flush sincrónico de estilos: obliga al browser a recalcular el
+      // `body:has(#mobile-menu.is-open){overflow:hidden}` AHORA, así el scroll
+      // ya está liberado si otro listener del mismo click quiere scrollear.
+      void document.body.offsetHeight;
+    };
+
+    document.addEventListener("click", (e) => {
+      const t = e.target as HTMLElement;
+      if (!t.closest) return;
+
+      if (t.closest("#nav-burger")) {
+        e.preventDefault();
+        menu.classList.contains("is-open") ? closeMenu() : openMenu();
+        return;
+      }
+      if (t.closest("#mobile-menu-close") || t.closest("#mobile-menu-backdrop")) {
+        closeMenu();
+        return;
+      }
+      // Click en un link del menú.
+      // OJO: no podemos delegar el scroll a animation.ts porque en ese mismo
+      // tick el body todavía tiene `overflow:hidden` (scroll lock del menú) y
+      // el window.scrollTo se descarta silenciosamente. Cerramos primero y
+      // scrolleamos cuando la transición ya liberó el scroll del body.
+      const link = t.closest("[data-mobile-link]") as HTMLAnchorElement | null;
+      if (link) {
+        const id = link.getAttribute("href") || "";
+        closeMenu();
+        if (id.startsWith("#") && id.length > 1 && document.querySelector(id)) {
+          e.preventDefault();
+          setTimeout(() => {
+            const target = document.querySelector(id) as HTMLElement | null;
+            if (!target) return;
+            const nav = document.getElementById("site-nav");
+            const offset = (nav?.offsetHeight ?? 72) + 12;
+            const top = target.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top, behavior: "smooth" });
+          }, 320);
+        }
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && menu.classList.contains("is-open")) closeMenu();
+    });
+  })();
+</script>
 
 <script>
   // Activa el efecto glass del pill central CUANDO el hero deja de estar visible.
