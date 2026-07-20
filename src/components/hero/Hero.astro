@@ -28,8 +28,9 @@ import HeroReveal from "./HeroReveal";
        object-cover se encarga de cubrir el viewport sin estirar pixels. -->
   <video
     id="hero-video"
-    class="absolute inset-0 size-full object-cover -z-20 opacity-0 transition-opacity duration-700 ease-out"
+    class="absolute inset-0 size-full object-cover -z-20 transition-opacity duration-700 ease-out"
     src="/assets/videos/cargo-ship-aerial-loop.mp4"
+    poster="/assets/images/hero-poster.jpg"
     autoplay
     muted
     loop
@@ -107,9 +108,8 @@ import HeroReveal from "./HeroReveal";
     if (v) {
       v.muted = true;
       v.playsInline = true;
-      const fadeIn = () => v.classList.remove("opacity-0");
-      v.addEventListener("canplay", fadeIn, { once: true });
-      if (v.readyState >= 3) fadeIn();
+      // Ya no hacemos fade-in por JS: el `poster` muestra el primer frame
+      // del video de inmediato, así que no hay hueco que tapar.
       const tryPlay = () => v.play().catch(() => {
         const onGesture = () => { v.play().catch(()=>{}); cleanup(); };
         const cleanup = () => {

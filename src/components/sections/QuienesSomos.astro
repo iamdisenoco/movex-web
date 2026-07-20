@@ -13,15 +13,15 @@ import { counters } from "../../data/site";
          Sin loop nativo: el script más abajo loopea de 1.5s a final. -->
     <video
       id="quienes-somos-video"
-      class="absolute inset-0 size-full object-cover -z-20 opacity-0 transition-opacity duration-700 ease-out"
+      class="absolute inset-0 size-full object-cover -z-20 transition-opacity duration-700 ease-out"
       src="/assets/videos/contenedores-quienes-somos.mp4#t=1.5"
+      poster="/assets/images/quienes-somos-poster.jpg"
       autoplay
       muted
       playsinline
       preload="auto"
       aria-hidden="true"
       data-start-time="1.5"
-      onloadeddata="this.classList.remove('opacity-0')"
     ></video>
     <!-- Overlay degradado (mismo estilo que el hero: izq oscura, der un poco más limpia) -->
     <div
