@@ -54,7 +54,7 @@ export default function HeroReveal({ position }: Props) {
 
   // position === "subtext"
   return (
-    <div className="max-w-md sm:max-w-lg lg:max-w-xl text-right">
+    <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl text-left lg:text-right">
       <p
         data-hero-reveal
         className="text-base sm:text-lg leading-relaxed text-white/90 mb-8"
@@ -65,14 +65,14 @@ export default function HeroReveal({ position }: Props) {
       </p>
       <div
         data-hero-reveal
-        className="flex flex-wrap gap-4 justify-end"
+        className="flex flex-col sm:flex-row flex-wrap gap-4 justify-start lg:justify-end"
         style={{ "--hero-reveal-delay": "980ms" } as React.CSSProperties}
       >
         <a
           href="#quienes-somos"
           data-magnetic
           data-ripple
-          className="mvx-shimmer inline-flex items-center justify-center min-w-[180px] rounded-full bg-teal-500 hover:bg-teal-300 text-white font-semibold px-7 py-4 text-base transition-colors"
+          className="mvx-shimmer inline-flex items-center justify-center w-full sm:w-auto sm:min-w-[180px] rounded-full bg-teal-500 hover:bg-teal-300 text-white font-semibold px-7 py-4 text-base transition-colors"
         >
           <span>Sobre Movex</span>
         </a>
@@ -80,7 +80,7 @@ export default function HeroReveal({ position }: Props) {
           href="#contacto"
           data-magnetic
           data-ripple
-          className="inline-flex items-center justify-center min-w-[180px] rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-semibold px-7 py-4 text-base transition-colors border border-white/25"
+          className="inline-flex items-center justify-center w-full sm:w-auto sm:min-w-[180px] rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-semibold px-7 py-4 text-base transition-colors border border-white/25"
         >
           <span>Contáctanos</span>
         </a>

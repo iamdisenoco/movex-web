@@ -66,27 +66,34 @@ import HeroReveal from "./HeroReveal";
        - Subtexto+CTAs: posición absoluta abajo-derecha (no en el grid)
          con bottom moderado para que no quede pegado al fondo ni muy arriba
   -->
-  <!-- Título: React island con Framer Motion (reveal garantizado) -->
-  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10 h-full flex items-center pt-24 pb-32">
-    <HeroReveal client:load position="title" />
+  <!-- CONTENIDO — RESPONSIVE:
+       · Móvil: columna en flujo normal (título → subtexto → CTAs), centrado
+         vertical, sin overlaps.
+       · Desktop (lg): título centrado a la izquierda + subtexto/CTAs en
+         posición absoluta abajo-derecha (layout original). -->
+  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-10 h-full flex flex-col justify-center gap-8 pt-24 pb-28 lg:gap-0 lg:pb-32">
+    <!-- Título -->
+    <div class="lg:h-full lg:flex lg:items-center">
+      <HeroReveal client:load position="title" />
+    </div>
+
+    <!-- Subtexto + CTAs -->
+    <div class="lg:absolute lg:bottom-40 lg:right-10 lg:z-10">
+      <HeroReveal client:load position="subtext" />
+    </div>
   </div>
 
-  <!-- Subtexto + CTAs: React island con Framer Motion -->
-  <div class="absolute bottom-40 right-6 lg:right-10 z-10">
-    <HeroReveal client:load position="subtext" />
-  </div>
-
-  <!-- Scroll hint bottom-left -->
-  <span class="absolute bottom-8 left-8 text-[10px] font-mono uppercase tracking-[0.3em] text-white/55 animate-pulse">
+  <!-- Scroll hint bottom-left (solo desktop) -->
+  <span class="hidden lg:block absolute bottom-8 left-8 text-[10px] font-mono uppercase tracking-[0.3em] text-white/55 animate-pulse">
     Scroll ↓
   </span>
 
-  <!-- Isotipo Movex centrado abajo -->
+  <!-- Isotipo Movex centrado abajo (solo desktop — en móvil chocaba con los CTAs) -->
   <img
     src="/brand/movex-isotipo-3lines-white.svg"
     alt=""
     aria-hidden="true"
-    class="absolute bottom-40 left-1/2 -translate-x-1/2 h-10 sm:h-12 w-auto opacity-80 z-10 pointer-events-none"
+    class="hidden lg:block absolute bottom-40 left-1/2 -translate-x-1/2 h-10 sm:h-12 w-auto opacity-80 z-10 pointer-events-none"
   />
 </section>
 </div><!-- /hero pin space -->
