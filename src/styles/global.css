@@ -84,6 +84,19 @@ html.intro-locked body {
   overflow: hidden;
 }
 
+/* Los títulos display NUNCA deben cortarse. En móvil los clamp() dejan
+   márgenes de pocos píxeles, y basta con que iOS renderice la fuente un
+   pelo más ancha (fallback de Inter aún cargando, zoom de página de
+   Safari, texto agrandado por accesibilidad) para que la última letra
+   quede recortada. `break-word` solo actúa cuando la palabra de verdad
+   no cabe: rompe en vez de salirse. */
+h1,
+h2,
+h3,
+.font-display-xl {
+  overflow-wrap: break-word;
+}
+
 /* Marquee */
 @keyframes marquee {
   0% { transform: translateX(0); }

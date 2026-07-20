@@ -25,7 +25,7 @@ export default function HeroReveal({ position }: Props) {
   if (position === "title") {
     return (
       <div className="max-w-4xl">
-        <h1 className="font-display-xl text-[clamp(2.8rem,7.5vw,6.5rem)] leading-[0.92]">
+        <h1 className="font-display-xl text-[clamp(2.2rem,7.5vw,6.5rem)] leading-[0.92]">
           <span
             data-hero-reveal
             className="block text-white"
