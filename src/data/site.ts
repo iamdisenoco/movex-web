@@ -33,6 +33,9 @@ export const timeline = [
   { year: 2026, label: "Movex Internacional", detail: "Lanzamiento de la marca premium global." },
 ] as const;
 
+// Portafolio real (ajustado según observaciones del cliente 2026-09).
+// Logística Global se eliminó del portafolio; Logística Digital pasa a ser
+// valor agregado con su propia página (ver src/pages/logistica-digital.astro).
 export const services = [
   {
     id: "portuarias",
@@ -42,16 +45,18 @@ export const services = [
     items: [
       "Cargue y descargue de carga general",
       "Cargue y descargue de contenedores",
-      "Trincado y destrincado",
-      "Conexión y desconexión a bordo",
       "Estiba y desestiba en bodega",
       "Estiba y desestiba en cubierta",
       "Estiba y desestiba refrigerada",
+      "Trincado y destrincado de contenedores",
+      "Conexión y desconexión a bordo",
       "Izamiento de equipos y contenedores",
-      "Movimiento de tapas de cubierta",
-      "Enganche y desenganche",
       "Lavado de contenedores",
-      "Revisión previa de equipos de cargue",
+      "Operadores de maquinaria portuaria",
+      "Tarja y trazabilidad de carga",
+      "Apoyo en inspecciones de autoridades",
+      "Consolidación y desconsolidación de carga",
+      "Movimiento de vehículos en buques Ro-Ro",
     ],
   },
   {
@@ -60,49 +65,16 @@ export const services = [
     image: "/assets/images/terrestres-reach-stacker.jpg",
     items: [
       "Descargue de camiones",
-      "Desembalaje de vehículos",
-      "Consolidación de contenedores",
-      "Desconsolidación de contenedores",
+      "Consolidación y desconsolidación de contenedores",
       "Movimiento de pallets en plataforma",
-      "Reempaque",
       "Tarja y chequeo",
       "Apoyo a inspecciones",
       "Inspecciones de calidad",
       "Evaluación de calidad",
       "Etiquetado",
       "Operación de equipos portuarios",
-      "Mantenimiento portuario",
-      "Alistamiento de contenedores",
       "Preparación del contenedor",
-      "Bloqueo y trincado de carga",
       "Auxiliares de grúa",
-    ],
-  },
-  {
-    id: "digital",
-    title: "Logística Digital",
-    image: "/assets/images/04-digital-dashboard.jpg",
-    items: [
-      "Desarrollo de soluciones tecnológicas",
-      "Software a medida para tu operación",
-      "Reportes en línea y dashboards",
-      "Trazabilidad integral del servicio y la carga",
-      "Mejora de procesos operativos",
-      "Mejora de procesos administrativos",
-      "Exactitud en la información",
-      "Auditoría de cadena de frío",
-      "Consultoría y asesoría de procesos",
-    ],
-  },
-  {
-    id: "global",
-    title: "Logística Global",
-    image: "/assets/images/global-puerto-dusk.jpg",
-    items: [
-      "Gestión segura de carga",
-      "Asesoramiento de transporte",
-      "Coordinación marítimo y terrestre",
-      "Agenciamiento aduanero",
     ],
   },
   {
@@ -110,9 +82,18 @@ export const services = [
     title: "Alquiler de Equipos",
     image: "/assets/images/03-portuario.jpg",
     items: [
+      "Montacargas",
+      "Pallet jacks",
       "Equipos de manipulación",
-      "Equipos de seguridad",
       "Equipos de mantenimiento portuario",
+    ],
+  },
+  {
+    id: "almacenamiento",
+    title: "Almacenamiento de Carga",
+    image: "/assets/images/03-portuario.jpg",
+    items: [
+      "Almacenamiento de carga nacionalizada en Urabá",
     ],
   },
 ] as const;

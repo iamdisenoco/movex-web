@@ -3,23 +3,18 @@ import { services } from "../../data/site";
 
 // Descripción corta por servicio (va en el panel del tab).
 const descriptions: Record<string, string> = {
-  terrestres:
-    "Carga, descarga y consolidación de contenedores y mercancía en tierra firme.",
   portuarias:
-    "Estiba, desestiba y conexión de contenedores a bordo y en muelle.",
-  digital:
-    "Tecnología propia que mejora procesos, reduce tiempos y entrega información en línea con exactitud.",
-  global:
-    "Coordinación marítima, terrestre y aduanera para carga internacional.",
+    "Estiba, desestiba, trincado y manejo de carga a bordo y en muelle, con personal y maquinaria especializada.",
+  terrestres:
+    "Cargue, descargue, consolidación y preparación de contenedores y mercancía en tierra firme.",
   alquiler:
-    "Equipos especializados de manipulación, seguridad y mantenimiento portuario.",
+    "Montacargas, pallet jacks y equipos de manipulación disponibles para tu operación.",
+  almacenamiento:
+    "Almacenamiento de carga nacionalizada en la zona de Urabá, bajo control y trazabilidad.",
 };
 
 // Descripción larga (opcional, reemplaza a la corta en el panel).
-const longDescriptions: Record<string, string> = {
-  digital:
-    "Nos enfocamos en desarrollar y aplicar soluciones tecnológicas para mejorar procesos y reducir tiempos en labores operativas y administrativas, buscando reportes en línea y exactitud en la información.",
-};
+const longDescriptions: Record<string, string> = {};
 
 const totalServicios = services.length;
 ---
@@ -54,8 +49,8 @@ const totalServicios = services.length;
         <span data-split>Nuestros </span><span data-split="slow" class="text-teal-300">servicios.</span>
       </h2>
       <p data-reveal="up" style="--reveal-delay:150ms" class="mt-6 text-base sm:text-lg text-white/70 max-w-xl">
-        Soluciones integradas para operar tu carga en puertos y terminales:
-        cargue, descargue y todo lo que hay en medio.
+        Soluciones integradas para el manejo de tu carga en puertos y
+        terminales: cargue, descargue, estiba, trazabilidad y almacenamiento.
       </p>
     </div>
 
