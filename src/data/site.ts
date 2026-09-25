@@ -26,15 +26,6 @@ export const hero = {
   cta: { primary: "Cotizar servicio", secondary: "Conocer Movex" },
 } as const;
 
-// Counters provisionales — el cliente ajusta los números reales sin tocar el código.
-// La animación countup (ver Layout.astro) lee el atributo data-countup y anima 0→target.
-export const counters = [
-  { value: "250000", label: "Cajas movilizadas" },
-  { value: "18000", label: "Contenedores al año" },
-  { value: "45", label: "Vehículos en flota" },
-  { value: "28", label: "Países atendidos" },
-] as const;
-
 export const timeline = [
   { year: 2012, label: "Inicio de operaciones", detail: "Comienzan las actividades portuarias en Apartadó." },
   { year: 2018, label: "Expansión Santa Marta", detail: "Apertura de operaciones portuarias en el Caribe." },
