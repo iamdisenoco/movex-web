@@ -34,8 +34,9 @@ export const timeline = [
 ] as const;
 
 // Portafolio real (ajustado según observaciones del cliente 2026-09).
-// Logística Global se eliminó del portafolio; Logística Digital pasa a ser
-// valor agregado con su propia página (ver src/pages/logistica-digital.astro).
+// Logística Global se eliminó del portafolio. Logística Digital se mantiene
+// como opción/tab dentro de Servicios (valor agregado), ya no como sección
+// grande independiente en el home.
 export const services = [
   {
     id: "portuarias",
@@ -94,6 +95,22 @@ export const services = [
     image: "/assets/images/03-portuario.jpg",
     items: [
       "Almacenamiento de carga nacionalizada en Urabá",
+    ],
+  },
+  {
+    id: "digital",
+    title: "Logística Digital",
+    image: "/assets/images/04-digital-dashboard.jpg",
+    items: [
+      "Desarrollo de soluciones tecnológicas",
+      "Software a medida para tu operación",
+      "Reportes en línea y dashboards",
+      "Trazabilidad integral del servicio y la carga",
+      "Mejora de procesos operativos",
+      "Mejora de procesos administrativos",
+      "Exactitud en la información",
+      "Auditoría de cadena de frío",
+      "Consultoría y asesoría de procesos",
     ],
   },
 ] as const;
